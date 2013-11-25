@@ -52,6 +52,7 @@ public class GerritDecorator implements Decorator, PostJob {
         try {
             assertOrFetchGerritModifiedFiles();
             LOG.info("Has violations: {}", context.getViolations());
+            processFileResource(resource, context);
         } catch (GerritPluginException e) {
             LOG.error("Error processing Gerrit Plugin decorator", e);
         }
@@ -66,6 +67,7 @@ public class GerritDecorator implements Decorator, PostJob {
         }
         LOG.info("Alaysis has finished. Sending results to Gerrit.");
         try {
+            reviewInput.setLabelToPlusOne();
             gerritFacade.setReview(review.getGerritChangeId(), review.getGerritRevisionId(), reviewInput);
         } catch (GerritPluginException e) {
             LOG.error("Error sending review to Gerrit", e);
@@ -73,10 +75,10 @@ public class GerritDecorator implements Decorator, PostJob {
     }
 
     protected void processFileResource(@NotNull Resource resource, @NotNull DecoratorContext context) {
-        LOG.info("Processing resource scope {}, long name {}, name {}", new Object[] {resource.getScope(), resource.getLongName(), resource.getName()});
         if (gerritModifiedFiles.contains(resource.getLongName())) {
+            LOG.info("File {} belongs to Gerrit patchset", resource.getLongName());
             List<ReviewComment> comments = new ArrayList<ReviewComment>();
-            for(Violation violation : context.getViolations()) {
+            for (Violation violation : context.getViolations()) {
                 LOG.info("Violation found: {}", violation.toString());
                 comments.add(violationToComment(violation));
             }
