@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public class GerritConnector {
     private final static Logger LOG = LoggerFactory.getLogger(GerritConnector.class);
     private static final String GET_LIST_FILES_URL_FORMAT = "/a/changes/%s/revisions/%s/files/";
-    private static final String POST_SET_REVIEW_URL_FORMAT = "a/changes/%s/revisions/%s/review";
+    private static final String POST_SET_REVIEW_URL_FORMAT = "/a/changes/%s/revisions/%s/review";
     private static int REQUEST_COUNTER = 0;
     private String host;
     private int port;
@@ -61,6 +61,7 @@ public class GerritConnector {
 
     @NotNull
     public String setReview(String changeId, String revisionId, String reviewInputAsJson) throws URISyntaxException, IOException {
+        LOG.info("Setting review {}", reviewInputAsJson);
         URI uri = new URIBuilder().setPath(String.format(POST_SET_REVIEW_URL_FORMAT, changeId, revisionId)).build();
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setEntity(new StringEntity(reviewInputAsJson, ContentType.APPLICATION_JSON));
