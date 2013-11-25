@@ -42,6 +42,15 @@ public class ReviewTest {
     }
 
     @Test(expected = GerritPluginException.class)
+    public void shouldNotValidateIfGerritPasswordIsBlank() throws GerritPluginException {
+        //given
+        fillGerritConfiguration();
+        review.setGerritPassword("");
+        //expect thrown
+        review.validateGerritSettings();
+    }
+
+    @Test(expected = GerritPluginException.class)
     public void shouldNotValidateIfGerritProjectNameIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();

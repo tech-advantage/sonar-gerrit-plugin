@@ -5,27 +5,32 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.resources.Project;
 
 public class Review {
     private final static Logger LOG = LoggerFactory.getLogger(Review.class);
     private String gerritHost;
-    private String gerritPort;
+    private Integer gerritPort;
     private String gerritUsername;
+    private String gerritPassword;
     private String gerritProjectName;
     private String gerritChangeId;
     private String gerritRevisionId;
     private Project project;
+    private DecoratorContext context;
 
-    public Review(@NotNull Project project) {
+    public Review(@NotNull Project project, @NotNull DecoratorContext context) {
         this.project = project;
+        this.context = context;
     }
 
     public void validateGerritSettings() throws GerritPluginException {
         LOG.info(dumpGerritSettings());
         if (StringUtils.isBlank(gerritHost) ||
-                StringUtils.isBlank(gerritPort) ||
+                gerritPort == null ||
                 StringUtils.isBlank(gerritUsername) ||
+                StringUtils.isBlank(gerritPassword) ||
                 StringUtils.isBlank(gerritProjectName) ||
                 StringUtils.isBlank(gerritChangeId) ||
                 StringUtils.isBlank(gerritRevisionId)
@@ -39,6 +44,7 @@ public class Review {
                 "gerritHost='" + gerritHost + '\'' +
                 ", gerritPort='" + gerritPort + '\'' +
                 ", gerritUsername='" + gerritUsername + '\'' +
+                ", gerritPassword='" + (StringUtils.isBlank(gerritPassword) ? "blank" : "not blank") + '\'' +
                 ", gerritProjectName='" + gerritProjectName + '\'' +
                 ", gerritChangeId='" + gerritChangeId + '\'' +
                 ", gerritRevisionId='" + gerritRevisionId + '\'' +
@@ -55,11 +61,11 @@ public class Review {
     }
 
     @Nullable
-    public String getGerritPort() {
+    public Integer getGerritPort() {
         return gerritPort;
     }
 
-    public void setGerritPort(@Nullable String gerritPort) {
+    public void setGerritPort(@Nullable Integer gerritPort) {
         this.gerritPort = gerritPort;
     }
 
@@ -70,6 +76,15 @@ public class Review {
 
     public void setGerritUsername(@Nullable String gerritUsername) {
         this.gerritUsername = gerritUsername;
+    }
+
+    @Nullable
+    public String getGerritPassword() {
+        return gerritPassword;
+    }
+
+    public void setGerritPassword(String gerritPassword) {
+        this.gerritPassword = gerritPassword;
     }
 
     @Nullable
@@ -102,5 +117,10 @@ public class Review {
     @NotNull
     public Project getProject() {
         return project;
+    }
+
+    @NotNull
+    public DecoratorContext getContext() {
+        return context;
     }
 }

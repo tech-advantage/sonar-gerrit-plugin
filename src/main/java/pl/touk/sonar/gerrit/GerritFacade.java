@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codehaus.plexus.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import pl.touk.sonar.GerritPluginException;
+import pl.touk.sonar.Review;
 
 public class GerritFacade {
     private static final String RESPONSE_PREFIX = ")]}'";
@@ -19,12 +21,12 @@ public class GerritFacade {
     private GerritConnector gerritConnector;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public GerritFacade(String host, int port, String username, String password) {
+    public GerritFacade(@NotNull String host, int port, @NotNull String username, @NotNull String password) {
         gerritConnector = new GerritConnector(host, port, username, password);
     }
 
     @NotNull
-    public List<String> listFiles(String changeId, String revisionId) throws GerritPluginException {
+    public List<String> listFiles(@NotNull String changeId, @NotNull String revisionId) throws GerritPluginException {
         try {
             String response = gerritConnector.listFiles(changeId, revisionId);
             String jsonString = trimResponse(response);
@@ -34,11 +36,23 @@ public class GerritFacade {
             keys.remove(COMMIT_MSG);
             files.addAll(keys);
             return files;
-
         } catch (IOException e) {
             throw new GerritPluginException("Error listing files", e);
         } catch (URISyntaxException e) {
             throw new GerritPluginException("Error listing files", e);
+        }
+    }
+
+    public void setReview(@NotNull String changeId, @NotNull String revisionId, @NotNull ReviewInput reviewInput) throws GerritPluginException {
+        try {
+            String json = objectMapper.writeValueAsString(reviewInput);
+            gerritConnector.setReview(changeId, revisionId, json);
+        } catch (JsonProcessingException e) {
+            throw new GerritPluginException("Error setting review", e);
+        } catch (IOException e) {
+            throw new GerritPluginException("Error setting review", e);
+        } catch (URISyntaxException e) {
+            throw new GerritPluginException("Error setting review", e);
         }
     }
 

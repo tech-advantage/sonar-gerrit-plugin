@@ -6,17 +6,18 @@ import java.net.URISyntaxException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.DigestScheme;
-import org.apache.http.impl.auth.DigestSchemeFactory;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class GerritConnector {
     private final static Logger LOG = LoggerFactory.getLogger(GerritConnector.class);
     private static final String GET_LIST_FILES_URL_FORMAT = "/a/changes/%s/revisions/%s/files/";
+    private static final String POST_SET_REVIEW_URL_FORMAT = "a/changes/%s/revisions/%s/review";
     private static int REQUEST_COUNTER = 0;
     private String host;
     private int port;
@@ -54,6 +56,15 @@ public class GerritConnector {
         URI uri = new URIBuilder().setPath(String.format(GET_LIST_FILES_URL_FORMAT, changeId, revisionId)).build();
         HttpGet httpGet = new HttpGet(uri);
         CloseableHttpResponse httpResponse = logAndExecute(httpGet);
+        return consumeAndLogEntity(httpResponse);
+    }
+
+    @NotNull
+    public String setReview(String changeId, String revisionId, String reviewInputAsJson) throws URISyntaxException, IOException {
+        URI uri = new URIBuilder().setPath(String.format(POST_SET_REVIEW_URL_FORMAT, changeId, revisionId)).build();
+        HttpPost httpPost = new HttpPost(uri);
+        httpPost.setEntity(new StringEntity(reviewInputAsJson, ContentType.APPLICATION_JSON));
+        CloseableHttpResponse httpResponse = logAndExecute(httpPost);
         return consumeAndLogEntity(httpResponse);
     }
 

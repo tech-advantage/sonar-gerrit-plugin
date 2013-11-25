@@ -26,18 +26,20 @@ public class GerritDecorator implements Decorator {
     public void decorate(Resource resource, DecoratorContext context) {
         LOG.info("Decorate on resource {}", resource);
         if (ResourceUtils.isRootProject(resource)) {
-            decorateProject((Project)resource);
+            decorateProject((Project)resource, context);
         }
     }
 
-    protected void decorateProject(Project project) {
-        Review review = new Review(project);
+    protected void decorateProject(Project project, DecoratorContext context) {
+        Review review = new Review(project, context);
         review.setGerritHost(settings.getString(PropertyKey.GERRIT_HOST));
-        review.setGerritPort(settings.getString(PropertyKey.GERRIT_PORT));
+        review.setGerritPort(settings.getInt(PropertyKey.GERRIT_PORT));
         review.setGerritUsername(settings.getString(PropertyKey.GERRIT_USERNAME));
+        review.setGerritPassword(settings.getString(PropertyKey.GERRIT_PASSWORD));
         review.setGerritProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
         review.setGerritChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
         review.setGerritRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
+        new ProjectProcessor(review).process();
 
     }
 
