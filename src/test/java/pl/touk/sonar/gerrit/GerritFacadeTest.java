@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,9 +56,9 @@ public class GerritFacadeTest {
         //given
         when(gerritConnectorMock.listFiles(CHANGE_ID, REVISION_ID)).thenReturn(LIST_FILES_REPONSE);
         //when
-        List<String> files = gerritFacade.listFiles(CHANGE_ID, REVISION_ID);
+        Map<String, String> files = gerritFacade.listFiles(CHANGE_ID, REVISION_ID);
         //then
         assertThat(files).hasSize(1);
-        assertThat(files.get(0)).isEqualTo("com.google.gerrit.server.project.RefControl");
+        assertThat(files.get("com.google.gerrit.server.project.RefControl")).isEqualTo("gerrit-server/src/main/java/com/google/gerrit/server/project/RefControl.java");
     }
 }

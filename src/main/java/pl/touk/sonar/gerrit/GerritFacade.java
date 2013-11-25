@@ -2,9 +2,7 @@ package pl.touk.sonar.gerrit;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -27,17 +25,20 @@ public class GerritFacade {
         gerritConnector = new GerritConnector(host, port, username, password);
     }
 
+    /**
+     * @return sonarLongName to gerritFileName map
+     */
     @NotNull
-    public List<String> listFiles(@NotNull String changeId, @NotNull String revisionId) throws GerritPluginException {
+    public Map<String, String> listFiles(@NotNull String changeId, @NotNull String revisionId) throws GerritPluginException {
         try {
             String response = gerritConnector.listFiles(changeId, revisionId);
             String jsonString = trimResponse(response);
             ListFilesResponse listFilesResponse = objectMapper.readValue(jsonString, ListFilesResponse.class);
-            List<String> files = new ArrayList<String>();
+            Map<String, String> files = new HashMap<String, String>();
             Set<String> keys = listFilesResponse.keySet();
             keys.remove(COMMIT_MSG);
             for (String key : keys) {
-                files.add(parseFileName(key));
+                files.put(parseFileName(key), key);
             }
             return files;
         } catch (IOException e) {

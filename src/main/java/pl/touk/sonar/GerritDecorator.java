@@ -1,6 +1,6 @@
 package pl.touk.sonar;
 
-import org.apache.commons.lang.StringUtils;
+import com.sun.xml.internal.ws.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +16,17 @@ import pl.touk.sonar.gerrit.ReviewInput;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 //http://sonarqube.15.x6.nabble.com/sonar-dev-Decorator-executed-a-lot-of-times-td5011536.html
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritDecorator implements Decorator, PostJob {
     private final static Logger LOG = LoggerFactory.getLogger(GerritDecorator.class);
+    private static final String COMMENT_FORMAT = "[%s] Severity: %s, Message: %s";
     private Review review;
     private GerritFacade gerritFacade;
-    private List<String> gerritModifiedFiles;
+    //Sonar's long name to Gerrit original file name map.
+    private Map<String, String> gerritModifiedFiles;
     private ReviewInput reviewInput = new ReviewInput();
 
     public GerritDecorator(Settings settings) {
@@ -74,21 +77,21 @@ public class GerritDecorator implements Decorator, PostJob {
     }
 
     protected void processFileResource(@NotNull Resource resource, @NotNull DecoratorContext context) {
-        if (gerritModifiedFiles.contains(resource.getLongName())) {
-            LOG.info("File {} belongs to Gerrit patchset", resource.getLongName());
+        if (gerritModifiedFiles.containsKey(resource.getLongName())) {
+            LOG.info("File in Sonar {} matches file in Gerrit {}", resource.getLongName());
             List<ReviewComment> comments = new ArrayList<ReviewComment>();
             for (Violation violation : context.getViolations()) {
                 LOG.info("Violation found: {}", violation.toString());
                 comments.add(violationToComment(violation));
             }
-            reviewInput.comments.put(resource.getLongName(), comments);
+            reviewInput.comments.put(gerritModifiedFiles.get(resource.getLongName()), comments);
         }
     }
 
     protected ReviewComment violationToComment(Violation violation) {
         ReviewComment result = new ReviewComment();
         result.line = violation.getLineId();
-        result.message = violation.getMessage();
+        result.message = String.format(COMMENT_FORMAT, StringUtils.capitalize(violation.getRule().getRepositoryKey()), violation.getSeverity().toString(), violation.getMessage());
         return result;
     }
 
