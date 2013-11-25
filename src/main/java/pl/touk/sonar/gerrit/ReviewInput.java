@@ -1,5 +1,6 @@
 package pl.touk.sonar.gerrit;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class ReviewInput {
     public static final String CODE_REVIEW = "Code-Review";
     public String message = "TODO";
     public Map<String, Integer> labels;
-    public Map<String, List<ReviewComment>> comments;
+    public Map<String, List<ReviewComment>> comments = new HashMap<String, List<ReviewComment>>();
 
     public void setLabelToPlusOne() {
         labels.put(CODE_REVIEW, 1);
