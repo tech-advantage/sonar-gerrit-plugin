@@ -7,5 +7,5 @@ public final class PropertyKey {
     public static final String GERRIT_PASSWORD = "gerrit.password";
     public static final String GERRIT_PROJECT = "GERRIT_PROJECT";
     public static final String GERRIT_CHANGE_ID = "GERRIT_CHANGE_ID";
-    public static final String GERRIT_REVISION_ID =" GERRIT_PATCHSET_REVISION";
+    public static final String GERRIT_REVISION_ID = "GERRIT_PATCHSET_REVISION";
 }
