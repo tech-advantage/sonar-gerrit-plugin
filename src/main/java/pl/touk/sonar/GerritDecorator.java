@@ -21,7 +21,6 @@ public class GerritDecorator implements Decorator {
         this.settings = settings;
     }
 
-
     @Override
     public void decorate(Resource resource, DecoratorContext context) {
         LOG.info("Decorate on resource {}", resource);
