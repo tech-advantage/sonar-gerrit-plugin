@@ -5,12 +5,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.resources.Project;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewTest {
     @Mock
-    private Project project;
+    private Project projectMock;
+    @Mock
+    private DecoratorContext decoratorContextMock;
     @InjectMocks
     private Review review;
 
@@ -27,7 +30,7 @@ public class ReviewTest {
     public void shouldNotValidateIfGerritPortIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
-        review.setGerritPort("");
+        review.setGerritPort(null);
         //expect thrown
         review.validateGerritSettings();
     }
@@ -79,7 +82,7 @@ public class ReviewTest {
 
     private void fillGerritConfiguration() {
         review.setGerritHost("localhost");
-        review.setGerritPort("29418");
+        review.setGerritPort(29418);
         review.setGerritUsername("sonar");
         review.setGerritProjectName("example");
         review.setGerritChangeId("myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940");
