@@ -60,12 +60,11 @@ public class GerritDecorator implements Decorator, PostJob {
 
     @Override
     public void executeOn(Project project, SensorContext context) {
-
         if (!review.isGerritConfigurationValid()) {
-            LOG.info("Alaysis has finished. Not sending results to Gerrit, because configuration is not valid.");
+            LOG.info("Analysis has finished. Not sending results to Gerrit, because configuration is not valid.");
             return;
         }
-        LOG.info("Alaysis has finished. Sending results to Gerrit.");
+        LOG.info("Analysis has finished. Sending results to Gerrit.");
         try {
             reviewInput.setLabelToPlusOne();
             gerritFacade.setReview(review.getGerritChangeId(), review.getGerritRevisionId(), reviewInput);

@@ -26,8 +26,8 @@ import java.util.Map;
  */
 public class ReviewInput {
     public static final String CODE_REVIEW = "Code-Review";
-    public String message = "TODO";
-    public Map<String, Integer> labels;
+    public String message = "Looks good to me.";
+    public Map<String, Integer> labels = new HashMap<String, Integer>();
     public Map<String, List<ReviewComment>> comments = new HashMap<String, List<ReviewComment>>();
 
     public void setLabelToPlusOne() {
