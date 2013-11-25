@@ -32,9 +32,9 @@ public class GerritDecorator implements Decorator {
     protected void decorateProject(Project project, DecoratorContext context) {
         Review review = new Review(project, context);
         review.setGerritHost(settings.getString(PropertyKey.GERRIT_HOST));
-        review.setGerritPort(settings.getInt(PropertyKey.GERRIT_PORT));
-        review.setGerritUsername(settings.getString(PropertyKey.GERRIT_USERNAME));
-        review.setGerritPassword(settings.getString(PropertyKey.GERRIT_PASSWORD));
+        review.setGerritHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
+        review.setGerritHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
+        review.setGerritHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD));
         review.setGerritProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
         review.setGerritChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
         review.setGerritRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));

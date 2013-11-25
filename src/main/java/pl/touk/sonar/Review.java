@@ -11,9 +11,9 @@ import org.sonar.api.resources.Project;
 public class Review {
     private final static Logger LOG = LoggerFactory.getLogger(Review.class);
     private String gerritHost;
-    private Integer gerritPort;
-    private String gerritUsername;
-    private String gerritPassword;
+    private Integer gerritHttpPort;
+    private String gerritHttpUsername;
+    private String gerritHttpPassword;
     private String gerritProjectName;
     private String gerritChangeId;
     private String gerritRevisionId;
@@ -28,9 +28,9 @@ public class Review {
     public void validateGerritSettings() throws GerritPluginException {
         LOG.info(dumpGerritSettings());
         if (StringUtils.isBlank(gerritHost) ||
-                gerritPort == null ||
-                StringUtils.isBlank(gerritUsername) ||
-                StringUtils.isBlank(gerritPassword) ||
+                gerritHttpPort == null ||
+                StringUtils.isBlank(gerritHttpUsername) ||
+                StringUtils.isBlank(gerritHttpPassword) ||
                 StringUtils.isBlank(gerritProjectName) ||
                 StringUtils.isBlank(gerritChangeId) ||
                 StringUtils.isBlank(gerritRevisionId)
@@ -42,9 +42,9 @@ public class Review {
     private String dumpGerritSettings() {
         return "Gerrit settings: {" +
                 "gerritHost='" + gerritHost + '\'' +
-                ", gerritPort='" + gerritPort + '\'' +
-                ", gerritUsername='" + gerritUsername + '\'' +
-                ", gerritPassword='" + (StringUtils.isBlank(gerritPassword) ? "blank" : "not blank") + '\'' +
+                ", gerritHttpPort='" + gerritHttpPort + '\'' +
+                ", gerritHttpUsername='" + gerritHttpUsername + '\'' +
+                ", gerritHttpPassword='" + (StringUtils.isBlank(gerritHttpPassword) ? "blank" : "not blank") + '\'' +
                 ", gerritProjectName='" + gerritProjectName + '\'' +
                 ", gerritChangeId='" + gerritChangeId + '\'' +
                 ", gerritRevisionId='" + gerritRevisionId + '\'' +
@@ -61,30 +61,30 @@ public class Review {
     }
 
     @Nullable
-    public Integer getGerritPort() {
-        return gerritPort;
+    public Integer getGerritHttpPort() {
+        return gerritHttpPort;
     }
 
-    public void setGerritPort(@Nullable Integer gerritPort) {
-        this.gerritPort = gerritPort;
-    }
-
-    @Nullable
-    public String getGerritUsername() {
-        return gerritUsername;
-    }
-
-    public void setGerritUsername(@Nullable String gerritUsername) {
-        this.gerritUsername = gerritUsername;
+    public void setGerritHttpPort(@Nullable Integer gerritHttpPort) {
+        this.gerritHttpPort = gerritHttpPort;
     }
 
     @Nullable
-    public String getGerritPassword() {
-        return gerritPassword;
+    public String getGerritHttpUsername() {
+        return gerritHttpUsername;
     }
 
-    public void setGerritPassword(String gerritPassword) {
-        this.gerritPassword = gerritPassword;
+    public void setGerritHttpUsername(@Nullable String gerritHttpUsername) {
+        this.gerritHttpUsername = gerritHttpUsername;
+    }
+
+    @Nullable
+    public String getGerritHttpPassword() {
+        return gerritHttpPassword;
+    }
+
+    public void setGerritHttpPassword(String gerritHttpPassword) {
+        this.gerritHttpPassword = gerritHttpPassword;
     }
 
     @Nullable

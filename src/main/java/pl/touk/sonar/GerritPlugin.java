@@ -10,9 +10,9 @@ import java.util.List;
 
 @Properties({
         @Property(key = PropertyKey.GERRIT_HOST, name = PropertyKey.GERRIT_HOST),
-        @Property(key = PropertyKey.GERRIT_PORT, name = PropertyKey.GERRIT_PORT, defaultValue = "29418", type = PropertyType.INTEGER),
-        @Property(key = PropertyKey.GERRIT_USERNAME, name = PropertyKey.GERRIT_USERNAME),
-        @Property(key = PropertyKey.GERRIT_PASSWORD , name = PropertyKey.GERRIT_PASSWORD),
+        @Property(key = PropertyKey.GERRIT_HTTP_PORT, name = PropertyKey.GERRIT_HTTP_PORT, defaultValue = "80", type = PropertyType.INTEGER),
+        @Property(key = PropertyKey.GERRIT_HTTP_USERNAME, name = PropertyKey.GERRIT_HTTP_USERNAME),
+        @Property(key = PropertyKey.GERRIT_HTTP_PASSWORD , name = PropertyKey.GERRIT_HTTP_PASSWORD),
         @Property(key = PropertyKey.GERRIT_CHANGE_ID , name = PropertyKey.GERRIT_CHANGE_ID),
         @Property(key = PropertyKey.GERRIT_REVISION_ID , name = PropertyKey.GERRIT_REVISION_ID)
 })

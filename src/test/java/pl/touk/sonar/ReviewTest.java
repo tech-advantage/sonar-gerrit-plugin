@@ -30,7 +30,7 @@ public class ReviewTest {
     public void shouldNotValidateIfGerritPortIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
-        review.setGerritPort(null);
+        review.setGerritHttpPort(null);
         //expect thrown
         review.validateGerritSettings();
     }
@@ -39,7 +39,7 @@ public class ReviewTest {
     public void shouldNotValidateIfGerritUsernameIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
-        review.setGerritUsername("");
+        review.setGerritHttpUsername("");
         //expect thrown
         review.validateGerritSettings();
     }
@@ -48,7 +48,7 @@ public class ReviewTest {
     public void shouldNotValidateIfGerritPasswordIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
-        review.setGerritPassword("");
+        review.setGerritHttpPassword("");
         //expect thrown
         review.validateGerritSettings();
     }
@@ -82,8 +82,8 @@ public class ReviewTest {
 
     private void fillGerritConfiguration() {
         review.setGerritHost("localhost");
-        review.setGerritPort(29418);
-        review.setGerritUsername("sonar");
+        review.setGerritHttpPort(8080);
+        review.setGerritHttpUsername("sonar");
         review.setGerritProjectName("example");
         review.setGerritChangeId("myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940");
         review.setGerritRevisionId("674ac754f91e64a0efb8087e59a176484bd534d1");

@@ -7,7 +7,6 @@ import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.resources.ResourceUtils;
 import org.sonar.api.rules.Violation;
-import org.sonar.api.violations.ViolationQuery;
 import pl.touk.sonar.gerrit.GerritFacade;
 import pl.touk.sonar.gerrit.ReviewComment;
 import pl.touk.sonar.gerrit.ReviewInput;
@@ -30,7 +29,7 @@ public class ProjectProcessor {
         try {
             review.validateGerritSettings();
             reviewInput = new ReviewInput();
-            gerritFacade = new GerritFacade(review.getGerritHost(), review.getGerritPort(), review.getGerritUsername(), review.getGerritPassword());
+            gerritFacade = new GerritFacade(review.getGerritHost(), review.getGerritHttpPort(), review.getGerritHttpUsername(), review.getGerritHttpPassword());
 
             gerritModifiedFiles = gerritFacade.listFiles(review.getGerritChangeId(), review.getGerritRevisionId());
             processDecoratorContext(review.getContext());
