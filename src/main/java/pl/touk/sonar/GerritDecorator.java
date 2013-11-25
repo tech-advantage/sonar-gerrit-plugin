@@ -36,6 +36,8 @@ public class GerritDecorator implements Decorator {
         review.setGerritUsername(settings.getString(PropertyKey.GERRIT_USERNAME));
         review.setGerritPassword(settings.getString(PropertyKey.GERRIT_PASSWORD));
         review.setGerritProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
+        LOG.info("WTF {} {} ???", settings.getString(PropertyKey.GERRIT_CHANGE_ID), settings.getString(PropertyKey.GERRIT_REVISION_ID));
+        LOG.info("WTF2 {}???", settings.getStringArray(PropertyKey.GERRIT_REVISION_ID));
         review.setGerritChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
         review.setGerritRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
         new ProjectProcessor(review).process();
