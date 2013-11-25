@@ -2,17 +2,14 @@ package pl.touk.sonar;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.batch.Decorator;
-import org.sonar.api.batch.DecoratorBarriers;
-import org.sonar.api.batch.DecoratorContext;
-import org.sonar.api.batch.DependsUpon;
+import org.sonar.api.batch.*;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.resources.ResourceUtils;
 
 //http://sonarqube.15.x6.nabble.com/sonar-dev-Decorator-executed-a-lot-of-times-td5011536.html
-//@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
+@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritDecorator implements Decorator {
     private final static Logger LOG = LoggerFactory.getLogger(GerritDecorator.class);
     private Settings settings;
@@ -23,7 +20,8 @@ public class GerritDecorator implements Decorator {
 
     @Override
     public void decorate(Resource resource, DecoratorContext context) {
-        LOG.info("Decorate on resource {}", resource);
+        LOG.info("Decorate on resource {} with this {}", resource, this);
+        LOG.info("Has violations: {}", context.getViolations());
         if (ResourceUtils.isRootProject(resource)) {
             decorateProject((Project)resource, context);
         }

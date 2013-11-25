@@ -68,25 +68,28 @@ public class GerritConnector {
         return consumeAndLogEntity(httpResponse);
     }
 
+    // Example http://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientPreemptiveDigestAuthentication.java
     private void createHttpContext() {
-        httpClient = HttpClients.createDefault();
         httpHost = new HttpHost(host, port);
-        basicAuthCache = new BasicAuthCache();
-        digestScheme = new DigestScheme();
-        basicAuthCache.put(httpHost, digestScheme);
         credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(
             new AuthScope(host, port),
             new UsernamePasswordCredentials(username, password));
+        httpClient = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
+
+        basicAuthCache = new BasicAuthCache();
+        digestScheme = new DigestScheme();
+        basicAuthCache.put(httpHost, digestScheme);
         httpClientContext = HttpClientContext.create();
-        httpClientContext.setCredentialsProvider(credentialsProvider);
-//        httpClientContext.setAuthSchemeRegistry(digestScheme);
         httpClientContext.setAuthCache(basicAuthCache);
+
+//        httpClientContext.setCredentialsProvider(credentialsProvider);
+//        httpClientContext.setAuthSchemeRegistry(digestScheme);
     }
 
     @NotNull
     private CloseableHttpResponse logAndExecute(@NotNull HttpRequestBase request) throws IOException {
-        LOG.info("Request  {}: {} to {}", new Object[] {REQUEST_COUNTER++, request.getMethod(), request.getURI().toString()});
+        LOG.info("Request  {}: {} to {}", new Object[] {++REQUEST_COUNTER, request.getMethod(), request.getURI().toString()});
         CloseableHttpResponse httpResponse = httpClient.execute(httpHost, request, httpClientContext);
         LOG.info("Response {}: {}", REQUEST_COUNTER, httpResponse.getStatusLine().toString());
         return httpResponse;
@@ -99,7 +102,7 @@ public class GerritConnector {
             return StringUtils.EMPTY;
         }
         String content = EntityUtils.toString(response.getEntity());
-        LOG.debug("Entity {}: {}", REQUEST_COUNTER, content);
+        LOG.info("Entity {}: {}", REQUEST_COUNTER, content);
         return content;
     }
 
