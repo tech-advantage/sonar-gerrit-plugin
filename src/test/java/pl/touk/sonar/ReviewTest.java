@@ -8,6 +8,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.resources.Project;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewTest {
     @Mock
@@ -17,67 +19,81 @@ public class ReviewTest {
     @InjectMocks
     private Review review;
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritHostIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritHost("");
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritPortIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritHttpPort(null);
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritUsernameIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritHttpUsername("");
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritPasswordIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritHttpPassword("");
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritProjectNameIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritProjectName("");
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritChangeIdIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritChangeId("");
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
-    @Test(expected = GerritPluginException.class)
+    @Test
     public void shouldNotValidateIfGerritRevisionIdIsBlank() throws GerritPluginException {
         //given
         fillGerritConfiguration();
         review.setGerritRevisionId("");
-        //expect thrown
-        review.validateGerritSettings();
+        //when
+        review.assertGerritConfiguration();
+        //then
+        assertThat(review.isGerritConfigurationValid()).isFalse();
     }
 
     private void fillGerritConfiguration() {

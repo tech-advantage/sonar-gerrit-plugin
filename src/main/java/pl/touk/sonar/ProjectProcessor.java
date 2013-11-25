@@ -25,21 +25,21 @@ public class ProjectProcessor {
         this.review = review;
     }
 
-    public void process() {
-        try {
-            review.validateGerritSettings();
-            reviewInput = new ReviewInput();
-            gerritFacade = new GerritFacade(review.getGerritHost(), review.getGerritHttpPort(), review.getGerritHttpUsername(), review.getGerritHttpPassword());
-
-            gerritModifiedFiles = gerritFacade.listFiles(review.getGerritChangeId(), review.getGerritRevisionId());
-            processDecoratorContext(review.getContext());
-
-            reviewInput.setLabelToPlusOne();
-            gerritFacade.setReview(review.getGerritChangeId(), review.getGerritRevisionId(), reviewInput);
-        } catch (GerritPluginException e) {
-            LOG.error("Error processing project {} with Gerrit Plugin.", review.getProject().getName(), e);
-        }
-    }
+//    public void process() {
+//        try {
+//            review.validateGerritSettings();
+//            reviewInput = new ReviewInput();
+//            gerritFacade = new GerritFacade(review.getGerritHost(), review.getGerritHttpPort(), review.getGerritHttpUsername(), review.getGerritHttpPassword());
+//
+//            gerritModifiedFiles = gerritFacade.listFiles(review.getGerritChangeId(), review.getGerritRevisionId());
+//            processDecoratorContext(review.getContext());
+//
+//            reviewInput.setLabelToPlusOne();
+//            gerritFacade.setReview(review.getGerritChangeId(), review.getGerritRevisionId(), reviewInput);
+//        } catch (GerritPluginException e) {
+//            LOG.error("Error processing project {} with Gerrit Plugin.", review.getProject().getName(), e);
+//        }
+//    }
 
 
     /** Recursive iteration of all elements. Couldn't find better solution for now. */

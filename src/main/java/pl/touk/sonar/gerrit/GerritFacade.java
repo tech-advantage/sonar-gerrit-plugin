@@ -9,7 +9,7 @@ import java.util.Set;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import pl.touk.sonar.GerritPluginException;
@@ -18,6 +18,8 @@ import pl.touk.sonar.Review;
 public class GerritFacade {
     private static final String RESPONSE_PREFIX = ")]}'";
     private static final String COMMIT_MSG = "/COMMIT_MSG";
+    private static final String MAVEN_ENTRY = "src/main/java/";
+    private static final String DOT = ".";
     private GerritConnector gerritConnector;
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -34,7 +36,9 @@ public class GerritFacade {
             List<String> files = new ArrayList<String>();
             Set<String> keys = listFilesResponse.keySet();
             keys.remove(COMMIT_MSG);
-            files.addAll(keys);
+            for (String key : keys) {
+                files.add(parseFileName(key));
+            }
             return files;
         } catch (IOException e) {
             throw new GerritPluginException("Error listing files", e);
@@ -59,6 +63,10 @@ public class GerritFacade {
     @NotNull
     protected String trimResponse(@NotNull String response) {
         return StringUtils.replaceOnce(response, RESPONSE_PREFIX, "");
+    }
+
+    protected String parseFileName(@NotNull String fileName) {
+        return StringUtils.substringBeforeLast(StringUtils.substringAfter(fileName, MAVEN_ENTRY), DOT).replace('/', '.');
     }
 
     void setGerritConnector(@NotNull GerritConnector gerritConnector) {

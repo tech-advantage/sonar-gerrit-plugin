@@ -58,6 +58,6 @@ public class GerritFacadeTest {
         List<String> files = gerritFacade.listFiles(CHANGE_ID, REVISION_ID);
         //then
         assertThat(files).hasSize(1);
-        assertThat(files.get(0)).isEqualTo("gerrit-server/src/main/java/com/google/gerrit/server/project/RefControl.java");
+        assertThat(files.get(0)).isEqualTo("com.google.gerrit.server.project.RefControl");
     }
 }

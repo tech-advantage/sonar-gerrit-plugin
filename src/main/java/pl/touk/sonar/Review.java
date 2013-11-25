@@ -17,26 +17,21 @@ public class Review {
     private String gerritProjectName;
     private String gerritChangeId;
     private String gerritRevisionId;
-    private Project project;
-    private DecoratorContext context;
+    private boolean gerritConfigurationValid = true;
 
-    public Review(@NotNull Project project, @NotNull DecoratorContext context) {
-        this.project = project;
-        this.context = context;
-    }
-
-    public void validateGerritSettings() throws GerritPluginException {
+    public void assertGerritConfiguration() {
+        if (!gerritConfigurationValid) {
+            return;
+        }
         LOG.info(dumpGerritSettings());
-        if (StringUtils.isBlank(gerritHost) ||
+        gerritConfigurationValid = !(StringUtils.isBlank(gerritHost) ||
                 gerritHttpPort == null ||
                 StringUtils.isBlank(gerritHttpUsername) ||
                 StringUtils.isBlank(gerritHttpPassword) ||
                 StringUtils.isBlank(gerritProjectName) ||
                 StringUtils.isBlank(gerritChangeId) ||
                 StringUtils.isBlank(gerritRevisionId)
-                ) {
-            throw new GerritPluginException("Gerrit settings are not all filled");
-        }
+                );
     }
 
     private String dumpGerritSettings() {
@@ -114,13 +109,7 @@ public class Review {
         this.gerritRevisionId = gerritRevisionId;
     }
 
-    @NotNull
-    public Project getProject() {
-        return project;
-    }
-
-    @NotNull
-    public DecoratorContext getContext() {
-        return context;
+    public boolean isGerritConfigurationValid() {
+        return gerritConfigurationValid;
     }
 }
