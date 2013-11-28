@@ -14,7 +14,7 @@ There are no packages yet. Clone this repository, package it and put a package t
 mvn package
 cp target/sonar-gerrit-plugin-1.0.jar $SONAR_DIR/plugins
 $SONAR_DIR/bin/your-architecture-here/sonar.sh restart
-``
+```
 
 Configure Jenkins
 -----------------
@@ -27,7 +27,7 @@ Then you need to set up Sonar plugin in Jenkins. Log in as admin, Manage Jenkins
 
 ```
 -DGERRIT_HTTP_PORT=8080 -DGERRIT_HTTP_USERNAME=sonar -DGERRIT_HTTP_PASSWORD=sonar_password
-``
+```
 
 Last step is to add Post-Build action - Sonar to every job you want to.
 
