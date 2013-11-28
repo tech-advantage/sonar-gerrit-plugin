@@ -1,9 +1,5 @@
 package pl.touk.sonar.gerrit;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -26,6 +22,10 @@ import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class GerritConnector {
     private final static Logger LOG = LoggerFactory.getLogger(GerritConnector.class);
@@ -83,9 +83,6 @@ public class GerritConnector {
         basicAuthCache.put(httpHost, digestScheme);
         httpClientContext = HttpClientContext.create();
         httpClientContext.setAuthCache(basicAuthCache);
-
-//        httpClientContext.setCredentialsProvider(credentialsProvider);
-//        httpClientContext.setAuthSchemeRegistry(digestScheme);
     }
 
     @NotNull

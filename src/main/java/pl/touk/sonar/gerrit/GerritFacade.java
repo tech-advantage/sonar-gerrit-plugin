@@ -5,13 +5,11 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import pl.touk.sonar.GerritPluginException;
-import pl.touk.sonar.Review;
 
 public class GerritFacade {
     private static final String RESPONSE_PREFIX = ")]}'";

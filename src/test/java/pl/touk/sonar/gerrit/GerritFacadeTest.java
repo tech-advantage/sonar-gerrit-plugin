@@ -1,13 +1,5 @@
 package pl.touk.sonar.gerrit;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,15 +7,22 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import pl.touk.sonar.GerritPluginException;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class GerritFacadeTest {
     private static final String HOST = "localhost";
     private static final int PORT = 443;
     private static final String USERNAME = "sonar";
-    private static final String PASSWORD = "sonarpassword";
+    private static final String PASSWORD = "password";
     private static final String CHANGE_ID = "myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940";
     private static final String REVISION_ID = "674ac754f91e64a0efb8087e59a176484bd534d1";
-    private static final String LIST_FILES_REPONSE = ")]}'\n" +
+    private static final String LIST_FILES_RESPONSE = ")]}'\n" +
         "  {\n" +
         "    \"/COMMIT_MSG\": {\n" +
         "      \"status\": \"A\",\n" +
@@ -54,7 +53,7 @@ public class GerritFacadeTest {
     @Test
     public void shouldParseListFiles() throws IOException, URISyntaxException, GerritPluginException {
         //given
-        when(gerritConnectorMock.listFiles(CHANGE_ID, REVISION_ID)).thenReturn(LIST_FILES_REPONSE);
+        when(gerritConnectorMock.listFiles(CHANGE_ID, REVISION_ID)).thenReturn(LIST_FILES_RESPONSE);
         //when
         Map<String, String> files = gerritFacade.listFiles(CHANGE_ID, REVISION_ID);
         //then

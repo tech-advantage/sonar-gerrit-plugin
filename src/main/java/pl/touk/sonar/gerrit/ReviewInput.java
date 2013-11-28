@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Gerrit request for review input.
+ * Used with JSON marshaller only.
+ *
+ * Example JSON:
+ *
  * {
  * "message": "Some nits need to be fixed.",
  * "labels": {

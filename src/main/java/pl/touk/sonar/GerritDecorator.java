@@ -23,23 +23,23 @@ import java.util.Map;
 public class GerritDecorator implements Decorator, PostJob {
     private final static Logger LOG = LoggerFactory.getLogger(GerritDecorator.class);
     private static final String COMMENT_FORMAT = "[%s] Severity: %s, Message: %s";
-    private Review review;
+    private GerritConfiguration gerritConfiguration;
     private GerritFacade gerritFacade;
     //Sonar's long name to Gerrit original file name map.
     private Map<String, String> gerritModifiedFiles;
     private ReviewInput reviewInput = new ReviewInput();
 
     public GerritDecorator(Settings settings) {
-        this.review = new Review();
-        review.setGerritHost(settings.getString(PropertyKey.GERRIT_HOST));
-        review.setGerritHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
-        review.setGerritHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
-        review.setGerritHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD));
-        review.setGerritProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
-        review.setGerritChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
-        review.setGerritRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
-        review.assertGerritConfiguration();
-        gerritFacade = new GerritFacade(review.getGerritHost(), review.getGerritHttpPort(), review.getGerritHttpUsername(), review.getGerritHttpPassword());
+        this.gerritConfiguration = new GerritConfiguration();
+        gerritConfiguration.setHost(settings.getString(PropertyKey.GERRIT_HOST));
+        gerritConfiguration.setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
+        gerritConfiguration.setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
+        gerritConfiguration.setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD));
+        gerritConfiguration.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
+        gerritConfiguration.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
+        gerritConfiguration.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
+        gerritConfiguration.assertGerritConfiguration();
+        gerritFacade = new GerritFacade(gerritConfiguration.getHost(), gerritConfiguration.getHttpPort(), gerritConfiguration.getHttpUsername(), gerritConfiguration.getHttpPassword());
     }
 
     @Override
@@ -49,7 +49,7 @@ public class GerritDecorator implements Decorator, PostJob {
         }
         LOG.info("Processing resource qualifier {}, long name {}, name {}", new Object[] {resource.getScope(), resource.getLongName(), resource.getName()});
         LOG.info("Decorate on resource {} with this {}", resource, this);
-        if (!review.isGerritConfigurationValid()) {
+        if (!gerritConfiguration.isValid()) {
             return;
         }
         try {
@@ -63,14 +63,14 @@ public class GerritDecorator implements Decorator, PostJob {
 
     @Override
     public void executeOn(Project project, SensorContext context) {
-        if (!review.isGerritConfigurationValid()) {
+        if (!gerritConfiguration.isValid()) {
             LOG.info("Analysis has finished. Not sending results to Gerrit, because configuration is not valid.");
             return;
         }
         LOG.info("Analysis has finished. Sending results to Gerrit.");
         try {
             reviewInput.setLabelToPlusOne();
-            gerritFacade.setReview(review.getGerritChangeId(), review.getGerritRevisionId(), reviewInput);
+            gerritFacade.setReview(gerritConfiguration.getChangeId(), gerritConfiguration.getRevisionId(), reviewInput);
         } catch (GerritPluginException e) {
             LOG.error("Error sending review to Gerrit", e);
         }
@@ -99,7 +99,7 @@ public class GerritDecorator implements Decorator, PostJob {
         if (gerritModifiedFiles != null) {
             return;
         }
-        gerritModifiedFiles = gerritFacade.listFiles(review.getGerritChangeId(), review.getGerritRevisionId());
+        gerritModifiedFiles = gerritFacade.listFiles(gerritConfiguration.getChangeId(), gerritConfiguration.getRevisionId());
     }
 
     @DependsUpon
