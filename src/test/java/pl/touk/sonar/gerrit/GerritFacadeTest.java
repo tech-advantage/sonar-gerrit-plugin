@@ -31,6 +31,10 @@ public class GerritFacadeTest {
         "    \"gerrit-server/src/main/java/com/google/gerrit/server/project/RefControl.java\": {\n" +
         "      \"lines_inserted\": 5,\n" +
         "      \"lines_deleted\": 3\n" +
+        "    },\n" +
+        "    \"gerrit-server/src/test/java/com/google/gerrit/server/project/RefControlTest.java\": {\n" +
+        "      \"lines_inserted\": 5,\n" +
+        "      \"lines_deleted\": 3\n" +
         "    }\n" +
         "  }";
     @Mock private GerritConnector gerritConnectorMock;
@@ -57,7 +61,8 @@ public class GerritFacadeTest {
         //when
         Map<String, String> files = gerritFacade.listFiles(CHANGE_ID, REVISION_ID);
         //then
-        assertThat(files).hasSize(1);
+        assertThat(files).hasSize(2);
         assertThat(files.get("com.google.gerrit.server.project.RefControl")).isEqualTo("gerrit-server/src/main/java/com/google/gerrit/server/project/RefControl.java");
+        assertThat(files.get("com.google.gerrit.server.project.RefControlTest")).isEqualTo("gerrit-server/src/test/java/com/google/gerrit/server/project/RefControlTest.java");
     }
 }

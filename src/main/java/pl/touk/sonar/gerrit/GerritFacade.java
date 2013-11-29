@@ -1,20 +1,21 @@
 package pl.touk.sonar.gerrit;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-
 import pl.touk.sonar.GerritPluginException;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class GerritFacade {
     private static final String RESPONSE_PREFIX = ")]}'";
     private static final String COMMIT_MSG = "/COMMIT_MSG";
-    private static final String MAVEN_ENTRY = "src/main/java/";
+    private static final String MAVEN_ENTRY_REGEX = ".*src/(main|test)/java/";
     private static final String DOT = ".";
     private GerritConnector gerritConnector;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -65,7 +66,7 @@ public class GerritFacade {
     }
 
     protected String parseFileName(@NotNull String fileName) {
-        return StringUtils.substringBeforeLast(StringUtils.substringAfter(fileName, MAVEN_ENTRY), DOT).replace('/', '.');
+        return StringUtils.substringBeforeLast(fileName.replaceFirst(MAVEN_ENTRY_REGEX, ""), DOT).replace('/', '.');
     }
 
     void setGerritConnector(@NotNull GerritConnector gerritConnector) {

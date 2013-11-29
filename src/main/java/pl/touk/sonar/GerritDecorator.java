@@ -47,14 +47,11 @@ public class GerritDecorator implements Decorator, PostJob {
         if (!ResourceUtils.isFile(resource)) {
             return;
         }
-        LOG.info("Processing resource qualifier {}, long name {}, name {}", new Object[] {resource.getScope(), resource.getLongName(), resource.getName()});
-        LOG.info("Decorate on resource {} with this {}", resource, this);
         if (!gerritConfiguration.isValid()) {
             return;
         }
         try {
             assertOrFetchGerritModifiedFiles();
-            LOG.info("Has violations: {}", context.getViolations());
             processFileResource(resource, context);
         } catch (GerritPluginException e) {
             LOG.error("Error processing Gerrit Plugin decorator", e);
