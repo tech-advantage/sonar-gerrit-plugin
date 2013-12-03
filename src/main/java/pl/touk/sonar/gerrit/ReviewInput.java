@@ -33,7 +33,7 @@ public class ReviewInput {
     public static final String CODE_REVIEW = "Code-Review";
     public String message = "Looks good to me.";
     public Map<String, Integer> labels = new HashMap<String, Integer>();
-    public Map<String, List<ReviewComment>> comments = new HashMap<String, List<ReviewComment>>();
+    public Map<String, List<ReviewFileComment>> comments = new HashMap<String, List<ReviewFileComment>>();
 
     public void setLabelToPlusOne() {
         labels.put(CODE_REVIEW, 1);
