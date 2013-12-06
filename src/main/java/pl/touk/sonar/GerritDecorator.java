@@ -72,12 +72,6 @@ public class GerritDecorator implements Decorator, PostJob {
         }
         try {
             LOG.info("Analysis has finished. Sending results to Gerrit.");
-            for (Measure measure : context.getMeasures(MeasuresFilters.all())) {
-                LOG.info("Measure found: {}, data {}", measure.getMetricKey(), measure.getData());
-                LOG.info("Measure id: {} value {}", measure.getId(), measure.getValue());
-                LOG.info("Measure alert: {} {}", measure.getAlertStatus(), measure.getAlertText());
-                LOG.info("Characteristic: {}", measure.getCharacteristic());
-            }
             assertGerritFacade();
             reviewInput.setLabelToPlusOne();
             gerritFacade.setReview(gerritConfiguration.getChangeId(), gerritConfiguration.getRevisionId(), reviewInput);
@@ -92,12 +86,6 @@ public class GerritDecorator implements Decorator, PostJob {
             List<ReviewFileComment> comments = new ArrayList<ReviewFileComment>();
             commentViolations(context, comments);
             commentAlerts(context, comments);
-            for (Measure measure : context.getMeasures(MeasuresFilters.all())) {
-                LOG.info("Measure found: {}, data {}", measure.getMetricKey(), measure.getData());
-                LOG.info("Measure id: {} value {}", measure.getId(), measure.getValue());
-                LOG.info("Measure alert: {} {}", measure.getAlertStatus(), measure.getAlertText());
-                LOG.info("Characteristic: {}", measure.getCharacteristic());
-            }
             reviewInput.comments.put(gerritModifiedFiles.get(resource.getLongName()), comments);
         }
     }
