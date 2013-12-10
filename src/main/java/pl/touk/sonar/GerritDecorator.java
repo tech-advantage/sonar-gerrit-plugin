@@ -86,7 +86,9 @@ public class GerritDecorator implements Decorator, PostJob {
             List<ReviewFileComment> comments = new ArrayList<ReviewFileComment>();
             commentViolations(context, comments);
             commentAlerts(context, comments);
-            reviewInput.comments.put(gerritModifiedFiles.get(resource.getLongName()), comments);
+            if (!comments.isEmpty()) {
+                reviewInput.comments.put(gerritModifiedFiles.get(resource.getLongName()), comments);
+            }
         }
     }
 
