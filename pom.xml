@@ -10,6 +10,23 @@
 
 	<name>Sonar Gerrit Plugin</name>
 	<description>Sonar will rate your gerrit patch set and comment on found alerts.</description>
+    <organization>
+        <name>TouK</name>
+        <url>http://touk.pl</url>
+    </organization>
+    <url>https://github.com/TouK/sonar-gerrit-plugin</url>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/TouK/sonar-gerrit-plugin/issues</url>
+    </issueManagement>
+    <scm>
+        <url>git@github.com:TouK/sonar-gerrit-plugin.git</url>
+    </scm>
+    <licenses>
+        <license>
+            <name>Apache License</name>
+        </license>
+    </licenses>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
