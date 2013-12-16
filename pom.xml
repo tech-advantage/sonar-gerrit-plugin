@@ -21,6 +21,8 @@
     </issueManagement>
     <scm>
         <url>git@github.com:TouK/sonar-gerrit-plugin.git</url>
+        <connection>scm:git:https://github.com/TouK/sonar-gerrit-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:TouK/sonar-gerrit-plugin.git</developerConnection>
     </scm>
     <licenses>
         <license>
