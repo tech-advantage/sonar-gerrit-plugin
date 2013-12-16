@@ -18,7 +18,7 @@ Requirements
 Installation
 ------------
 
-There is a build package available here: TODO version 1.0 release file link.
+There is a build package available here: [sonar-gerrit-plugin-1.0.jar](https://github.com/TouK/sonar-gerrit-plugin/releases/download/sonar-gerrit-plugin-1.0/sonar-gerrit-plugin-1.0.jar).
 
 Or you can build it for yourself. Clone this repository, package it and put a package to your sonar plugins directory.
 
