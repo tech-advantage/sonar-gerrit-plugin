@@ -5,7 +5,7 @@
 	<groupId>pl.touk</groupId>
 	<artifactId>sonar-gerrit-plugin</artifactId>
 	<packaging>sonar-plugin</packaging>
-	<version>1.0</version>
+	<version>1.1-SNAPSHOT</version>
 
 	<name>Sonar Gerrit Plugin</name>
 	<description>Sonar will rate your gerrit patch set and comment on found alerts.</description>
