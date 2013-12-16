@@ -1,14 +1,26 @@
 Sonar Gerrit Plugin
 ===================
 
-This plugins reports Sonar violations to your Gerrit server. Sonar analyse full project, but only changed files are commented on Gerrit.
+This plugin reports Sonar violations to your Gerrit server. Sonar analyse full project, but only files included in patchset are commented on Gerrit.
 
 Currently plugin always reports +1 for Code Review, as it's still in development. However, you should always treat these comments as hints to improve, not as direct errors.
+
+I recommend you to try this plugin in conjunction with our other plugin: [Sonar File Alerts Plugin](https://github.com/TouK/sonar-file-alerts-plugin). It alters Sonar's behaviour so alerts can be raised on a file level, not only project level.
+
+Requirements
+------------
+
+- Gerrit 2.8 is required (REST API for reviews was introduced in this version)
+- SonarQube 4.0 (plugin is build against 4.0's API)
+
+*Note: you should be able to build against Sonar's 3.x API with ease, but it won't be supported. Just change version in pom.xml and fix small code issues.*
 
 Installation
 ------------
 
-There are no packages yet. Clone this repository, package it and put a package to your sonar plugins directory.
+There is a build package available here: TODO version 1.0 release file link.
+
+Or you can build it for yourself. Clone this repository, package it and put a package to your sonar plugins directory.
 
 ```bash
 mvn package
@@ -19,17 +31,24 @@ $SONAR_DIR/bin/your-architecture-here/sonar.sh restart
 Configure Jenkins
 -----------------
 
-This plugin is intended to use with Gerrit Trigger plugin: https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger.
+This plugin is intended to use with Gerrit Trigger plugin: https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger on a Jenkins server.
 
 You need to create a Gerrit user with a HTTP password for him. Then add this user to Non-Interactive Users group.
 
-Then you need to set up Sonar plugin in Jenkins. Log in as admin, Manage Jenkins - Configure System - Sonar - Advanced... - Additional properties: add and andjust your settings:
+Then you need to set up Sonar plugin in Jenkins. Log in as admin, Manage Jenkins - Configure System - Sonar - Advanced... - Additional properties: add and adjust your settings:
 
 ```
 -DGERRIT_HTTP_PORT=8080 -DGERRIT_HTTP_USERNAME=sonar -DGERRIT_HTTP_PASSWORD=sonar_password
 ```
 
-Last step is to add Post-Build action - Sonar to every job you want to.
+Last step is to add Post-Build action - Sonar to every Jenkin's job you want to.
+
+How does it work?
+-----------------
+
+As Sonar analysis starts, plugin connects to Gerrit and asks what files were changed in a patchset. Sonar iterates on every file and if file is contained in a patchset, plugin collects it's violations and alerts.
+
+When analysis is finished, plugin connects to Gerrit again with collected results.
 
 License
 -------
