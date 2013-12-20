@@ -1,7 +1,7 @@
 Sonar Gerrit Plugin
 ===================
 
-This plugin reports Sonar violations to your Gerrit server. Sonar analyse full project, but only files included in patchset are commented on Gerrit.
+This plugin reports Sonar violations on your patchsets to your Gerrit server. Sonar analyses full project, but only files included in patchset are commented on Gerrit
 
 Currently plugin always reports +1 for Code Review, as it's still in development. However, you should always treat these comments as hints to improve, not as direct errors.
 
