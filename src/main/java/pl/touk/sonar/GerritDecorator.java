@@ -128,7 +128,7 @@ public class GerritDecorator implements Decorator, PostJob {
     protected void assertGerritFacade() {
         assert(gerritConfiguration.isValid());
         if (gerritFacade == null) {
-            gerritFacade = new GerritFacade(gerritConfiguration.getHost(), gerritConfiguration.getHttpPort(), gerritConfiguration.getHttpUsername(), gerritConfiguration.getHttpPassword());
+            gerritFacade = new GerritFacade(gerritConfiguration.getScheme(), gerritConfiguration.getHost(), gerritConfiguration.getHttpPort(), gerritConfiguration.getHttpUsername(), gerritConfiguration.getHttpPassword());
         }
     }
 
