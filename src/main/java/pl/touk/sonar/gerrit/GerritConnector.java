@@ -32,6 +32,7 @@ public class GerritConnector {
     private static final String GET_LIST_FILES_URL_FORMAT = "/a/changes/%s/revisions/%s/files/";
     private static final String POST_SET_REVIEW_URL_FORMAT = "/a/changes/%s/revisions/%s/review";
     private static int REQUEST_COUNTER = 0;
+    private String scheme;
     private String host;
     private int port;
     private String username;
@@ -43,7 +44,8 @@ public class GerritConnector {
     private DigestScheme digestScheme;
     private BasicAuthCache basicAuthCache;
 
-    public GerritConnector(String host, int port, String username, String password) {
+    public GerritConnector(String scheme, String host, int port, String username, String password) {
+	this.scheme = scheme;
         this.host = host;
         this.port = port;
         this.username = username;
@@ -71,7 +73,7 @@ public class GerritConnector {
 
     // Example http://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientPreemptiveDigestAuthentication.java
     private void createHttpContext() {
-        httpHost = new HttpHost(host, port);
+        httpHost = new HttpHost(host, port, scheme);
         credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(
             new AuthScope(host, port),

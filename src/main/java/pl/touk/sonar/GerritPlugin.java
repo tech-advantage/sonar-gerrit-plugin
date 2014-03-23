@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Properties({
+        @Property(key = PropertyKey.GERRIT_SCHEME, name = PropertyKey.GERRIT_SCHEME, defaultValue = "http", type = PropertyType.STRING),
         @Property(key = PropertyKey.GERRIT_HOST, name = PropertyKey.GERRIT_HOST),
         @Property(key = PropertyKey.GERRIT_HTTP_PORT, name = PropertyKey.GERRIT_HTTP_PORT, defaultValue = "80", type = PropertyType.INTEGER),
         @Property(key = PropertyKey.GERRIT_HTTP_USERNAME, name = PropertyKey.GERRIT_HTTP_USERNAME),

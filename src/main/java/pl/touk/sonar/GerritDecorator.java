@@ -37,6 +37,7 @@ public class GerritDecorator implements Decorator, PostJob {
 
     public GerritDecorator(Settings settings) {
         this.gerritConfiguration = new GerritConfiguration();
+        gerritConfiguration.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
         gerritConfiguration.setHost(settings.getString(PropertyKey.GERRIT_HOST));
         gerritConfiguration.setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
         gerritConfiguration.setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));

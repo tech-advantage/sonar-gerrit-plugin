@@ -1,6 +1,7 @@
 package pl.touk.sonar;
 
 public final class PropertyKey {
+    public static final String GERRIT_SCHEME = "GERRIT_SCHEME";
     public static final String GERRIT_HOST = "GERRIT_HOST";
     public static final String GERRIT_HTTP_PORT = "GERRIT_HTTP_PORT";
     public static final String GERRIT_PROJECT = "GERRIT_PROJECT";

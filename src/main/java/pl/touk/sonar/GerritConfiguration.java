@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class GerritConfiguration {
     private final static Logger LOG = LoggerFactory.getLogger(GerritConfiguration.class);
+    private String scheme;
     private String host;
     private Integer httpPort;
     private String httpUsername;
@@ -33,7 +34,8 @@ public class GerritConfiguration {
 
     private String dump() {
         return "Gerrit configuration: {" +
-                "host='" + host + '\'' +
+                "scheme='" + scheme + '\'' +
+                ", host='" + host + '\'' +
                 ", httpPort='" + httpPort + '\'' +
                 ", httpUsername='" + httpUsername + '\'' +
                 ", httpPassword='" + (StringUtils.isBlank(httpPassword) ? "blank" : "not blank") + '\'' +
@@ -41,6 +43,15 @@ public class GerritConfiguration {
                 ", changeId='" + changeId + '\'' +
                 ", revisionId='" + revisionId + '\'' +
                 '}';
+    }
+
+    @Nullable
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(@Nullable String scheme) {
+        this.scheme = scheme;
     }
 
     @Nullable

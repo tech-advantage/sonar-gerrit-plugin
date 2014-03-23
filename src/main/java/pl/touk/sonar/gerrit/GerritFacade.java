@@ -20,8 +20,8 @@ public class GerritFacade {
     private GerritConnector gerritConnector;
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public GerritFacade(@NotNull String host, int port, @NotNull String username, @NotNull String password) {
-        gerritConnector = new GerritConnector(host, port, username, password);
+    public GerritFacade(String scheme, @NotNull String host, int port, @NotNull String username, @NotNull String password) {
+        gerritConnector = new GerritConnector(scheme, host, port, username, password);
     }
 
     /**
