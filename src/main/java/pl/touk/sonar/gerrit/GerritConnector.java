@@ -44,6 +44,10 @@ public class GerritConnector {
     private DigestScheme digestScheme;
     private BasicAuthCache basicAuthCache;
 
+    public GerritConnector(String host, int port, String username, String password) {
+	this("http", host, port, username, password);
+    }
+
     public GerritConnector(String scheme, String host, int port, String username, String password) {
 	this.scheme = scheme;
         this.host = host;
