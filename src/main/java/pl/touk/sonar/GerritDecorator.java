@@ -37,6 +37,7 @@ public class GerritDecorator implements Decorator, PostJob {
 
     public GerritDecorator(Settings settings) {
         this.gerritConfiguration = new GerritConfiguration();
+        gerritConfiguration.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
         gerritConfiguration.setHost(settings.getString(PropertyKey.GERRIT_HOST));
         gerritConfiguration.setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
         gerritConfiguration.setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
@@ -127,7 +128,7 @@ public class GerritDecorator implements Decorator, PostJob {
     protected void assertGerritFacade() {
         assert(gerritConfiguration.isValid());
         if (gerritFacade == null) {
-            gerritFacade = new GerritFacade(gerritConfiguration.getHost(), gerritConfiguration.getHttpPort(), gerritConfiguration.getHttpUsername(), gerritConfiguration.getHttpPassword());
+            gerritFacade = new GerritFacade(gerritConfiguration.getScheme(), gerritConfiguration.getHost(), gerritConfiguration.getHttpPort(), gerritConfiguration.getHttpUsername(), gerritConfiguration.getHttpPassword());
         }
     }
 

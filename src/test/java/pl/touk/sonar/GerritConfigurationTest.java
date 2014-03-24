@@ -97,6 +97,7 @@ public class GerritConfigurationTest {
     }
 
     private void fillConfiguration() {
+	gerritConfiguration.setScheme("http");
         gerritConfiguration.setHost("localhost");
         gerritConfiguration.setHttpPort(8080);
         gerritConfiguration.setHttpUsername("sonar");

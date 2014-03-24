@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GerritFacadeTest {
+    private static final String SCHEME = "https";
     private static final String HOST = "localhost";
     private static final int PORT = 443;
     private static final String USERNAME = "sonar";
@@ -42,7 +43,7 @@ public class GerritFacadeTest {
 
     @Before
     public void setUp() {
-        gerritFacade = new GerritFacade(HOST, PORT, USERNAME, PASSWORD);
+        gerritFacade = new GerritFacade(SCHEME, HOST, PORT, USERNAME, PASSWORD);
         gerritFacade.setGerritConnector(gerritConnectorMock);
     }
 
