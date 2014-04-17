@@ -21,6 +21,7 @@ public class GerritFacadeTest {
     private static final int PORT = 443;
     private static final String USERNAME = "sonar";
     private static final String PASSWORD = "password";
+    private static final String BASE_URL = "";
     private static final String CHANGE_ID = "myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940";
     private static final String REVISION_ID = "674ac754f91e64a0efb8087e59a176484bd534d1";
     private static final String LIST_FILES_RESPONSE = ")]}'\n" +
@@ -43,7 +44,7 @@ public class GerritFacadeTest {
 
     @Before
     public void setUp() {
-        gerritFacade = new GerritFacade(SCHEME, HOST, PORT, USERNAME, PASSWORD);
+        gerritFacade = new GerritFacade(SCHEME, HOST, PORT, USERNAME, PASSWORD, BASE_URL);
         gerritFacade.setGerritConnector(gerritConnectorMock);
     }
 

@@ -12,6 +12,7 @@ public class GerritConfiguration {
     private Integer httpPort;
     private String httpUsername;
     private String httpPassword;
+    private String baseUrl;
     private String projectName;
     private String changeId;
     private String revisionId;
@@ -39,6 +40,7 @@ public class GerritConfiguration {
                 ", httpPort='" + httpPort + '\'' +
                 ", httpUsername='" + httpUsername + '\'' +
                 ", httpPassword='" + (StringUtils.isBlank(httpPassword) ? "blank" : "not blank") + '\'' +
+                ", baseUrl='" + baseUrl + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", changeId='" + changeId + '\'' +
                 ", revisionId='" + revisionId + '\'' +
@@ -88,6 +90,15 @@ public class GerritConfiguration {
 
     public void setHttpPassword(String httpPassword) {
         this.httpPassword = httpPassword;
+    }
+
+    @Nullable
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     @Nullable

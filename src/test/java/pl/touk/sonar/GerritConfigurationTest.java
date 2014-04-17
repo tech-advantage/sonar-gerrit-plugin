@@ -101,6 +101,7 @@ public class GerritConfigurationTest {
         gerritConfiguration.setHost("localhost");
         gerritConfiguration.setHttpPort(8080);
         gerritConfiguration.setHttpUsername("sonar");
+        gerritConfiguration.setBaseUrl("");
         gerritConfiguration.setProjectName("example");
         gerritConfiguration.setChangeId("myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940");
         gerritConfiguration.setRevisionId("674ac754f91e64a0efb8087e59a176484bd534d1");

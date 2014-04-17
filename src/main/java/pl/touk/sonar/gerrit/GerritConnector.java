@@ -29,14 +29,15 @@ import java.net.URISyntaxException;
 
 public class GerritConnector {
     private final static Logger LOG = LoggerFactory.getLogger(GerritConnector.class);
-    private static final String GET_LIST_FILES_URL_FORMAT = "/a/changes/%s/revisions/%s/files/";
-    private static final String POST_SET_REVIEW_URL_FORMAT = "/a/changes/%s/revisions/%s/review";
+    private static final String GET_LIST_FILES_URL_FORMAT = "/%s/a/changes/%s/revisions/%s/files/";
+    private static final String POST_SET_REVIEW_URL_FORMAT = "/%s/a/changes/%s/revisions/%s/review";
     private static int REQUEST_COUNTER = 0;
     private String scheme;
     private String host;
     private int port;
     private String username;
     private String password;
+    private String baseUrl;
     private HttpHost httpHost;
     private CredentialsProvider credentialsProvider;
     private CloseableHttpClient httpClient;
@@ -45,21 +46,22 @@ public class GerritConnector {
     private BasicAuthCache basicAuthCache;
 
     public GerritConnector(String host, int port, String username, String password) {
-        this("http", host, port, username, password);
+        this("http", host, port, username, password, "");
     }
 
-    public GerritConnector(String scheme, String host, int port, String username, String password) {
+    public GerritConnector(String scheme, String host, int port, String username, String password, String baseUrl) {
         this.scheme = scheme;
         this.host = host;
         this.port = port;
         this.username = username;
         this.password = password;
+        this.baseUrl = baseUrl;
         createHttpContext();
     }
 
     @NotNull
     public String listFiles(String changeId, String revisionId) throws URISyntaxException, IOException {
-        URI uri = new URIBuilder().setPath(String.format(GET_LIST_FILES_URL_FORMAT, changeId, revisionId)).build();
+        URI uri = new URIBuilder().setPath(String.format(GET_LIST_FILES_URL_FORMAT, baseUrl, changeId, revisionId)).build();
         HttpGet httpGet = new HttpGet(uri);
         CloseableHttpResponse httpResponse = logAndExecute(httpGet);
         return consumeAndLogEntity(httpResponse);
@@ -68,7 +70,7 @@ public class GerritConnector {
     @NotNull
     public String setReview(String changeId, String revisionId, String reviewInputAsJson) throws URISyntaxException, IOException {
         LOG.info("Setting review {}", reviewInputAsJson);
-        URI uri = new URIBuilder().setPath(String.format(POST_SET_REVIEW_URL_FORMAT, changeId, revisionId)).build();
+        URI uri = new URIBuilder().setPath(String.format(POST_SET_REVIEW_URL_FORMAT, baseUrl, changeId, revisionId)).build();
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setEntity(new StringEntity(reviewInputAsJson, ContentType.APPLICATION_JSON));
         CloseableHttpResponse httpResponse = logAndExecute(httpPost);
