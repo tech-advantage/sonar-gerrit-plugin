@@ -13,6 +13,7 @@ public class GerritConfiguration {
     private String httpUsername;
     private String httpPassword;
     private String baseUrl;
+    private String label;
     private String projectName;
     private String changeId;
     private String revisionId;
@@ -27,6 +28,7 @@ public class GerritConfiguration {
                 httpPort == null ||
                 StringUtils.isBlank(httpUsername) ||
                 StringUtils.isBlank(httpPassword) ||
+                StringUtils.isBlank(label) ||
                 StringUtils.isBlank(projectName) ||
                 StringUtils.isBlank(changeId) ||
                 StringUtils.isBlank(revisionId)
@@ -41,6 +43,7 @@ public class GerritConfiguration {
                 ", httpUsername='" + httpUsername + '\'' +
                 ", httpPassword='" + (StringUtils.isBlank(httpPassword) ? "blank" : "not blank") + '\'' +
                 ", baseUrl='" + baseUrl + '\'' +
+                ", label='" + label + '\'' +
                 ", projectName='" + projectName + '\'' +
                 ", changeId='" + changeId + '\'' +
                 ", revisionId='" + revisionId + '\'' +
@@ -105,6 +108,15 @@ public class GerritConfiguration {
             baseUrl = "/" + baseUrl;
         }
         this.baseUrl = baseUrl;
+    }
+
+    @Nullable
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(@Nullable String label) {
+        this.label = label;
     }
 
     @Nullable

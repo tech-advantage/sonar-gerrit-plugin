@@ -30,16 +30,15 @@ import java.util.Map;
  * }
  */
 public class ReviewInput {
-    public static final String CODE_REVIEW = "Code-Review";
     public String message = "Looks good to me.";
     public Map<String, Integer> labels = new HashMap<String, Integer>();
     public Map<String, List<ReviewFileComment>> comments = new HashMap<String, List<ReviewFileComment>>();
 
-    public void setLabelToPlusOne() {
-        labels.put(CODE_REVIEW, 1);
+    public void setLabelToPlusOne(String label) {
+        labels.put(label, 1);
     }
 
-    public void setLabelToMinusOne() {
-        labels.put(CODE_REVIEW, -1);
+    public void setLabelToMinusOne(String label) {
+        labels.put(label, -1);
     }
 }

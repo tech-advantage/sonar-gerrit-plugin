@@ -10,4 +10,5 @@ public final class PropertyKey {
     public static final String GERRIT_HTTP_USERNAME = "GERRIT_HTTP_USERNAME";
     public static final String GERRIT_HTTP_PASSWORD = "GERRIT_HTTP_PASSWORD";
     public static final String GERRIT_BASE_URL = "GERRIT_BASE_URL";
+    public static final String GERRIT_LABEL = "GERRIT_LABEL";
 }

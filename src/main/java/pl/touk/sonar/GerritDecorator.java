@@ -43,6 +43,7 @@ public class GerritDecorator implements Decorator, PostJob {
         gerritConfiguration.setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
         gerritConfiguration.setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD));
         gerritConfiguration.setBaseUrl(settings.getString(PropertyKey.GERRIT_BASE_URL));
+        gerritConfiguration.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
         gerritConfiguration.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
         gerritConfiguration.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
         gerritConfiguration.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
@@ -75,7 +76,7 @@ public class GerritDecorator implements Decorator, PostJob {
         try {
             LOG.info("Analysis has finished. Sending results to Gerrit.");
             assertGerritFacade();
-            reviewInput.setLabelToPlusOne();
+            reviewInput.setLabelToPlusOne(gerritConfiguration.getLabel());
             gerritFacade.setReview(gerritConfiguration.getChangeId(), gerritConfiguration.getRevisionId(), reviewInput);
         } catch (GerritPluginException e) {
             LOG.error("Error sending review to Gerrit", e);
