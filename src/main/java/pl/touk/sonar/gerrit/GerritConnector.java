@@ -45,11 +45,11 @@ public class GerritConnector {
     private BasicAuthCache basicAuthCache;
 
     public GerritConnector(String host, int port, String username, String password) {
-	this("http", host, port, username, password);
+        this("http", host, port, username, password);
     }
 
     public GerritConnector(String scheme, String host, int port, String username, String password) {
-	this.scheme = scheme;
+        this.scheme = scheme;
         this.host = host;
         this.port = port;
         this.username = username;
