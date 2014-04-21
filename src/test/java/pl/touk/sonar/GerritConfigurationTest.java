@@ -96,6 +96,50 @@ public class GerritConfigurationTest {
         assertThat(gerritConfiguration.isValid()).isFalse();
     }
 
+    @Test
+    public void shouldHandleNullBaseUrl() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl(null);
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/");
+    }
+
+    @Test
+    public void shouldHandleEmptyBaseUrl() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl("");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/");
+    }
+
+    @Test
+    public void shouldFixBaseUrlWithoutSlash() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl("gerrit");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/gerrit");
+    }
+
+    @Test
+    public void shouldNotFixBaseUrlWithoutSlash() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl("/gerrit");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/gerrit");
+    }
+
     private void fillConfiguration() {
         gerritConfiguration.setScheme("http");
         gerritConfiguration.setHost("localhost");

@@ -97,7 +97,13 @@ public class GerritConfiguration {
         return baseUrl;
     }
 
-    public void setBaseUrl(String baseUrl) {
+    public void setBaseUrl(@Nullable String baseUrl) {
+        if (StringUtils.isBlank(baseUrl)) {
+            baseUrl = "/";
+        }
+        if (baseUrl.charAt(0) != '/') {
+            baseUrl = "/" + baseUrl;
+        }
         this.baseUrl = baseUrl;
     }
 

@@ -29,8 +29,8 @@ import java.net.URISyntaxException;
 
 public class GerritConnector {
     private final static Logger LOG = LoggerFactory.getLogger(GerritConnector.class);
-    private static final String GET_LIST_FILES_URL_FORMAT = "/%s/a/changes/%s/revisions/%s/files/";
-    private static final String POST_SET_REVIEW_URL_FORMAT = "/%s/a/changes/%s/revisions/%s/review";
+    private static final String GET_LIST_FILES_URL_FORMAT = "%s/a/changes/%s/revisions/%s/files/";
+    private static final String POST_SET_REVIEW_URL_FORMAT = "%s/a/changes/%s/revisions/%s/review";
     private static int REQUEST_COUNTER = 0;
     private String scheme;
     private String host;
@@ -46,7 +46,7 @@ public class GerritConnector {
     private BasicAuthCache basicAuthCache;
 
     public GerritConnector(String host, int port, String username, String password) {
-        this("http", host, port, username, password, "");
+        this("http", host, port, username, password, null);
     }
 
     public GerritConnector(String scheme, String host, int port, String username, String password, String baseUrl) {
@@ -111,6 +111,4 @@ public class GerritConnector {
         LOG.info("Entity {}: {}", REQUEST_COUNTER, content);
         return content;
     }
-
-
 }
