@@ -96,11 +96,56 @@ public class GerritConfigurationTest {
         assertThat(gerritConfiguration.isValid()).isFalse();
     }
 
+    @Test
+    public void shouldHandleNullBaseUrl() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl(null);
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/");
+    }
+
+    @Test
+    public void shouldHandleEmptyBaseUrl() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl("");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/");
+    }
+
+    @Test
+    public void shouldFixBaseUrlWithoutSlash() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl("gerrit");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/gerrit");
+    }
+
+    @Test
+    public void shouldNotFixBaseUrlWithoutSlash() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setBaseUrl("/gerrit");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.getBaseUrl()).isEqualTo("/gerrit");
+    }
+
     private void fillConfiguration() {
-	gerritConfiguration.setScheme("http");
+        gerritConfiguration.setScheme("http");
         gerritConfiguration.setHost("localhost");
         gerritConfiguration.setHttpPort(8080);
         gerritConfiguration.setHttpUsername("sonar");
+        gerritConfiguration.setBaseUrl("");
         gerritConfiguration.setProjectName("example");
         gerritConfiguration.setChangeId("myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940");
         gerritConfiguration.setRevisionId("674ac754f91e64a0efb8087e59a176484bd534d1");

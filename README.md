@@ -38,7 +38,7 @@ You need to create a Gerrit user with a HTTP password for him. Then add this use
 Then you need to set up Sonar plugin in Jenkins. Log in as admin, Manage Jenkins - Configure System - Sonar - Advanced... - Additional properties: add and adjust your settings:
 
 ```
--DGERRIT_HTTP_PORT=8080 -DGERRIT_HTTP_USERNAME=sonar -DGERRIT_HTTP_PASSWORD=sonar_password
+-DGERRIT_SCHEME=http -DGERRIT_HTTP_PORT=8080 -DGERRIT_HTTP_USERNAME=sonar -DGERRIT_HTTP_PASSWORD=sonar_password -DGERRIT_BASE_URL=
 ```
 
 Last step is to add Post-Build action - SonarQube™ to every Jenkin's job you want to.

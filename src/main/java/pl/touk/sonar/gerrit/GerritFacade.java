@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pl.touk.sonar.GerritPluginException;
 
 import java.io.IOException;
@@ -21,11 +22,11 @@ public class GerritFacade {
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public GerritFacade(@NotNull String host, int port, @NotNull String username, @NotNull String password) {
-	this("http", host, port, username, password);
+        this("http", host, port, username, password, null);
     }
 
-    public GerritFacade(String scheme, @NotNull String host, int port, @NotNull String username, @NotNull String password) {
-        gerritConnector = new GerritConnector(scheme, host, port, username, password);
+    public GerritFacade(String scheme, @NotNull String host, int port, @NotNull String username, @NotNull String password, @Nullable String baseUrl) {
+        gerritConnector = new GerritConnector(scheme, host, port, username, password, baseUrl);
     }
 
     /**
