@@ -20,6 +20,16 @@ public class GerritConfigurationTest {
     private GerritConfiguration gerritConfiguration;
 
     @Test
+    public void shouldValidateWithDefaults() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.isValid()).isTrue();
+    }
+
+    @Test
     public void shouldNotValidateIfHostIsBlank() throws GerritPluginException {
         //given
         fillConfiguration();
@@ -145,6 +155,7 @@ public class GerritConfigurationTest {
         gerritConfiguration.setHost("localhost");
         gerritConfiguration.setHttpPort(8080);
         gerritConfiguration.setHttpUsername("sonar");
+        gerritConfiguration.setHttpPassword("sonar");
         gerritConfiguration.setBaseUrl("");
         gerritConfiguration.setProjectName("example");
         gerritConfiguration.setChangeId("myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940");
