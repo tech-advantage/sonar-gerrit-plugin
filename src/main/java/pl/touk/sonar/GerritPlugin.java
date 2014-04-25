@@ -15,6 +15,7 @@ import java.util.List;
         @Property(key = PropertyKey.GERRIT_HTTP_USERNAME, name = PropertyKey.GERRIT_HTTP_USERNAME),
         @Property(key = PropertyKey.GERRIT_HTTP_PASSWORD , name = PropertyKey.GERRIT_HTTP_PASSWORD, type = PropertyType.PASSWORD),
         @Property(key = PropertyKey.GERRIT_BASE_URL, name = PropertyKey.GERRIT_BASE_URL, type = PropertyType.STRING),
+        @Property(key = PropertyKey.GERRIT_LABEL, name = PropertyKey.GERRIT_LABEL, defaultValue = "Code-Review", type = PropertyType.STRING),
         @Property(key = PropertyKey.GERRIT_CHANGE_ID , name = PropertyKey.GERRIT_CHANGE_ID),
         @Property(key = PropertyKey.GERRIT_REVISION_ID , name = PropertyKey.GERRIT_REVISION_ID)
 })

@@ -74,6 +74,17 @@ public class GerritConfigurationTest {
     }
 
     @Test
+    public void shouldNotValidateIfLabelIsBlank() throws GerritPluginException {
+        //given
+        fillConfiguration();
+        gerritConfiguration.setLabel("");
+        //when
+        gerritConfiguration.assertGerritConfiguration();
+        //then
+        assertThat(gerritConfiguration.isValid()).isFalse();
+    }
+
+    @Test
     public void shouldNotValidateIfProjectNameIsBlank() throws GerritPluginException {
         //given
         fillConfiguration();
@@ -157,6 +168,7 @@ public class GerritConfigurationTest {
         gerritConfiguration.setHttpUsername("sonar");
         gerritConfiguration.setHttpPassword("sonar");
         gerritConfiguration.setBaseUrl("");
+        gerritConfiguration.setLabel("Code-Review");
         gerritConfiguration.setProjectName("example");
         gerritConfiguration.setChangeId("myProject~master~I8473b95934b5732ac55d26311a706c9c2bde9940");
         gerritConfiguration.setRevisionId("674ac754f91e64a0efb8087e59a176484bd534d1");
