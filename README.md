@@ -1,3 +1,5 @@
+> This project is abandoned and it's not maintained anymore. If you're looking for alternative please check out Sputnik: https://github.com/TouK/sputnik.
+
 Gerrit Plugin for SonarQube™
 ============================
 
