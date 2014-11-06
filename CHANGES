@@ -1,0 +1,13 @@
+Changes with version 2.0 :
+  * Add authentication scheme selection
+  * Add l10n for the setting pages
+  * Add a threshold to vote -1/+1 (global/project)
+  * Add to enable/disable on Sonar side (global/project)
+  * Add logs
+  * Add tests
+  * Clean-up sonar issues
+  * Message can contain dynamic values retrived from settings
+  * Refactor settings view (split server/review settings)
+
+Changes with version 1.0 (1f9567ae16756a202f4631c9b2cbd18adb305960):
+  * Initial version from TouK https://github.com/TouK/sonar-gerrit-plugin.git
