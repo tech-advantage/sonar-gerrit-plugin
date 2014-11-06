@@ -1,13 +1,11 @@
-> This project is abandoned and it's not maintained anymore. If you're looking for alternative please check out Sputnik: https://github.com/TouK/sputnik.
+This project is based on original source on https://github.com/TouK/ which was abandonned.
+
 
 Gerrit Plugin for SonarQube™
 ============================
 
 This plugin reports SonarQube™ issues on your patchsets to your Gerrit server. SonarQube™ analyses full project, but only files included in patchset are commented on Gerrit
-
-Currently plugin always reports +1 for Code Review, as it's still in development. However, you should always treat these comments as hints to improve, not as direct errors.
-
-I recommend you to try this plugin in conjunction with our other plugin: [Sonar File Alerts Plugin](https://github.com/TouK/sonar-file-alerts-plugin). It alters SonarQube™'s behaviour so alerts can be raised on a file level, not only project level.
+Plugin reports -1 or +1 for Code-Review (default) based on severity threshold (default:INFO).
 
 Requirements
 ------------
@@ -20,13 +18,12 @@ Requirements
 Installation
 ------------
 
-There is a build package available here: [sonar-gerrit-plugin-1.0.jar](https://github.com/TouK/sonar-gerrit-plugin/releases/download/sonar-gerrit-plugin-1.0/sonar-gerrit-plugin-1.0.jar).
-
+There is a build package available here: [sonar-gerrit-plugin-2.0-rc1.jar](https://github.com/tech-advantage/sonar-gerrit-plugin/releases/download/2.0-rc1/sonar-gerrit-plugin-2.0-rc1.jar).
 Or you can build it for yourself. Clone this repository, package it and put a package to your sonar plugins directory.
 
 ```bash
-mvn package
-cp target/sonar-gerrit-plugin-1.0.jar $SONAR_DIR/plugins
+mvn clean package
+cp target/sonar-gerrit-plugin-2.0.jar $SONAR_DIR/extentions/plugins
 $SONAR_DIR/bin/your-architecture-here/sonar.sh restart
 ```
 
@@ -34,23 +31,34 @@ Configure Jenkins
 -----------------
 
 This plugin is intended to use with Gerrit Trigger plugin: https://wiki.jenkins-ci.org/display/JENKINS/Gerrit+Trigger on a Jenkins server.
-
-You need to create a Gerrit user with a HTTP password for him. Then add this user to Non-Interactive Users group.
-
-Then you need to set up Sonar plugin in Jenkins. Log in as admin, Manage Jenkins - Configure System - Sonar - Advanced... - Additional properties: add and adjust your settings:
+Then you should set up Sonar plugin in Jenkins. Log in as admin, Manage Jenkins - Configure System - Sonar - Advanced… - Additional properties: add and adjust your settings:
 
 ```
--DGERRIT_SCHEME=http -DGERRIT_HTTP_PORT=8080 -DGERRIT_HTTP_USERNAME=sonar -DGERRIT_HTTP_PASSWORD=sonar_password -DGERRIT_BASE_URL=
+-DGERRIT_SCHEME=http -DGERRIT_HTTP_PORT=8080 -DGERRIT_HTTP_USERNAME=sonar -DGERRIT_HTTP_PASSWORD=sonar_password
 ```
 
 Last step is to add Post-Build action - SonarQube™ to every Jenkin's job you want to.
+
+Configure Gerrit
+----------------
+
+You need to be able to connect to Gerrit with a valid username and password through HTTP or HTTPS. User can be part of the Non-Interactive Users group.
+Plugin vote on Code-Review label. To vote on another label, add a new label on Gerrit and change the plugin settings
+
+```
+[label "Quality-Check"]
+    function = MaxWithBlock
+    value = -1 Issues to be corrected
+    value =  0 No score
+    value = +1 Code is clean
+```
 
 How does it work?
 -----------------
 
 As SonarQube™ analysis starts, plugin connects to Gerrit and asks what files were changed in a patchset. Sonar iterates on every file and if file is contained in a patchset, plugin collects it's violations and alerts.
-
-When analysis is finished, plugin connects to Gerrit again with collected results.
+When analysis is finished, plugin connects to Gerrit again and publish violations and alerts as patchset comments.
+Depending on the threshold, plugin votes -1/+1 so submit can be blocked based on your Gerrit settings.
 
 License
 -------

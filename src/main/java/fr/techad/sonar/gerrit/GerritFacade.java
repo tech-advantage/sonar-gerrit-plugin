@@ -1,14 +1,15 @@
-package pl.touk.sonar.gerrit;
+package fr.techad.sonar.gerrit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.techad.sonar.GerritPluginException;
+
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.touk.sonar.GerritPluginException;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -16,26 +17,30 @@ import java.util.Set;
 public class GerritFacade {
     private static final String RESPONSE_PREFIX = ")]}'";
     private static final String COMMIT_MSG = "/COMMIT_MSG";
-    private static final String MAVEN_ENTRY_REGEX = ".*src/(main|test)/java/";
-    private static final String DOT = ".";
+    private static final String MAVEN_ENTRY_REGEX = ".*src/";
+
+    private static final String ERROR_LISTING = "Error listing files";
+    private static final String ERROR_SETTING = "Error setting review";
     private GerritConnector gerritConnector;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public GerritFacade(@NotNull String host, int port, @NotNull String username, @NotNull String password) {
-        this("http", host, port, username, password, null);
+        this("http", host, port, username, password, null, "digest");
     }
 
-    public GerritFacade(String scheme, @NotNull String host, int port, @NotNull String username, @NotNull String password, @Nullable String baseUrl) {
-        gerritConnector = new GerritConnector(scheme, host, port, username, password, baseUrl);
+    public GerritFacade(String scheme, @NotNull String host, int port, @NotNull String username,
+            @NotNull String password, @Nullable String basePath, @NotNull String authScheme) {
+        gerritConnector = new GerritConnector(scheme, host, port, username, password, basePath, authScheme);
     }
 
     /**
      * @return sonarLongName to gerritFileName map
      */
     @NotNull
-    public Map<String, String> listFiles(@NotNull String changeId, @NotNull String revisionId) throws GerritPluginException {
+    public Map<String, String> listFiles(@NotNull String projectName, @NotNull String branchName,
+            @NotNull String changeId, @NotNull String revisionId) throws GerritPluginException {
         try {
-            String response = gerritConnector.listFiles(changeId, revisionId);
+            String response = gerritConnector.listFiles(projectName, branchName, changeId, revisionId);
             String jsonString = trimResponse(response);
             ListFilesResponse listFilesResponse = objectMapper.readValue(jsonString, ListFilesResponse.class);
             Map<String, String> files = new HashMap<String, String>();
@@ -46,22 +51,19 @@ public class GerritFacade {
             }
             return files;
         } catch (IOException e) {
-            throw new GerritPluginException("Error listing files", e);
-        } catch (URISyntaxException e) {
-            throw new GerritPluginException("Error listing files", e);
+            throw new GerritPluginException(ERROR_LISTING, e);
         }
     }
 
-    public void setReview(@NotNull String changeId, @NotNull String revisionId, @NotNull ReviewInput reviewInput) throws GerritPluginException {
+    public void setReview(@NotNull String projectName, @NotNull String branchName, @NotNull String changeId,
+            @NotNull String revisionId, @NotNull ReviewInput reviewInput) throws GerritPluginException {
         try {
             String json = objectMapper.writeValueAsString(reviewInput);
-            gerritConnector.setReview(changeId, revisionId, json);
+            gerritConnector.setReview(projectName, branchName, changeId, revisionId, json);
         } catch (JsonProcessingException e) {
-            throw new GerritPluginException("Error setting review", e);
+            throw new GerritPluginException(ERROR_SETTING, e);
         } catch (IOException e) {
-            throw new GerritPluginException("Error setting review", e);
-        } catch (URISyntaxException e) {
-            throw new GerritPluginException("Error setting review", e);
+            throw new GerritPluginException(ERROR_SETTING, e);
         }
     }
 
@@ -71,7 +73,7 @@ public class GerritFacade {
     }
 
     protected String parseFileName(@NotNull String fileName) {
-        return StringUtils.substringBeforeLast(fileName.replaceFirst(MAVEN_ENTRY_REGEX, ""), DOT).replace('/', '.');
+        return fileName.replaceFirst(MAVEN_ENTRY_REGEX, "src/");
     }
 
     void setGerritConnector(@NotNull GerritConnector gerritConnector) {
