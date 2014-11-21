@@ -7,7 +7,7 @@ Gerrit Plugin for SonarQube™
 This plugin reports SonarQube™ issues on your patchsets to your Gerrit server. SonarQube™ analyses full project, but only files included in patchset are commented on Gerrit
 Plugin reports -1 or +1 for Code-Review (default) based on severity threshold (default:INFO).
 
-Read the [wiki](https://github.com/tech-advantage/sonar-gerrit-plugin/wiki) for more details !
+#Read the [wiki](https://github.com/tech-advantage/sonar-gerrit-plugin/wiki) for more details !
 
 License
 -------
