@@ -13,7 +13,6 @@ import org.sonar.api.batch.DecoratorBarriers;
 import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.batch.DependsUpon;
 import org.sonar.api.component.ResourcePerspectives;
-import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.measures.CoreMetrics;
@@ -44,27 +43,8 @@ public class GerritDecorator implements Decorator {
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
     private final ResourcePerspectives perspectives;
 
-    public GerritDecorator(Settings settings, ResourcePerspectives perspectives) {
+    public GerritDecorator(ResourcePerspectives perspectives) {
         this.perspectives = perspectives;
-
-        gerritServerConfiguration.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED))
-                .setScheme(settings.getString(PropertyKey.GERRIT_SCHEME))
-                .setHost(settings.getString(PropertyKey.GERRIT_HOST))
-                .setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT))
-                .setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME))
-                .setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD))
-                .setHttpAuthScheme(settings.getString(PropertyKey.GERRIT_HTTP_AUTH_SCHEME))
-                .setBasePath(settings.getString(PropertyKey.GERRIT_BASE_PATH));
-        gerritServerConfiguration.assertGerritServerConfiguration();
-
-        gerritReviewConfiguration.setLabel(settings.getString(PropertyKey.GERRIT_LABEL))
-                .setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE))
-                .setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD))
-                .setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT))
-                .setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH))
-                .setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID))
-                .setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
-        gerritReviewConfiguration.assertGerritReviewConfiguration();
     }
 
     @Override
@@ -114,7 +94,8 @@ public class GerritDecorator implements Decorator {
     @Override
     public boolean shouldExecuteOnProject(Project project) {
         boolean enabled = gerritServerConfiguration.isEnabled();
-        LOG.info("[GERRIT PLUGIN] Will{}execute plugin on project \'{}\'.", enabled ? " " : " NOT ", project.getName());
+        LOG.info("[GERRIT PLUGIN] Decorator : will{}execute plugin on project \'{}\'.", enabled ? " " : " NOT ",
+                project.getName());
         return enabled;
     }
 
@@ -213,5 +194,10 @@ public class GerritDecorator implements Decorator {
             LOG.info("[GERRIT PLUGIN] Alert found: {}", level.toString());
             comments.add(measureToComment(measure));
         }
+    }
+
+    @Override
+    public String toString() {
+        return "GerritDecorator";
     }
 }

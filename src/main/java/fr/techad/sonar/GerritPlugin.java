@@ -71,7 +71,7 @@ public final class GerritPlugin extends SonarPlugin {
         PropertyDefinition revId = PropertyDefinition.builder(PropertyKey.GERRIT_REVISION_ID).category(GERRIT_CATEGORY)
                 .subCategory(GERRIT_SUBCATEGORY_REVIEW).index(reviewBaseIndex++).hidden().build();
 
-        return Arrays.asList(GerritDecorator.class, GerritPostJob.class, enabled, scheme, host, port, username, password, authScheme,
-                basePath, label, message, threshold, revId, chgId);
+        return Arrays.asList(GerritInitializer.class, GerritDecorator.class, GerritPostJob.class, enabled, scheme, host,
+                port, username, password, authScheme, basePath, label, message, threshold, revId, chgId);
     }
 }

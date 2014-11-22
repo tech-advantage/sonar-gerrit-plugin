@@ -35,31 +35,12 @@ public class GerritPostJob implements PostJob {
 
     public GerritPostJob(Settings settings) {
         this.settings = settings;
-
-        gerritServerConfiguration.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED))
-                .setScheme(settings.getString(PropertyKey.GERRIT_SCHEME))
-                .setHost(settings.getString(PropertyKey.GERRIT_HOST))
-                .setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT))
-                .setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME))
-                .setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD))
-                .setHttpAuthScheme(settings.getString(PropertyKey.GERRIT_HTTP_AUTH_SCHEME))
-                .setBasePath(settings.getString(PropertyKey.GERRIT_BASE_PATH));
-        gerritServerConfiguration.assertGerritServerConfiguration();
-
-        gerritReviewConfiguration.setLabel(settings.getString(PropertyKey.GERRIT_LABEL))
-                .setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE))
-                .setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD))
-                .setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT))
-                .setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH))
-                .setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID))
-                .setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
-        gerritReviewConfiguration.assertGerritReviewConfiguration();
     }
 
     @Override
     public void executeOn(Project project, SensorContext context) {
         if (!gerritServerConfiguration.isEnabled()) {
-            LOG.info("[GERRIT PLUGIN] Analysis has finished. Plugin is disabled. No actions taken.");
+            LOG.info("[GERRIT PLUGIN] PostJob : analysis has finished. Plugin is disabled. No actions taken.");
             return;
         }
 
