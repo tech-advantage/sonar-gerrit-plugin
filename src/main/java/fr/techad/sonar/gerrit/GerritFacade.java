@@ -8,6 +8,8 @@ import fr.techad.sonar.GerritPluginException;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class GerritFacade {
+    private static final Logger LOG = LoggerFactory.getLogger(GerritFacade.class);
     private static final String RESPONSE_PREFIX = ")]}'";
     private static final String COMMIT_MSG = "/COMMIT_MSG";
     private static final String MAVEN_ENTRY_REGEX = ".*src/";
@@ -23,6 +26,7 @@ public class GerritFacade {
     private static final String ERROR_SETTING = "Error setting review";
     private GerritConnector gerritConnector;
     private ObjectMapper objectMapper = new ObjectMapper();
+    private Map<String, String> gerritFileList = new HashMap<String, String>();
 
     public GerritFacade(@NotNull String host, int port, @NotNull String username, @NotNull String password) {
         this("http", host, port, username, password, null, "digest");
@@ -39,20 +43,23 @@ public class GerritFacade {
     @NotNull
     public Map<String, String> listFiles(@NotNull String projectName, @NotNull String branchName,
             @NotNull String changeId, @NotNull String revisionId) throws GerritPluginException {
-        try {
-            String response = gerritConnector.listFiles(projectName, branchName, changeId, revisionId);
-            String jsonString = trimResponse(response);
-            ListFilesResponse listFilesResponse = objectMapper.readValue(jsonString, ListFilesResponse.class);
-            Map<String, String> files = new HashMap<String, String>();
-            Set<String> keys = listFilesResponse.keySet();
-            keys.remove(COMMIT_MSG);
-            for (String key : keys) {
-                files.put(parseFileName(key), key);
+        if (!gerritFileList.isEmpty()) {
+            LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
+        } else {
+            try {
+                String response = gerritConnector.listFiles(projectName, branchName, changeId, revisionId);
+                String jsonString = trimResponse(response);
+                ListFilesResponse listFilesResponse = objectMapper.readValue(jsonString, ListFilesResponse.class);
+                Set<String> keys = listFilesResponse.keySet();
+                keys.remove(COMMIT_MSG);
+                for (String key : keys) {
+                    gerritFileList.put(parseFileName(key), key);
+                }
+            } catch (IOException e) {
+                throw new GerritPluginException(ERROR_LISTING, e);
             }
-            return files;
-        } catch (IOException e) {
-            throw new GerritPluginException(ERROR_LISTING, e);
         }
+        return gerritFileList;
     }
 
     public void setReview(@NotNull String projectName, @NotNull String branchName, @NotNull String changeId,
