@@ -15,8 +15,6 @@ import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.Project;
 
-import fr.techad.sonar.GerritConfiguration.GerritReviewConfiguration;
-import fr.techad.sonar.GerritConfiguration.GerritServerConfiguration;
 import fr.techad.sonar.gerrit.GerritFacade;
 import fr.techad.sonar.gerrit.ReviewInput;
 import fr.techad.sonar.gerrit.ReviewUtils;
@@ -28,31 +26,32 @@ public class GerritPostJob implements PostJob {
     private static final int PROP_START_LENGTH = PROP_START.length();
     private static final char PROP_END = '}';
     private final Settings settings;
-    private GerritServerConfiguration gerritServerConfiguration = GerritConfiguration.serverConfiguration();
-    private GerritReviewConfiguration gerritReviewConfiguration = GerritConfiguration.reviewConfiguration();
     private GerritFacade gerritFacade;
+    private final GerritConfiguration gerritConfiguration;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
-    public GerritPostJob(Settings settings) {
+    public GerritPostJob(Settings settings, GerritFacade gerritFacade, GerritConfiguration gerritConfiguration) {
+        LOG.debug("[GERRIT PLUGIN] Instanciating GerritPostJob");
         this.settings = settings;
+        this.gerritFacade = gerritFacade;
+        this.gerritConfiguration = gerritConfiguration;
     }
 
     @Override
     public void executeOn(Project project, SensorContext context) {
-        if (!gerritServerConfiguration.isEnabled()) {
+        if (!gerritConfiguration.isEnabled()) {
             LOG.info("[GERRIT PLUGIN] PostJob : analysis has finished. Plugin is disabled. No actions taken.");
             return;
         }
 
-        if (!GerritConfiguration.isValid()) {
+        if (!gerritConfiguration.isValid()) {
             LOG.info("[GERRIT PLUGIN] Analysis has finished. Not sending results to Gerrit, because configuration is not valid.");
             return;
         }
 
         try {
             LOG.info("[GERRIT PLUGIN] Analysis has finished. Sending results to Gerrit.");
-            assertGerritFacade();
-            reviewInput.setMessage(substituteProperties(gerritReviewConfiguration.getMessage()));
+            reviewInput.setMessage(substituteProperties(gerritConfiguration.getMessage()));
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("[GERRIT PLUGIN] Define message : {}", reviewInput.getMessage());
@@ -62,30 +61,28 @@ public class GerritPostJob implements PostJob {
             int maxLevel = ReviewUtils.maxLevel(reviewInput);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("[GERRIT PLUGIN] Configured threshold {}, max review level {}",
-                        gerritReviewConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
+                        gerritConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
             }
 
             if (ReviewUtils.isEmpty(reviewInput)
-                    || maxLevel < ReviewUtils.thresholdToValue(gerritReviewConfiguration.getThreshold())) {
+                    || maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote +1 for the label : {}", gerritReviewConfiguration.getLabel());
+                    LOG.debug("[GERRIT PLUGIN] Vote +1 for the label : {}", gerritConfiguration.getLabel());
                 }
-                reviewInput.setLabelToPlusOne(gerritReviewConfiguration.getLabel());
+                reviewInput.setLabelToPlusOne(gerritConfiguration.getLabel());
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote -1 for the label : {}", gerritReviewConfiguration.getLabel());
+                    LOG.debug("[GERRIT PLUGIN] Vote -1 for the label : {}", gerritConfiguration.getLabel());
                 }
-                reviewInput.setLabelToMinusOne(gerritReviewConfiguration.getLabel());
+                reviewInput.setLabelToMinusOne(gerritConfiguration.getLabel());
             }
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("[GERRIT PLUGIN] Send review for ChangeId={}, RevisionId={}",
-                        gerritReviewConfiguration.getChangeId(), gerritReviewConfiguration.getRevisionId());
+                        gerritConfiguration.getChangeId(), gerritConfiguration.getRevisionId());
             }
 
-            gerritFacade.setReview(gerritReviewConfiguration.getProjectName(),
-                    gerritReviewConfiguration.getBranchName(), gerritReviewConfiguration.getChangeId(),
-                    gerritReviewConfiguration.getRevisionId(), reviewInput);
+            gerritFacade.setReview(reviewInput);
 
         } catch (GerritPluginException e) {
             LOG.error("[GERRIT PLUGIN] Error sending review to Gerrit", e);
@@ -98,18 +95,8 @@ public class GerritPostJob implements PostJob {
     }
 
     @DependsUpon
-    public Metric dependsOnAlerts() {
+    public Metric<?> dependsOnAlerts() {
         return CoreMetrics.ALERT_STATUS;
-    }
-
-    protected void assertGerritFacade() {
-        assert gerritServerConfiguration.isValid();
-        if (gerritFacade == null) {
-            gerritFacade = new GerritFacade(gerritServerConfiguration.getScheme(), gerritServerConfiguration.getHost(),
-                    gerritServerConfiguration.getHttpPort(), gerritServerConfiguration.getHttpUsername(),
-                    gerritServerConfiguration.getHttpPassword(), gerritServerConfiguration.getBasePath(),
-                    gerritServerConfiguration.getHttpAuthScheme());
-        }
     }
 
     protected String substituteProperties(String originalMessage) {

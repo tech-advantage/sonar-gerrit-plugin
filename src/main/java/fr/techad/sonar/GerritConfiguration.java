@@ -5,280 +5,265 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonar.api.BatchComponent;
+import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.config.Settings;
 
-public class GerritConfiguration {
-    private boolean enabled;
-
+@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
+public class GerritConfiguration implements BatchComponent {
     private static final Logger LOG = LoggerFactory.getLogger(GerritConfiguration.class);
-    private static GerritConfiguration gerritConf = new GerritConfiguration();
-    private static GerritServerConfiguration serverConf = gerritConf.new GerritServerConfiguration();
-    private static GerritReviewConfiguration reviewConf = gerritConf.new GerritReviewConfiguration();
 
-    private GerritConfiguration() {
+    private boolean enabled;
+    private boolean valid;
+    private boolean anonymous;
+
+    private String scheme;
+    private String host;
+    private Integer httpPort;
+    private String httpUsername;
+    private String httpPassword;
+    private String authScheme;
+    private String basePath;
+
+    private String label;
+    private String message;
+    private String threshold;
+
+    private String projectName;
+    private String branchName;
+    private String changeId;
+    private String revisionId;
+
+    public GerritConfiguration(Settings settings) {
+        LOG.debug("[GERRIT PLUGIN] Instanciating GerritConfiguration");
+
+        this.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED));
+
+        this.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
+        this.setHost(settings.getString(PropertyKey.GERRIT_HOST));
+        this.setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
+        this.setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
+        this.setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD));
+        this.setHttpAuthScheme(settings.getString(PropertyKey.GERRIT_HTTP_AUTH_SCHEME));
+        this.setBasePath(settings.getString(PropertyKey.GERRIT_BASE_PATH));
+
+        this.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
+        this.setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE));
+        this.setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD));
+
+        this.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
+        this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
+        this.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
+        this.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
+
+        this.assertGerritConfiguration();
     }
 
-    public static GerritServerConfiguration serverConfiguration() {
-        return serverConf;
+    public boolean isValid() {
+        assertGerritConfiguration();
+        return valid;
     }
 
-    public static GerritReviewConfiguration reviewConfiguration() {
-        return reviewConf;
+    public GerritConfiguration enable(boolean serverEnabled) {
+        enabled = serverEnabled;
+        return this;
     }
 
-    public static boolean isValid() {
-        return serverConf.isValid() && reviewConf.isValid();
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    class GerritServerConfiguration {
-        private boolean serverValid = true;
-
-        private String scheme;
-        private String host;
-        private Integer httpPort;
-        private String httpUsername;
-        private String httpPassword;
-        private String authScheme;
-        private String basePath;
-        private boolean anonymous;
-
-        protected GerritServerConfiguration() {
-        }
-
-        public GerritServerConfiguration enable(boolean serverEnabled) {
-            enabled = serverEnabled;
-            return this;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public boolean isAnonymous() {
-            return anonymous;
-        }
-
-        @NotNull
-        public String getScheme() {
-            return scheme;
-        }
-
-        public GerritServerConfiguration setScheme(@NotNull String scheme) {
-            this.scheme = scheme;
-            return this;
-        }
-
-        @NotNull
-        public String getHost() {
-            return host;
-        }
-
-        public GerritServerConfiguration setHost(@NotNull String host) {
-            this.host = host;
-            return this;
-        }
-
-        @NotNull
-        public Integer getHttpPort() {
-            return httpPort;
-        }
-
-        public GerritServerConfiguration setHttpPort(@NotNull Integer httpPort) {
-            this.httpPort = httpPort;
-            return this;
-        }
-
-        @Nullable
-        public String getHttpUsername() {
-            return httpUsername;
-        }
-
-        public GerritServerConfiguration setHttpUsername(@Nullable String httpUsername) {
-            this.httpUsername = httpUsername;
-            if (StringUtils.isBlank(httpUsername)) {
-                anonymous = true;
-            }
-            return this;
-        }
-
-        @Nullable
-        public String getHttpPassword() {
-            return httpPassword;
-        }
-
-        public GerritServerConfiguration setHttpPassword(String httpPassword) {
-            this.httpPassword = httpPassword;
-            return this;
-        }
-
-        public String getHttpAuthScheme() {
-            return authScheme;
-        }
-
-        public GerritServerConfiguration setHttpAuthScheme(String authScheme) {
-            this.authScheme = authScheme;
-            return this;
-        }
-
-        @Nullable
-        public String getBasePath() {
-            return basePath;
-        }
-
-        public GerritServerConfiguration setBasePath(@Nullable String basePath) {
-            String newBasePath = basePath;
-
-            if (StringUtils.isBlank(newBasePath)) {
-                newBasePath = "/";
-            }
-
-            if (newBasePath.charAt(0) != '/') {
-                newBasePath = "/" + newBasePath;
-            }
-
-            while (newBasePath.startsWith("/", 1) && !newBasePath.isEmpty()) {
-                newBasePath = newBasePath.substring(1, newBasePath.length());
-            }
-
-            while (newBasePath.endsWith("/") && 1 < newBasePath.length()) {
-                newBasePath = newBasePath.substring(0, newBasePath.length() - 1);
-            }
-
-            this.basePath = newBasePath;
-
-            return this;
-        }
-
-        void assertGerritServerConfiguration() {
-            if (StringUtils.isBlank(host) || null == httpPort) {
-                serverValid = false;
-                if (enabled || LOG.isDebugEnabled()) {
-                    LOG.error("[GERRIT PLUGIN] ServerConfiguration is not valid : {}", this.toString());
-                }
-            } else {
-                serverValid = true;
-            }
-        }
-
-        public boolean isValid() {
-            assertGerritServerConfiguration();
-            return serverValid;
-
-        }
-
-        @Override
-        public String toString() {
-            return "GerritServerConfiguration [serverValid=" + serverValid + ", enabled=" + enabled + ", scheme="
-                    + scheme + ", host=" + host + ", httpPort=" + httpPort + ", httpUsername=" + httpUsername
-                    + ", httpPassword=" + httpPassword + ", authScheme=" + authScheme + ", basePath=" + basePath + "]";
-        }
-
+    public boolean isAnonymous() {
+        return anonymous;
     }
 
-    class GerritReviewConfiguration {
-        private boolean reviewValid = true;
-        private String label;
-        private String message;
-        private String threshold;
+    @NotNull
+    public String getScheme() {
+        return scheme;
+    }
 
-        private String projectName;
-        private String branchName;
-        private String changeId;
-        private String revisionId;
+    public GerritConfiguration setScheme(@NotNull String scheme) {
+        this.scheme = scheme;
+        return this;
+    }
 
-        protected GerritReviewConfiguration() {
+    @NotNull
+    public String getHost() {
+        return host;
+    }
+
+    public GerritConfiguration setHost(@NotNull String host) {
+        this.host = host;
+        return this;
+    }
+
+    @NotNull
+    public Integer getHttpPort() {
+        return httpPort;
+    }
+
+    public GerritConfiguration setHttpPort(@NotNull Integer httpPort) {
+        this.httpPort = httpPort;
+        return this;
+    }
+
+    @Nullable
+    public String getHttpUsername() {
+        return httpUsername;
+    }
+
+    public GerritConfiguration setHttpUsername(@Nullable String httpUsername) {
+        this.httpUsername = httpUsername;
+        if (StringUtils.isBlank(httpUsername)) {
+            anonymous = true;
+        }
+        return this;
+    }
+
+    @Nullable
+    public String getHttpPassword() {
+        return httpPassword;
+    }
+
+    public GerritConfiguration setHttpPassword(String httpPassword) {
+        this.httpPassword = httpPassword;
+        return this;
+    }
+
+    public String getHttpAuthScheme() {
+        return authScheme;
+    }
+
+    public GerritConfiguration setHttpAuthScheme(String authScheme) {
+        this.authScheme = authScheme;
+        return this;
+    }
+
+    @Nullable
+    public String getBasePath() {
+        return basePath;
+    }
+
+    public GerritConfiguration setBasePath(@Nullable String basePath) {
+        String newBasePath = basePath;
+
+        if (StringUtils.isBlank(newBasePath)) {
+            newBasePath = "/";
         }
 
-        @NotNull
-        public String getLabel() {
-            return label;
+        if (newBasePath.charAt(0) != '/') {
+            newBasePath = "/" + newBasePath;
         }
 
-        public GerritReviewConfiguration setLabel(@NotNull String label) {
-            this.label = label;
-            return this;
+        while (newBasePath.startsWith("/", 1) && !newBasePath.isEmpty()) {
+            newBasePath = newBasePath.substring(1, newBasePath.length());
         }
 
-        public String getMessage() {
-            return message;
+        while (newBasePath.endsWith("/") && 1 < newBasePath.length()) {
+            newBasePath = newBasePath.substring(0, newBasePath.length() - 1);
         }
 
-        public GerritReviewConfiguration setMessage(String message) {
-            this.message = message;
-            return this;
-        }
+        this.basePath = newBasePath;
 
-        public String getThreshold() {
-            return threshold;
-        }
+        return this;
+    }
 
-        public GerritReviewConfiguration setThreshold(String threshold) {
-            this.threshold = threshold;
-            return this;
-        }
+    @NotNull
+    public String getLabel() {
+        return label;
+    }
 
-        @NotNull
-        public String getProjectName() {
-            return projectName;
-        }
+    public GerritConfiguration setLabel(@NotNull String label) {
+        this.label = label;
+        return this;
+    }
 
-        public GerritReviewConfiguration setProjectName(@NotNull String projectName) {
-            this.projectName = projectName;
-            return this;
-        }
+    public String getMessage() {
+        return message;
+    }
 
-        @NotNull
-        public String getBranchName() {
-            return branchName;
-        }
+    public GerritConfiguration setMessage(String message) {
+        this.message = message;
+        return this;
+    }
 
-        public GerritReviewConfiguration setBranchName(@NotNull String branchName) {
-            this.branchName = branchName;
-            return this;
-        }
+    public String getThreshold() {
+        return threshold;
+    }
 
-        @NotNull
-        public String getChangeId() {
-            return changeId;
-        }
+    public GerritConfiguration setThreshold(String threshold) {
+        this.threshold = threshold;
+        return this;
+    }
 
-        public GerritReviewConfiguration setChangeId(@NotNull String changeId) {
-            this.changeId = changeId;
-            return this;
-        }
+    @NotNull
+    public String getProjectName() {
+        return projectName;
+    }
 
-        @NotNull
-        public String getRevisionId() {
-            return revisionId;
-        }
+    public GerritConfiguration setProjectName(@NotNull String projectName) {
+        this.projectName = projectName;
+        return this;
+    }
 
-        public GerritReviewConfiguration setRevisionId(@NotNull String revisionId) {
-            this.revisionId = revisionId;
-            return this;
-        }
+    @NotNull
+    public String getBranchName() {
+        return branchName;
+    }
 
-        void assertGerritReviewConfiguration() {
-            if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
-                    || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
-                reviewValid = false;
-                if (enabled || LOG.isDebugEnabled()) {
-                    LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
-                }
-            } else {
-                reviewValid = true;
+    public GerritConfiguration setBranchName(@NotNull String branchName) {
+        this.branchName = branchName;
+        return this;
+    }
+
+    @NotNull
+    public String getChangeId() {
+        return changeId;
+    }
+
+    public GerritConfiguration setChangeId(@NotNull String changeId) {
+        this.changeId = changeId;
+        return this;
+    }
+
+    @NotNull
+    public String getRevisionId() {
+        return revisionId;
+    }
+
+    public GerritConfiguration setRevisionId(@NotNull String revisionId) {
+        this.revisionId = revisionId;
+        return this;
+    }
+
+    void assertGerritConfiguration() {
+        if (StringUtils.isBlank(host) || null == httpPort) {
+            valid = false;
+            if (enabled || LOG.isDebugEnabled()) {
+                LOG.error("[GERRIT PLUGIN] ServerConfiguration is not valid : {}", this.toString());
             }
+        } else {
+            valid = true;
         }
 
-        public boolean isValid() {
-            assertGerritReviewConfiguration();
-            return reviewValid;
-
+        if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
+                || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
+            valid = false;
+            if (enabled || LOG.isDebugEnabled()) {
+                LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
+            }
+        } else {
+            valid &= true;
         }
+    }
 
-        @Override
-        public String toString() {
-            return "GerritReviewConfiguration [reviewValid=" + reviewValid + ", label=" + label + ", message="
-                    + message + ", threshold=" + threshold + ", projectName=" + projectName + ", branchName="
-                    + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId + "]";
-        }
+    @Override
+    public String toString() {
+        return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
+                + ", httpPort=" + httpPort + ", anonymous=" + anonymous + ", httpUsername=" + httpUsername
+                + ", httpPassword=" + httpPassword + ", authScheme=" + authScheme + ", basePath=" + basePath
+                + ", label=" + label + ", message=" + message + ", threshold=" + threshold + ", projectName="
+                + projectName + ", branchName=" + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId
+                + "]";
     }
 }

@@ -1,7 +1,7 @@
 package fr.techad.sonar;
 
 public final class PropertyKey {
-    public static final String GERRIT_ENABLED = "GERRIT_ENABLED";    
+    public static final String GERRIT_ENABLED = "GERRIT_ENABLED";
     public static final String GERRIT_SCHEME = "GERRIT_SCHEME";
     public static final String GERRIT_HOST = "GERRIT_HOST";
     public static final String GERRIT_HTTP_PORT = "GERRIT_HTTP_PORT";
