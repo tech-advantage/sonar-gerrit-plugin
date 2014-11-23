@@ -39,6 +39,7 @@ public class GerritConfiguration {
         private String httpPassword;
         private String authScheme;
         private String basePath;
+        private boolean anonymous;
 
         protected GerritServerConfiguration() {
         }
@@ -50,6 +51,10 @@ public class GerritConfiguration {
 
         public boolean isEnabled() {
             return enabled;
+        }
+
+        public boolean isAnonymous() {
+            return anonymous;
         }
 
         @NotNull
@@ -89,6 +94,9 @@ public class GerritConfiguration {
 
         public GerritServerConfiguration setHttpUsername(@Nullable String httpUsername) {
             this.httpUsername = httpUsername;
+            if (StringUtils.isBlank(httpUsername)) {
+                anonymous = true;
+            }
             return this;
         }
 
