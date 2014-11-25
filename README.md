@@ -1,6 +1,3 @@
-This project is based on original source on https://github.com/TouK/ which was abandonned.
-
-
 Gerrit Plugin for SonarQube™
 ============================
 
@@ -13,3 +10,6 @@ License
 -------
 
 This project is licenced under Apache License.
+
+----  
+This project is based on original source on https://github.com/TouK/ which was abandonned.
