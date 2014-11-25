@@ -58,28 +58,6 @@ public class GerritConfigurationTest {
     }
 
     @Test
-    public void shouldNotValidateIfUsernameIsBlank() throws GerritPluginException {
-        // given
-        fillConfiguration();
-        gerritServerConfiguration.setHttpUsername("");
-        // when
-        gerritServerConfiguration.assertGerritServerConfiguration();
-        // then
-        assertThat(gerritServerConfiguration.isValid()).isFalse();
-    }
-
-    @Test
-    public void shouldNotValidateIfPasswordIsBlank() throws GerritPluginException {
-        // given
-        fillConfiguration();
-        gerritServerConfiguration.setHttpPassword("");
-        // when
-        gerritServerConfiguration.assertGerritServerConfiguration();
-        // then
-        assertThat(gerritServerConfiguration.isValid()).isFalse();
-    }
-
-    @Test
     public void shouldNotValidateIfLabelIsBlank() throws GerritPluginException {
         // given
         fillConfiguration();

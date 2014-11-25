@@ -19,7 +19,7 @@ public class GerritConnectorTest {
     private DecoratorContext decoratorContextMock;
     @Mock
     private GerritConnector gerritConnector;
-    
+
     @Test
     public void shouldAggregateBasicParamsWhenAuthenticated() throws GerritPluginException {
         // given
@@ -50,15 +50,32 @@ public class GerritConnectorTest {
                 "/r/a/changes/project~branch%2Fsubbranch~changeid/revisions/revisionid");
     }
 
-    /**
     @Test
     public void shouldAggregateBasicParamsWhenAnonymous() throws GerritPluginException {
         // given
-        gerritConnector = new GerritConnector("server", 443, "", "");
+        gerritConnector = new GerritConnector("localhost", 80, "", "");
         // when
         // then
         assertThat(gerritConnector.rootUriBuilder("project", "branch", "changeid", "revisionid")).isEqualTo(
                 "/changes/project~branch~changeid/revisions/revisionid");
     }
-    **/
+
+    @Test
+    public void shouldPrependCustomBasePathWhenAnonymous() throws GerritPluginException {
+        // given
+        gerritConnector = new GerritConnector("https", "localhost", 443, "", "", "/r", "BASIC");
+        // when
+        // then
+        assertThat(gerritConnector.rootUriBuilder("project", "branch/subbranch", "changeid", "revisionid")).isEqualTo(
+                "/r/changes/project~branch%2Fsubbranch~changeid/revisions/revisionid");
+    }
+
+    /**
+     * @Test public void shouldAggregateBasicParamsWhenAnonymous() throws
+     *       GerritPluginException { // given gerritConnector = new
+     *       GerritConnector("server", 443, "", ""); // when // then
+     *       assertThat(gerritConnector.rootUriBuilder("project", "branch",
+     *       "changeid", "revisionid")).isEqualTo(
+     *       "/changes/project~branch~changeid/revisions/revisionid"); }
+     **/
 }

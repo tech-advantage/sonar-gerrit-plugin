@@ -141,8 +141,7 @@ public class GerritConfiguration {
         }
 
         void assertGerritServerConfiguration() {
-            if (StringUtils.isBlank(host) || null == httpPort || StringUtils.isBlank(httpUsername)
-                    || StringUtils.isBlank(httpPassword)) {
+            if (StringUtils.isBlank(host) || null == httpPort) {
                 serverValid = false;
                 if (enabled || LOG.isDebugEnabled()) {
                     LOG.error("[GERRIT PLUGIN] ServerConfiguration is not valid : {}", this.toString());
