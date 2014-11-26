@@ -98,26 +98,31 @@ public class GerritConnector {
     // http://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientPreemptiveDigestAuthentication.java
     private void createHttpContext() {
         httpHost = new HttpHost(host, port, scheme);
-        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(new AuthScope(host, port), new UsernamePasswordCredentials(username,
-                password));
-        httpClient = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
-
-        BasicAuthCache basicAuthCache = new BasicAuthCache();
-        AuthScheme authScheme = null;
-
-        if (BASIC_AUTH_SCHEME.equalsIgnoreCase(httpAuthScheme)) {
-            authScheme = new BasicScheme();
-        } else if (DIGEST_AUTH_SCHEME.equalsIgnoreCase(httpAuthScheme)) {
-            authScheme = new DigestScheme();
-        } else {
-            LOG.error("[GERRIT PLUGIN] createHttpContext called with AUTH_SCHEME {} instead of digest or basic",
-                    httpAuthScheme);
-        }
-
-        basicAuthCache.put(httpHost, authScheme);
         httpClientContext = HttpClientContext.create();
-        httpClientContext.setAuthCache(basicAuthCache);
+
+        if (StringUtils.isBlank(username)) {
+            httpClient = HttpClients.createDefault();
+        } else {
+            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            credentialsProvider.setCredentials(new AuthScope(host, port), new UsernamePasswordCredentials(username,
+                    password));
+            httpClient = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
+
+            BasicAuthCache basicAuthCache = new BasicAuthCache();
+            AuthScheme authScheme = null;
+
+            if (BASIC_AUTH_SCHEME.equalsIgnoreCase(httpAuthScheme)) {
+                authScheme = new BasicScheme();
+            } else if (DIGEST_AUTH_SCHEME.equalsIgnoreCase(httpAuthScheme)) {
+                authScheme = new DigestScheme();
+            } else {
+                LOG.error("[GERRIT PLUGIN] createHttpContext called with AUTH_SCHEME {} instead of digest or basic",
+                        httpAuthScheme);
+            }
+
+            basicAuthCache.put(httpHost, authScheme);
+            httpClientContext.setAuthCache(basicAuthCache);
+        }
     }
 
     @NotNull
@@ -164,7 +169,9 @@ public class GerritConnector {
         }
 
         String uri = basePath;
-        uri = uri.concat(URI_AUTH_PREFIX);
+        if (!StringUtils.isBlank(username)) {
+            uri = uri.concat(URI_AUTH_PREFIX);
+        }
         uri = uri.concat(String.format(URI_CHANGES, encode(projectName), encode(branchName), encode(changeId)));
         uri = uri.concat(String.format(URI_REVISIONS, encode(revisionId)));
 
