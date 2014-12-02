@@ -49,7 +49,7 @@ public class GerritDecorator implements Decorator, PostJob {
     private GerritFacade gerritFacade;
     // Sonar's long name to Gerrit original file name map.
     private Map<String, String> gerritModifiedFiles;
-    private ReviewInput reviewInput = new ReviewInput();
+    private ReviewInput reviewInput = ReviewHolder.getReviewInput();
     private final ResourcePerspectives perspectives;
 
     public GerritDecorator(Settings settings, ResourcePerspectives perspectives) {
@@ -236,7 +236,11 @@ public class GerritDecorator implements Decorator, PostJob {
         commentIssues(issuable, comments);
         commentAlerts(context, comments);
         if (!comments.isEmpty()) {
+            LOG.debug("[GERRIT PLUGIN] comments not empty. Adding to reviewInput. {}", comments);
             reviewInput.addComments(gerritModifiedFiles.get(resource.getLongName()), comments);
+        }
+        else {
+            LOG.debug("[GERRIT PLUGIN] comments empty. Nothing to add");
         }
     }
 

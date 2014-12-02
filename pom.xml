@@ -7,7 +7,6 @@
 	<artifactId>sonar-gerrit-plugin</artifactId>
 	<packaging>sonar-plugin</packaging>
 	<version>2.1.0</version>
-
 	<name>Sonar Gerrit Plugin</name>
 	<description>Sonar will rate your gerrit patch set and comment on found alerts.</description>
 	<organization>
