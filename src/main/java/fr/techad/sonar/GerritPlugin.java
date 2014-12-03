@@ -65,13 +65,7 @@ public final class GerritPlugin extends SonarPlugin {
                 .options(Severity.ALL).defaultValue(Severity.INFO).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
                 .index(reviewBaseIndex++).build();
 
-        PropertyDefinition chgId = PropertyDefinition.builder(PropertyKey.GERRIT_CHANGE_ID).category(GERRIT_CATEGORY)
-                .subCategory(GERRIT_SUBCATEGORY_REVIEW).index(reviewBaseIndex++).hidden().build();
-
-        PropertyDefinition revId = PropertyDefinition.builder(PropertyKey.GERRIT_REVISION_ID).category(GERRIT_CATEGORY)
-                .subCategory(GERRIT_SUBCATEGORY_REVIEW).index(reviewBaseIndex++).hidden().build();
-
         return Arrays.asList(GerritInitializer.class, GerritDecorator.class, GerritPostJob.class, enabled, scheme, host,
-                port, username, password, authScheme, basePath, label, message, threshold, revId, chgId);
+                port, username, password, authScheme, basePath, label, message, threshold);
     }
 }
