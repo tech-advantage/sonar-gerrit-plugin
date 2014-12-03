@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -59,7 +60,7 @@ public class GerritFacade {
                 throw new GerritPluginException(ERROR_LISTING, e);
             }
         }
-        return gerritFileList;
+        return Collections.unmodifiableMap(gerritFileList);
     }
 
     public void setReview(@NotNull String projectName, @NotNull String branchName, @NotNull String changeId,
