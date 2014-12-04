@@ -12,10 +12,7 @@ import org.sonar.api.batch.Decorator;
 import org.sonar.api.batch.DecoratorBarriers;
 import org.sonar.api.batch.DecoratorContext;
 import org.sonar.api.batch.DependsUpon;
-import org.sonar.api.batch.PostJob;
-import org.sonar.api.batch.SensorContext;
 import org.sonar.api.component.ResourcePerspectives;
-import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.measures.CoreMetrics;
@@ -33,47 +30,21 @@ import fr.techad.sonar.gerrit.GerritFacade;
 import fr.techad.sonar.gerrit.ReviewFileComment;
 import fr.techad.sonar.gerrit.ReviewInput;
 import fr.techad.sonar.gerrit.ReviewLineComment;
-import fr.techad.sonar.gerrit.ReviewUtils;
 
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
-public class GerritDecorator implements Decorator, PostJob {
+public class GerritDecorator implements Decorator {
     private static final Logger LOG = LoggerFactory.getLogger(GerritDecorator.class);
     private static final String ISSUE_FORMAT = "[%s] New: %s Severity: %s, Message: %s";
     private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
-    private static final String PROP_START = "${";
-    private static final int PROP_START_LENGTH = PROP_START.length();
-    private static final char PROP_END = '}';
-    private final Settings settings;
     private GerritServerConfiguration gerritServerConfiguration = GerritConfiguration.serverConfiguration();
     private GerritReviewConfiguration gerritReviewConfiguration = GerritConfiguration.reviewConfiguration();
     private GerritFacade gerritFacade;
-    // Sonar's long name to Gerrit original file name map.
     private Map<String, String> gerritModifiedFiles;
-    private ReviewInput reviewInput = new ReviewInput();
+    private ReviewInput reviewInput = ReviewHolder.getReviewInput();
     private final ResourcePerspectives perspectives;
 
-    public GerritDecorator(Settings settings, ResourcePerspectives perspectives) {
-        this.settings = settings;
+    public GerritDecorator(ResourcePerspectives perspectives) {
         this.perspectives = perspectives;
-
-        gerritServerConfiguration.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED))
-                .setScheme(settings.getString(PropertyKey.GERRIT_SCHEME))
-                .setHost(settings.getString(PropertyKey.GERRIT_HOST))
-                .setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT))
-                .setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME))
-                .setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD))
-                .setHttpAuthScheme(settings.getString(PropertyKey.GERRIT_HTTP_AUTH_SCHEME))
-                .setBasePath(settings.getString(PropertyKey.GERRIT_BASE_PATH));
-        gerritServerConfiguration.assertGerritServerConfiguration();
-
-        gerritReviewConfiguration.setLabel(settings.getString(PropertyKey.GERRIT_LABEL))
-                .setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE))
-                .setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD))
-                .setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT))
-                .setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH))
-                .setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID))
-                .setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
-        gerritReviewConfiguration.assertGerritReviewConfiguration();
     }
 
     @Override
@@ -121,58 +92,10 @@ public class GerritDecorator implements Decorator, PostJob {
     }
 
     @Override
-    public void executeOn(Project project, SensorContext context) {
-        if (!GerritConfiguration.isValid()) {
-            LOG.info("[GERRIT PLUGIN] Analysis has finished. Not sending results to Gerrit, because configuration is not valid.");
-            return;
-        }
-        try {
-            LOG.info("[GERRIT PLUGIN] Analysis has finished. Sending results to Gerrit.");
-            assertGerritFacade();
-            reviewInput.setMessage(substituteProperties(gerritReviewConfiguration.getMessage()));
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Define message : {}", reviewInput.getMessage());
-                LOG.debug("[GERRIT PLUGIN] Number of comments : {}", reviewInput.size());
-            }
-
-            int maxLevel = ReviewUtils.maxLevel(reviewInput);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Configured threshold {}, max review level {}",
-                        gerritReviewConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
-            }
-
-            if (ReviewUtils.isEmpty(reviewInput)
-                    || maxLevel < ReviewUtils.thresholdToValue(gerritReviewConfiguration.getThreshold())) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote +1 for the label : {}", gerritReviewConfiguration.getLabel());
-                }
-                reviewInput.setLabelToPlusOne(gerritReviewConfiguration.getLabel());
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote -1 for the label : {}", gerritReviewConfiguration.getLabel());
-                }
-                reviewInput.setLabelToMinusOne(gerritReviewConfiguration.getLabel());
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Send review for ChangeId={}, RevisionId={}",
-                        gerritReviewConfiguration.getChangeId(), gerritReviewConfiguration.getRevisionId());
-            }
-
-            gerritFacade.setReview(gerritReviewConfiguration.getProjectName(),
-                    gerritReviewConfiguration.getBranchName(), gerritReviewConfiguration.getChangeId(),
-                    gerritReviewConfiguration.getRevisionId(), reviewInput);
-
-        } catch (GerritPluginException e) {
-            LOG.error("[GERRIT PLUGIN] Error sending review to Gerrit", e);
-        }
-    }
-
-    @Override
     public boolean shouldExecuteOnProject(Project project) {
         boolean enabled = gerritServerConfiguration.isEnabled();
-        LOG.info("[GERRIT PLUGIN] Will{}execute plugin on project \'{}\'.", enabled ? " " : " NOT ", project.getName());
+        LOG.info("[GERRIT PLUGIN] Decorator : will{}execute plugin on project \'{}\'.", enabled ? " " : " NOT ",
+                project.getName());
         return enabled;
     }
 
@@ -240,37 +163,6 @@ public class GerritDecorator implements Decorator, PostJob {
         }
     }
 
-    protected String substituteProperties(String originalMessage) {
-        String subtitutedString = originalMessage;
-
-        if (StringUtils.contains(originalMessage, PROP_START)) {
-            List<String> prop = new ArrayList<String>();
-            String tempString = originalMessage;
-
-            while (StringUtils.contains(tempString, PROP_START)) {
-                tempString = tempString.substring(tempString.indexOf(PROP_START));
-                prop.add(tempString.substring(PROP_START_LENGTH, tempString.indexOf(PROP_END)));
-                tempString = StringUtils.substring(tempString, tempString.indexOf(PROP_END));
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Found {} properties to replace ({})", prop.size(), prop.toString());
-            }
-
-            for (String p : prop) {
-                subtitutedString = StringUtils.replace(subtitutedString, PROP_START + p + PROP_END,
-                        settings.getString(p));
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] New message is {}.", subtitutedString);
-            }
-        } else {
-            LOG.debug("[GERRIT PLUGIN] No message subtitution to do.");
-        }
-
-        return subtitutedString;
-    }
-
     private void commentIssues(Issuable issuable, List<ReviewFileComment> comments) {
         List<Issue> issues = issuable.issues();
         if (LOG.isDebugEnabled()) {
@@ -302,5 +194,10 @@ public class GerritDecorator implements Decorator, PostJob {
             LOG.info("[GERRIT PLUGIN] Alert found: {}", level.toString());
             comments.add(measureToComment(measure));
         }
+    }
+
+    @Override
+    public String toString() {
+        return "GerritDecorator";
     }
 }

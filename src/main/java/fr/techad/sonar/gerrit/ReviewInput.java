@@ -1,6 +1,6 @@
 package fr.techad.sonar.gerrit;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ReviewInput {
     private String message = "Looks good to me.";
-    private Map<String, Integer> labels = new HashMap<String, Integer>();
-    private Map<String, List<ReviewFileComment>> comments = new HashMap<String, List<ReviewFileComment>>();
+    private Map<String, Integer> labels = new ConcurrentHashMap<String, Integer>();
+    private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<String, List<ReviewFileComment>>();
 
     public void setLabelToPlusOne(@NotNull String label) {
         labels.put(label, 1);
