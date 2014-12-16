@@ -24,8 +24,7 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.resources.ResourceUtils;
 
-import fr.techad.sonar.GerritConfiguration.GerritReviewConfiguration;
-import fr.techad.sonar.GerritConfiguration.GerritServerConfiguration;
+import fr.techad.sonar.GerritConfiguration;
 import fr.techad.sonar.gerrit.GerritFacade;
 import fr.techad.sonar.gerrit.ReviewFileComment;
 import fr.techad.sonar.gerrit.ReviewInput;
@@ -36,15 +35,18 @@ public class GerritDecorator implements Decorator {
     private static final Logger LOG = LoggerFactory.getLogger(GerritDecorator.class);
     private static final String ISSUE_FORMAT = "[%s] New: %s Severity: %s, Message: %s";
     private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
-    private GerritServerConfiguration gerritServerConfiguration = GerritConfiguration.serverConfiguration();
-    private GerritReviewConfiguration gerritReviewConfiguration = GerritConfiguration.reviewConfiguration();
-    private GerritFacade gerritFacade;
     private Map<String, String> gerritModifiedFiles;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
+    private final GerritConfiguration gerritConfiguration;
+    private final GerritFacade gerritFacade;
     private final ResourcePerspectives perspectives;
 
-    public GerritDecorator(ResourcePerspectives perspectives) {
+    public GerritDecorator(ResourcePerspectives perspectives, GerritFacade gerritFacade,
+            GerritConfiguration gerritConfiguration) {
+        LOG.debug("[GERRIT PLUGIN] Instanciating GerritDecorator");
         this.perspectives = perspectives;
+        this.gerritFacade = gerritFacade;
+        this.gerritConfiguration = gerritConfiguration;
     }
 
     @Override
@@ -62,14 +64,13 @@ public class GerritDecorator implements Decorator {
                 }
                 return;
             }
-            if (!GerritConfiguration.isValid()) {
+            if (!gerritConfiguration.isValid()) {
                 LOG.debug("[GERRIT PLUGIN] Configuration is not valid");
                 return;
             }
 
             try {
                 LOG.debug("[GERRIT PLUGIN] Start Sonar decoration for Gerrit");
-                assertGerritFacade();
                 assertOrFetchGerritModifiedFiles();
             } catch (GerritPluginException e) {
                 LOG.error("[GERRIT PLUGIN] Error getting Gerrit datas", e);
@@ -93,7 +94,7 @@ public class GerritDecorator implements Decorator {
 
     @Override
     public boolean shouldExecuteOnProject(Project project) {
-        boolean enabled = gerritServerConfiguration.isEnabled();
+        boolean enabled = gerritConfiguration.isEnabled();
         LOG.info("[GERRIT PLUGIN] Decorator : will{}execute plugin on project \'{}\'.", enabled ? " " : " NOT ",
                 project.getName());
         return enabled;
@@ -105,27 +106,15 @@ public class GerritDecorator implements Decorator {
     }
 
     @DependsUpon
-    public Metric dependsOnAlerts() {
+    public Metric<?> dependsOnAlerts() {
         return CoreMetrics.ALERT_STATUS;
-    }
-
-    protected void assertGerritFacade() {
-        assert gerritServerConfiguration.isValid();
-        if (gerritFacade == null) {
-            gerritFacade = new GerritFacade(gerritServerConfiguration.getScheme(), gerritServerConfiguration.getHost(),
-                    gerritServerConfiguration.getHttpPort(), gerritServerConfiguration.getHttpUsername(),
-                    gerritServerConfiguration.getHttpPassword(), gerritServerConfiguration.getBasePath(),
-                    gerritServerConfiguration.getHttpAuthScheme());
-        }
     }
 
     protected void assertOrFetchGerritModifiedFiles() throws GerritPluginException {
         if (gerritModifiedFiles != null) {
             return;
         }
-        gerritModifiedFiles = gerritFacade.listFiles(gerritReviewConfiguration.getProjectName(),
-                gerritReviewConfiguration.getBranchName(), gerritReviewConfiguration.getChangeId(),
-                gerritReviewConfiguration.getRevisionId());
+        gerritModifiedFiles = gerritFacade.listFiles();
         if (LOG.isDebugEnabled()) {
             LOG.debug("[GERRIT PLUGIN] Modified files in gerrit (keys) : {}", gerritModifiedFiles.keySet());
             LOG.debug("[GERRIT PLUGIN] Modified files in gerrit (values): {}", gerritModifiedFiles.values());
@@ -144,7 +133,7 @@ public class GerritDecorator implements Decorator {
         return result;
     }
 
-    protected ReviewFileComment measureToComment(Measure measure) {
+    protected ReviewFileComment measureToComment(Measure<?> measure) {
         ReviewFileComment result = new ReviewFileComment();
         result.setMessage(String.format(ALERT_FORMAT, measure.getAlertStatus().toString(), measure.getAlertText()));
         if (LOG.isDebugEnabled()) {
@@ -178,12 +167,9 @@ public class GerritDecorator implements Decorator {
         }
     }
 
-    /**
-     * This is usable with sonar-file-alert plugin.
-     */
     private void commentAlerts(DecoratorContext context, List<ReviewFileComment> comments) {
         LOG.debug("[GERRIT PLUGIN] Found {} alerts", context.getMeasures(MeasuresFilters.all()).size());
-        for (Measure measure : context.getMeasures(MeasuresFilters.all())) {
+        for (Measure<?> measure : context.getMeasures(MeasuresFilters.all())) {
             Level level = measure.getAlertStatus();
             if (level == null || level == Metric.Level.OK) {
                 if (LOG.isDebugEnabled()) {

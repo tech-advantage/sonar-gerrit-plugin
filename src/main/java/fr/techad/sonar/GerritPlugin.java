@@ -9,6 +9,9 @@ import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.rule.Severity;
 
+import fr.techad.sonar.gerrit.GerritConnector;
+import fr.techad.sonar.gerrit.GerritFacade;
+
 public final class GerritPlugin extends SonarPlugin {
     private static final String GERRIT_CATEGORY = "Gerrit";
     private static final String GERRIT_SUBCATEGORY_SERVER = "Server";
@@ -65,7 +68,8 @@ public final class GerritPlugin extends SonarPlugin {
                 .options(Severity.ALL).defaultValue(Severity.INFO).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
                 .index(reviewBaseIndex++).build();
 
-        return Arrays.asList(GerritInitializer.class, GerritDecorator.class, GerritPostJob.class, enabled, scheme, host,
-                port, username, password, authScheme, basePath, label, message, threshold);
+        return Arrays.asList(GerritConfiguration.class, GerritConnector.class, GerritFacade.class,
+                GerritInitializer.class, GerritDecorator.class, GerritPostJob.class, enabled, scheme, host, port,
+                username, password, authScheme, basePath, label, message, threshold);
     }
 }
