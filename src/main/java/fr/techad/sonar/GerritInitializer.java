@@ -21,6 +21,11 @@ public class GerritInitializer extends Initializer {
 
     @Override
     public void execute(Project project) {
+        if (gerritConfiguration.forceBranch()) {
+            LOG.debug("[GERRIT PLUGIN] Force project branch to {}", gerritConfiguration.getBranchName());
+            project.setBranch(gerritConfiguration.getBranchName());
+        }
+        
         try {
             gerritFacade.listFiles();
         } catch (GerritPluginException e) {
