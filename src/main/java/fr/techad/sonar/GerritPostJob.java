@@ -44,11 +44,6 @@ public class GerritPostJob implements PostJob {
             return;
         }
 
-        if (!gerritConfiguration.isValid()) {
-            LOG.info("[GERRIT PLUGIN] Analysis has finished. Not sending results to Gerrit, because configuration is not valid.");
-            return;
-        }
-
         try {
             LOG.info("[GERRIT PLUGIN] Analysis has finished. Sending results to Gerrit.");
             reviewInput.setMessage(substituteProperties(gerritConfiguration.getMessage()));
