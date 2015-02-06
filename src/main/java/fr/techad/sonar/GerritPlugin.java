@@ -22,6 +22,7 @@ public final class GerritPlugin extends SonarPlugin {
     private static final String SCHEME_HTTPS = "https";
     private static final String AUTH_BASIC = "basic";
     private static final String AUTH_DIGEST = "digest";
+    private static final String GERRIT_COMMENT_NEW_ISSUES_ONLY = "false";
     private int serverBaseIndex;
     private int reviewBaseIndex;
 
@@ -73,8 +74,13 @@ public final class GerritPlugin extends SonarPlugin {
                 .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.BOOLEAN)
                 .defaultValue(GERRIT_FORCE_BRANCH_DEFAULT).index(reviewBaseIndex++).build();
 
+        PropertyDefinition newIssuesOnly = PropertyDefinition.builder(PropertyKey.GERRIT_COMMENT_NEW_ISSUES_ONLY)
+                .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.BOOLEAN)
+                .defaultValue(GERRIT_COMMENT_NEW_ISSUES_ONLY).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
+                .index(reviewBaseIndex++).build();
+
         return Arrays.asList(GerritConfiguration.class, GerritConnector.class, GerritFacade.class,
                 GerritInitializer.class, GerritDecorator.class, GerritPostJob.class, enabled, scheme, host, port,
-                username, password, authScheme, basePath, label, message, threshold, forceBranch);
+                username, password, authScheme, basePath, label, message, threshold, forceBranch, newIssuesOnly);
     }
 }

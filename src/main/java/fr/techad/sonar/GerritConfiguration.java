@@ -17,6 +17,7 @@ public class GerritConfiguration implements BatchComponent {
     private boolean valid;
     private boolean anonymous;
     private boolean forceBranch;
+    private boolean commentNewIssuesOnly;
 
     private String scheme;
     private String host;
@@ -39,6 +40,7 @@ public class GerritConfiguration implements BatchComponent {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritConfiguration");
 
         this.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED));
+        this.commentNewIssuesOnly(settings.getBoolean(PropertyKey.GERRIT_COMMENT_NEW_ISSUES_ONLY));
 
         this.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
         this.setHost(settings.getString(PropertyKey.GERRIT_HOST));
@@ -81,6 +83,15 @@ public class GerritConfiguration implements BatchComponent {
 
     public boolean forceBranch() {
         return forceBranch;
+    }
+
+    public GerritConfiguration commentNewIssuesOnly(boolean newIssuesOnly) {
+        commentNewIssuesOnly = newIssuesOnly;
+        return this;
+    }
+
+    public boolean shouldCommentNewIssuesOnly() {
+        return commentNewIssuesOnly;
     }
 
     @NotNull
@@ -273,8 +284,8 @@ public class GerritConfiguration implements BatchComponent {
         return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
                 + ", httpPort=" + httpPort + ", anonymous=" + anonymous + ", httpUsername=" + httpUsername
                 + ", httpPassword=" + httpPassword + ", authScheme=" + authScheme + ", basePath=" + basePath
-                + ", label=" + label + ", message=" + message + ", threshold=" + threshold + ", projectName="
-                + projectName + ", branchName=" + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId
-                + "]";
+                + ", label=" + label + ", message=" + message + ", threshold=" + threshold + ", commentNewIssuesOnly="
+                + commentNewIssuesOnly + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId="
+                + changeId + ", revisionId=" + revisionId + ", 'forceBranch=" + forceBranch + "]";
     }
 }
