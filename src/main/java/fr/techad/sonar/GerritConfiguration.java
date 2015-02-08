@@ -16,6 +16,7 @@ public class GerritConfiguration implements BatchComponent {
     private boolean enabled;
     private boolean valid;
     private boolean anonymous;
+    private boolean forceBranch;
 
     private String scheme;
     private String host;
@@ -55,6 +56,7 @@ public class GerritConfiguration implements BatchComponent {
         this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
         this.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
         this.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
+        this.setForceBranch(settings.getBoolean(PropertyKey.GERRIT_FORCE_BRANCH));
 
         this.assertGerritConfiguration();
     }
@@ -75,6 +77,10 @@ public class GerritConfiguration implements BatchComponent {
 
     public boolean isAnonymous() {
         return anonymous;
+    }
+
+    public boolean forceBranch() {
+        return forceBranch;
     }
 
     @NotNull
@@ -233,6 +239,11 @@ public class GerritConfiguration implements BatchComponent {
 
     public GerritConfiguration setRevisionId(@NotNull String revisionId) {
         this.revisionId = revisionId;
+        return this;
+    }
+
+    public GerritConfiguration setForceBranch(boolean forceBranch) {
+        this.forceBranch = forceBranch;
         return this;
     }
 

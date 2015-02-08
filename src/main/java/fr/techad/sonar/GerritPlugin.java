@@ -17,6 +17,7 @@ public final class GerritPlugin extends SonarPlugin {
     private static final String GERRIT_SUBCATEGORY_SERVER = "Server";
     private static final String GERRIT_SUBCATEGORY_REVIEW = "Review";
     private static final String GERRIT_ENABLED_DEFAULT = "true";
+    private static final String GERRIT_FORCE_BRANCH_DEFAULT = "false";
     private static final String SCHEME_HTTP = "http";
     private static final String SCHEME_HTTPS = "https";
     private static final String AUTH_BASIC = "basic";
@@ -68,8 +69,12 @@ public final class GerritPlugin extends SonarPlugin {
                 .options(Severity.ALL).defaultValue(Severity.INFO).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
                 .index(reviewBaseIndex++).build();
 
+        PropertyDefinition forceBranch = PropertyDefinition.builder(PropertyKey.GERRIT_FORCE_BRANCH)
+                .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.BOOLEAN)
+                .defaultValue(GERRIT_FORCE_BRANCH_DEFAULT).index(reviewBaseIndex++).build();
+
         return Arrays.asList(GerritConfiguration.class, GerritConnector.class, GerritFacade.class,
                 GerritInitializer.class, GerritDecorator.class, GerritPostJob.class, enabled, scheme, host, port,
-                username, password, authScheme, basePath, label, message, threshold);
+                username, password, authScheme, basePath, label, message, threshold, forceBranch);
     }
 }
