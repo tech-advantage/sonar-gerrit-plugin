@@ -64,10 +64,6 @@ public class GerritDecorator implements Decorator {
                 }
                 return;
             }
-            if (!gerritConfiguration.isValid()) {
-                LOG.debug("[GERRIT PLUGIN] Configuration is not valid");
-                return;
-            }
 
             try {
                 LOG.debug("[GERRIT PLUGIN] Start Sonar decoration for Gerrit");

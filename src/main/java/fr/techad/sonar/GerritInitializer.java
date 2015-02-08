@@ -35,9 +35,16 @@ public class GerritInitializer extends Initializer {
 
     @Override
     public boolean shouldExecuteOnProject(Project project) {
-        boolean enabled = gerritConfiguration.isEnabled();
-        LOG.info("[GERRIT PLUGIN] Initializer : will{}execute plugin on project \'{}\'.", enabled ? " " : " NOT ",
+        boolean willRun = gerritConfiguration.isEnabled();
+        
+        LOG.info("[GERRIT PLUGIN] Initializer : will{}execute plugin on project \'{}\'.", willRun ? " " : " NOT ",
                 project.getName());
-        return enabled;
+
+        if (!gerritConfiguration.isValid()) {
+            LOG.info("[GERRIT PLUGIN] Initializer : Configuration is not valid, will not execute.");
+            willRun = false;
+        }
+
+        return willRun;
     }
 }
