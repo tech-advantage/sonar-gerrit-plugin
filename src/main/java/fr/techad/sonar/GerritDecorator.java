@@ -155,11 +155,14 @@ public class GerritDecorator implements Decorator {
         }
         for (Issue issue : issues) {
             LOG.info("[GERRIT PLUGIN] Issue found: {}", issue.toString());
-            if (StringUtils.equals(issue.resolution(), Issue.RESOLUTION_FALSE_POSITIVE)) {
+
+            if (gerritConfiguration.shouldCommentNewIssuesOnly() && !issue.isNew()) {
+                LOG.info("[GERRIT PLUGIN] Issue is not new and only new one should be commented. Will not push back to Gerrit.");
+            } else if (StringUtils.equals(issue.resolution(), Issue.RESOLUTION_FALSE_POSITIVE)) {
                 LOG.info("[GERRIT PLUGIN] Issue marked as false-positive. Will not push back to Gerrit.");
-                continue;
+            } else {
+                comments.add(issueToComment(issue));
             }
-            comments.add(issueToComment(issue));
         }
     }
 

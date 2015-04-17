@@ -17,7 +17,8 @@ public final class PropertyKey {
     public static final String GERRIT_BASE_PATH = "GERRIT_BASE_PATH";
     public static final String GERRIT_THRESHOLD = "GERRIT_THRESHOLD";
     public static final String GERRIT_FORCE_BRANCH = "GERRIT_FORCE_BRANCH";
-    
+    public static final String GERRIT_COMMENT_NEW_ISSUES_ONLY = "GERRIT_COMMENT_NEW_ISSUES_ONLY";
+
     private PropertyKey() {
     }
 }
