@@ -23,6 +23,9 @@ public final class GerritPlugin extends SonarPlugin {
     private static final String AUTH_BASIC = "basic";
     private static final String AUTH_DIGEST = "digest";
     private static final String GERRIT_COMMENT_NEW_ISSUES_ONLY = "false";
+    private static final String GERRIT_VOTE_NO_ISSUE_DEFAULT = "+1";
+    private static final String GERRIT_VOTE_ISSUE_BELOW_THRESHOLD_DEFAULT = "+1";
+    private static final String GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD_DEFAULT = "-1";
     private int serverBaseIndex;
     private int reviewBaseIndex;
 
@@ -65,11 +68,6 @@ public final class GerritPlugin extends SonarPlugin {
                 .subCategory(GERRIT_SUBCATEGORY_REVIEW).defaultValue("Sonar review at ${sonar.host.url}")
                 .index(reviewBaseIndex++).build();
 
-        PropertyDefinition threshold = PropertyDefinition.builder(PropertyKey.GERRIT_THRESHOLD)
-                .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.SINGLE_SELECT_LIST)
-                .options(Severity.ALL).defaultValue(Severity.INFO).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
-                .index(reviewBaseIndex++).build();
-
         PropertyDefinition forceBranch = PropertyDefinition.builder(PropertyKey.GERRIT_FORCE_BRANCH)
                 .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.BOOLEAN)
                 .defaultValue(GERRIT_FORCE_BRANCH_DEFAULT).index(reviewBaseIndex++).build();
@@ -79,8 +77,31 @@ public final class GerritPlugin extends SonarPlugin {
                 .defaultValue(GERRIT_COMMENT_NEW_ISSUES_ONLY).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
                 .index(reviewBaseIndex++).build();
 
+        PropertyDefinition threshold = PropertyDefinition.builder(PropertyKey.GERRIT_THRESHOLD)
+                .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.SINGLE_SELECT_LIST)
+                .options(Severity.ALL).defaultValue(Severity.INFO).onQualifiers(Arrays.asList(Qualifiers.PROJECT))
+                .index(reviewBaseIndex++).build();
+
+        PropertyDefinition voteNoIssue = PropertyDefinition.builder(PropertyKey.GERRIT_VOTE_NO_ISSUE)
+                .category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.SINGLE_SELECT_LIST)
+                .options("+1", "+2").defaultValue(GERRIT_VOTE_NO_ISSUE_DEFAULT)
+                .onQualifiers(Arrays.asList(Qualifiers.PROJECT)).index(reviewBaseIndex++).build();
+
+        PropertyDefinition voteIssueBelowThreshold = PropertyDefinition
+                .builder(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD).category(GERRIT_CATEGORY)
+                .subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.SINGLE_SELECT_LIST)
+                .options("-2", "-1", "0", "+1", "+2").defaultValue(GERRIT_VOTE_ISSUE_BELOW_THRESHOLD_DEFAULT)
+                .onQualifiers(Arrays.asList(Qualifiers.PROJECT)).index(reviewBaseIndex++).build();
+
+        PropertyDefinition voteIssueAboveThreshold = PropertyDefinition
+                .builder(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD).category(GERRIT_CATEGORY)
+                .subCategory(GERRIT_SUBCATEGORY_REVIEW).type(PropertyType.SINGLE_SELECT_LIST).options("-2", "-1", "0")
+                .defaultValue(GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD_DEFAULT)
+                .onQualifiers(Arrays.asList(Qualifiers.PROJECT)).index(reviewBaseIndex++).build();
+
         return Arrays.asList(GerritConfiguration.class, GerritConnector.class, GerritFacade.class,
                 GerritInitializer.class, GerritPostJob.class, enabled, scheme, host, port,
-                username, password, authScheme, basePath, label, message, threshold, forceBranch, newIssuesOnly);
+                username, password, authScheme, basePath, label, message, forceBranch, newIssuesOnly, threshold,
+                voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold);
     }
 }

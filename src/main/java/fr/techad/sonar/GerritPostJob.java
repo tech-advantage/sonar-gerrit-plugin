@@ -78,17 +78,26 @@ public class GerritPostJob implements PostJob {
                         gerritConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
             }
 
-            if (ReviewUtils.isEmpty(reviewInput)
-                    || maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
+            if (ReviewUtils.isEmpty(reviewInput)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote +1 for the label : {}", gerritConfiguration.getLabel());
+                    LOG.debug("[GERRIT PLUGIN] No issues ! Vote {} for the label : {}",
+                            gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
                 }
-                reviewInput.setLabelToPlusOne(gerritConfiguration.getLabel());
+                reviewInput.setValueAndLabel(gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
+            } else if (maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("[GERRIT PLUGIN] Issues below threshold. Vote {} for the label : {}",
+                            gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
+                }
+                reviewInput.setValueAndLabel(gerritConfiguration.getVoteBelowThreshold(),
+                        gerritConfiguration.getLabel());
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote -1 for the label : {}", gerritConfiguration.getLabel());
+                    LOG.debug("[GERRIT PLUGIN] Issues above threshold. Vote {} for the label : {}",
+                            gerritConfiguration.getVoteAboveThreshold(), gerritConfiguration.getLabel());
                 }
-                reviewInput.setLabelToMinusOne(gerritConfiguration.getLabel());
+                reviewInput.setValueAndLabel(gerritConfiguration.getVoteAboveThreshold(),
+                        gerritConfiguration.getLabel());
             }
 
             if (LOG.isDebugEnabled()) {
