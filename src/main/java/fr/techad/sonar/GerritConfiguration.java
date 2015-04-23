@@ -30,9 +30,9 @@ public class GerritConfiguration implements BatchComponent {
     private String label;
     private String message;
     private String threshold;
-    private String voteNoIssue;
-    private String voteBelowThreshold;
-    private String voteAboveThreshold;
+    private int voteNoIssue;
+    private int voteBelowThreshold;
+    private int voteAboveThreshold;
 
     private String projectName;
     private String branchName;
@@ -56,9 +56,9 @@ public class GerritConfiguration implements BatchComponent {
         this.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
         this.setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE));
         this.setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD));
-        this.setVoteNoIssue(settings.getString(PropertyKey.GERRIT_VOTE_NO_ISSUE));
-        this.setVoteBelowThreshold(settings.getString(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD));
-        this.setVoteAboveThreshold(settings.getString(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD));
+        this.setVoteNoIssue(settings.getInt(PropertyKey.GERRIT_VOTE_NO_ISSUE));
+        this.setVoteBelowThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD));
+        this.setVoteAboveThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD));
 
         this.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
         this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
@@ -224,29 +224,29 @@ public class GerritConfiguration implements BatchComponent {
         return this;
     }
 
-    public String getVoteNoIssue() {
+    public int getVoteNoIssue() {
         return voteNoIssue;
     }
 
-    public GerritConfiguration setVoteNoIssue(String voteNoIssue) {
+    public GerritConfiguration setVoteNoIssue(int voteNoIssue) {
         this.voteNoIssue = voteNoIssue;
         return this;
     }
 
-    public String getVoteBelowThreshold() {
+    public int getVoteBelowThreshold() {
         return voteBelowThreshold;
     }
 
-    public GerritConfiguration setVoteBelowThreshold(String voteBelowThreshold) {
+    public GerritConfiguration setVoteBelowThreshold(int voteBelowThreshold) {
         this.voteBelowThreshold = voteBelowThreshold;
         return this;
     }
 
-    public String getVoteAboveThreshold() {
+    public int getVoteAboveThreshold() {
         return voteAboveThreshold;
     }
 
-    public GerritConfiguration setVoteAboveThreshold(String voteAboveThreshold) {
+    public GerritConfiguration setVoteAboveThreshold(int voteAboveThreshold) {
         this.voteAboveThreshold = voteAboveThreshold;
         return this;
     }
