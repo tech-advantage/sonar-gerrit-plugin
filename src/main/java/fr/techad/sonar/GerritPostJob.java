@@ -3,11 +3,15 @@ package fr.techad.sonar;
 import java.util.*;
 
 import fr.techad.sonar.gerrit.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.batch.*;
+import org.sonar.api.batch.DecoratorBarriers;
+import org.sonar.api.batch.DependsUpon;
+import org.sonar.api.batch.PostJob;
+import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.fs.InputPath;
 import org.sonar.api.batch.postjob.PostJobContext;
 import org.sonar.api.batch.postjob.issue.Issue;
@@ -28,10 +32,10 @@ public class GerritPostJob implements PostJob {
     private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
     private final Settings settings;
     private final GerritConfiguration gerritConfiguration;
+    private final PostJobContext postJobContext;
     private Map<String, String> gerritModifiedFiles;
     private GerritFacade gerritFacade;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
-    private final PostJobContext postJobContext;
 
     public GerritPostJob(Settings settings, GerritFacade gerritFacade, GerritConfiguration gerritConfiguration,
             PostJobContext postJobContext) {
