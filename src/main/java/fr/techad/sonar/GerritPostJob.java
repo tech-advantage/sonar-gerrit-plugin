@@ -18,17 +18,18 @@ import org.sonar.api.measures.MeasuresFilters;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.Project;
 
-import org.sonar.api.resources.Resource;
-
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
     private static final Logger LOG = LoggerFactory.getLogger(GerritPostJob.class);
     private static final String PROP_START = "${";
     private static final int PROP_START_LENGTH = PROP_START.length();
     private static final char PROP_END = '}';
+    private static final String ISSUE_FORMAT = "[%s] New: %s Severity: %s, Message: %s";
+    private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
     private final Settings settings;
-    private GerritFacade gerritFacade;
     private final GerritConfiguration gerritConfiguration;
+    private Map<String, String> gerritModifiedFiles;
+    private GerritFacade gerritFacade;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
     private final PostJobContext postJobContext;
 
@@ -142,10 +143,6 @@ public class GerritPostJob implements PostJob {
 
         return subtitutedString;
     }
-
-    private static final String ISSUE_FORMAT = "[%s] New: %s Severity: %s, Message: %s";
-    private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
-    private Map<String, String> gerritModifiedFiles;
 
     public void decorate(InputPath resource, SensorContext context, Collection<Issue> issues) {
         if (LOG.isDebugEnabled()) {
