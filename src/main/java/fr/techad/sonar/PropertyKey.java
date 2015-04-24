@@ -10,7 +10,7 @@ public final class PropertyKey {
     public static final String GERRIT_CHANGE_ID = "GERRIT_CHANGE_ID";
     public static final String GERRIT_REVISION_ID = "GERRIT_PATCHSET_REVISION";
     public static final String GERRIT_HTTP_USERNAME = "GERRIT_HTTP_USERNAME";
-    public static final String GERRIT_HTTP_PASSWORD = "GERRIT_HTTP_PASSWORD";
+    public static final String GERRIT_HTTP_PASSWORD = "GERRIT_HTTP_PASSWORD"; //NOSONAR
     public static final String GERRIT_HTTP_AUTH_SCHEME = "GERRIT_HTTP_AUTH_SCHEME";
     public static final String GERRIT_LABEL = "GERRIT_LABEL";
     public static final String GERRIT_MESSAGE = "GERRIT_MESSAGE";

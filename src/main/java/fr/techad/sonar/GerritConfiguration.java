@@ -74,7 +74,12 @@ public class GerritConfiguration implements BatchComponent {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        boolean ret = enabled;
+        if (StringUtils.isEmpty(changeId) || StringUtils.isEmpty(revisionId)) {
+            LOG.info("[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
+            ret = false;
+        }
+        return ret;
     }
 
     public boolean isAnonymous() {
@@ -261,7 +266,7 @@ public class GerritConfiguration implements BatchComponent {
     void assertGerritConfiguration() {
         if (StringUtils.isBlank(host) || null == httpPort) {
             valid = false;
-            if (enabled || LOG.isDebugEnabled()) {
+            if (isEnabled() || LOG.isDebugEnabled()) {
                 LOG.error("[GERRIT PLUGIN] ServerConfiguration is not valid : {}", this.toString());
             }
         } else {
@@ -271,7 +276,7 @@ public class GerritConfiguration implements BatchComponent {
         if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
                 || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
             valid = false;
-            if (enabled || LOG.isDebugEnabled()) {
+            if (isEnabled() || LOG.isDebugEnabled()) {
                 LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
             }
         } else {
@@ -283,9 +288,10 @@ public class GerritConfiguration implements BatchComponent {
     public String toString() {
         return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
                 + ", httpPort=" + httpPort + ", anonymous=" + anonymous + ", httpUsername=" + httpUsername
-                + ", httpPassword=" + httpPassword + ", authScheme=" + authScheme + ", basePath=" + basePath
-                + ", label=" + label + ", message=" + message + ", threshold=" + threshold + ", commentNewIssuesOnly="
-                + commentNewIssuesOnly + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId="
-                + changeId + ", revisionId=" + revisionId + ", 'forceBranch=" + forceBranch + "]";
+                + ", httpPassword=" + (StringUtils.isEmpty(httpPassword) ? "blank" : "*obfuscated*") + ", authScheme="
+                + authScheme + ", basePath=" + basePath + ", label=" + label + ", message=" + message + ", threshold="
+                + threshold + ", commentNewIssuesOnly=" + commentNewIssuesOnly + ", projectName=" + projectName
+                + ", branchName=" + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId
+                + ", 'forceBranch=" + forceBranch + "]";
     }
 }
