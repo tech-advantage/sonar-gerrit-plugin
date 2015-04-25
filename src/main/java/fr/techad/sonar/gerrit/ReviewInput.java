@@ -22,12 +22,16 @@ public class ReviewInput {
     private Map<String, Integer> labels = new ConcurrentHashMap<String, Integer>();
     private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<String, List<ReviewFileComment>>();
 
+    public void setValueAndLabel(@NotNull int value, @NotNull String label) {
+        labels.put(label, value);
+    }
+
     public void setLabelToPlusOne(@NotNull String label) {
-        labels.put(label, 1);
+        this.setValueAndLabel(1, label);
     }
 
     public void setLabelToMinusOne(@NotNull String label) {
-        labels.put(label, -1);
+        this.setValueAndLabel(-1, label);
     }
 
     public void setMessage(@NotNull String message) {

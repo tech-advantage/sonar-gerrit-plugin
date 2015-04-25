@@ -3,11 +3,15 @@ package fr.techad.sonar;
 import java.util.*;
 
 import fr.techad.sonar.gerrit.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonar.api.batch.*;
+import org.sonar.api.batch.DecoratorBarriers;
+import org.sonar.api.batch.DependsUpon;
+import org.sonar.api.batch.PostJob;
+import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.fs.InputPath;
 import org.sonar.api.batch.postjob.PostJobContext;
 import org.sonar.api.batch.postjob.issue.Issue;
@@ -28,10 +32,10 @@ public class GerritPostJob implements PostJob {
     private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
     private final Settings settings;
     private final GerritConfiguration gerritConfiguration;
+    private final PostJobContext postJobContext;
     private Map<String, String> gerritModifiedFiles;
     private GerritFacade gerritFacade;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
-    private final PostJobContext postJobContext;
 
     public GerritPostJob(Settings settings, GerritFacade gerritFacade, GerritConfiguration gerritConfiguration,
             PostJobContext postJobContext) {
@@ -78,17 +82,26 @@ public class GerritPostJob implements PostJob {
                         gerritConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
             }
 
-            if (ReviewUtils.isEmpty(reviewInput)
-                    || maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
+            if (ReviewUtils.isEmpty(reviewInput)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote +1 for the label : {}", gerritConfiguration.getLabel());
+                    LOG.debug("[GERRIT PLUGIN] No issues ! Vote {} for the label : {}",
+                            gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
                 }
-                reviewInput.setLabelToPlusOne(gerritConfiguration.getLabel());
+                reviewInput.setValueAndLabel(gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
+            } else if (maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("[GERRIT PLUGIN] Issues below threshold. Vote {} for the label : {}",
+                            gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
+                }
+                reviewInput.setValueAndLabel(gerritConfiguration.getVoteBelowThreshold(),
+                        gerritConfiguration.getLabel());
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Vote -1 for the label : {}", gerritConfiguration.getLabel());
+                    LOG.debug("[GERRIT PLUGIN] Issues above threshold. Vote {} for the label : {}",
+                            gerritConfiguration.getVoteAboveThreshold(), gerritConfiguration.getLabel());
                 }
-                reviewInput.setLabelToMinusOne(gerritConfiguration.getLabel());
+                reviewInput.setValueAndLabel(gerritConfiguration.getVoteAboveThreshold(),
+                        gerritConfiguration.getLabel());
             }
 
             if (LOG.isDebugEnabled()) {

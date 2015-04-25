@@ -30,6 +30,9 @@ public class GerritConfiguration implements BatchComponent {
     private String label;
     private String message;
     private String threshold;
+    private int voteNoIssue;
+    private int voteBelowThreshold;
+    private int voteAboveThreshold;
 
     private String projectName;
     private String branchName;
@@ -53,6 +56,9 @@ public class GerritConfiguration implements BatchComponent {
         this.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
         this.setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE));
         this.setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD));
+        this.setVoteNoIssue(settings.getInt(PropertyKey.GERRIT_VOTE_NO_ISSUE));
+        this.setVoteBelowThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD));
+        this.setVoteAboveThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD));
 
         this.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
         this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
@@ -218,6 +224,33 @@ public class GerritConfiguration implements BatchComponent {
         return this;
     }
 
+    public int getVoteNoIssue() {
+        return voteNoIssue;
+    }
+
+    public GerritConfiguration setVoteNoIssue(int voteNoIssue) {
+        this.voteNoIssue = voteNoIssue;
+        return this;
+    }
+
+    public int getVoteBelowThreshold() {
+        return voteBelowThreshold;
+    }
+
+    public GerritConfiguration setVoteBelowThreshold(int voteBelowThreshold) {
+        this.voteBelowThreshold = voteBelowThreshold;
+        return this;
+    }
+
+    public int getVoteAboveThreshold() {
+        return voteAboveThreshold;
+    }
+
+    public GerritConfiguration setVoteAboveThreshold(int voteAboveThreshold) {
+        this.voteAboveThreshold = voteAboveThreshold;
+        return this;
+    }
+
     @NotNull
     public String getProjectName() {
         return projectName;
@@ -288,10 +321,11 @@ public class GerritConfiguration implements BatchComponent {
     public String toString() {
         return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
                 + ", httpPort=" + httpPort + ", anonymous=" + anonymous + ", httpUsername=" + httpUsername
-                + ", httpPassword=" + (StringUtils.isEmpty(httpPassword) ? "blank" : "*obfuscated*") + ", authScheme="
+                + ", httpPassword=" + (StringUtils.isBlank(httpPassword) ? "blank" : "*obfuscated*") + ", authScheme="
                 + authScheme + ", basePath=" + basePath + ", label=" + label + ", message=" + message + ", threshold="
-                + threshold + ", commentNewIssuesOnly=" + commentNewIssuesOnly + ", projectName=" + projectName
-                + ", branchName=" + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId
-                + ", 'forceBranch=" + forceBranch + "]";
+                + threshold + ", voteNoIssue=" + voteNoIssue + ",voteBelowThreshold=" + voteBelowThreshold
+                + ",voteAboveThreshold=" + voteAboveThreshold + ",commentNewIssuesOnly=" + commentNewIssuesOnly
+                + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId=" + changeId
+                + ", revisionId=" + revisionId + ", 'forceBranch=" + forceBranch + "]";
     }
 }
