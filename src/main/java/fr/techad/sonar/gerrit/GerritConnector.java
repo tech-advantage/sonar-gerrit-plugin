@@ -61,6 +61,7 @@ public class GerritConnector implements BatchComponent {
         LOG.info("[GERRIT PLUGIN] Listing files from {}", getUri);
 
         HttpGet httpGet = new HttpGet(getUri);
+        httpGet.addHeader("Accept", "application/json");
         CloseableHttpResponse httpResponse = logAndExecute(httpGet);
         return consumeAndLogEntity(httpResponse);
     }
