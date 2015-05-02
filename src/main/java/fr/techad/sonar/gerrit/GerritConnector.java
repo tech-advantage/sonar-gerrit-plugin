@@ -25,16 +25,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.BatchComponent;
 import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
 
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritConnector implements BatchComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(GerritConnector.class);
+    private static final Logger LOG = Loggers.get(GerritConnector.class);
     private static final String BASIC_AUTH_SCHEME = "BASIC";
     private static final String DIGEST_AUTH_SCHEME = "DIGEST";
     private static final String URI_AUTH_PREFIX = "/a";

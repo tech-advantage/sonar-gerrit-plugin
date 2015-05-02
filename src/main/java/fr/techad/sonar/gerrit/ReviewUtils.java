@@ -4,12 +4,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.rule.Severity;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public final class ReviewUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(ReviewUtils.class);
+    private static final Logger LOG = Loggers.get(ReviewUtils.class);
     private static final String LOG_MESSAGE = "[GERRIT PLUGIN] Got review level {}, level is now {}";
     private static final String UNKNOWN = "UNKNOWN";
     private static final int INFO_VALUE = 0;

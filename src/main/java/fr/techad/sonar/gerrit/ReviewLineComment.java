@@ -1,11 +1,11 @@
 package fr.techad.sonar.gerrit;
 
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 public class ReviewLineComment extends ReviewFileComment {
-    private static final Logger LOG = LoggerFactory.getLogger(ReviewLineComment.class);
+    private static final Logger LOG = Loggers.get(ReviewLineComment.class);
     private Integer line = 0;
 
     public Integer getLine() {

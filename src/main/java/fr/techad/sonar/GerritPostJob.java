@@ -1,13 +1,13 @@
 package fr.techad.sonar;
 
-import java.util.*;
-
-import fr.techad.sonar.gerrit.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.DecoratorBarriers;
 import org.sonar.api.batch.DependsUpon;
 import org.sonar.api.batch.PostJob;
@@ -21,10 +21,18 @@ import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasuresFilters;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.Project;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
+import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.ReviewFileComment;
+import fr.techad.sonar.gerrit.ReviewInput;
+import fr.techad.sonar.gerrit.ReviewLineComment;
+import fr.techad.sonar.gerrit.ReviewUtils;
 
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
-    private static final Logger LOG = LoggerFactory.getLogger(GerritPostJob.class);
+    private static final Logger LOG = Loggers.get(GerritPostJob.class);
     private static final String PROP_START = "${";
     private static final int PROP_START_LENGTH = PROP_START.length();
     private static final char PROP_END = '}';

@@ -1,15 +1,14 @@
 package fr.techad.sonar;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Initializer;
 import org.sonar.api.resources.Project;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
-import fr.techad.sonar.GerritConfiguration;
 import fr.techad.sonar.gerrit.GerritFacade;
 
 public class GerritInitializer extends Initializer {
-    private static final Logger LOG = LoggerFactory.getLogger(GerritInitializer.class);
+    private static final Logger LOG = Loggers.get(GerritInitializer.class);
     private final GerritConfiguration gerritConfiguration;
     private GerritFacade gerritFacade;
 
