@@ -1,26 +1,26 @@
 package fr.techad.sonar.gerrit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fr.techad.sonar.GerritPluginException;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonar.api.BatchComponent;
-import org.sonar.api.batch.InstantiationStrategy;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.sonar.api.BatchComponent;
+import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fr.techad.sonar.GerritPluginException;
+
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritFacade implements BatchComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(GerritFacade.class);
+    private static final Logger LOG = Loggers.get(GerritFacade.class);
     private static final String RESPONSE_PREFIX = ")]}'";
     private static final String COMMIT_MSG = "/COMMIT_MSG";
     private static final String MAVEN_ENTRY_REGEX = ".*src/";

@@ -44,12 +44,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.8</version>
@@ -98,12 +92,6 @@
 			<groupId>com.intellij</groupId>
 			<artifactId>annotations</artifactId>
 			<version>12.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.10</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

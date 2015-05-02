@@ -3,15 +3,15 @@ package fr.techad.sonar;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.sonar.api.BatchComponent;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Settings;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritConfiguration implements BatchComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(GerritConfiguration.class);
+    private static final Logger LOG = Loggers.get(GerritConfiguration.class);
 
     private boolean enabled;
     private boolean valid;
