@@ -70,7 +70,12 @@ public class GerritConfiguration implements BatchComponent {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        boolean ret = enabled;
+        if (StringUtils.isEmpty(changeId) || StringUtils.isEmpty(revisionId)) {
+            LOG.info("[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
+            ret = false;
+        }
+        return ret;
     }
 
     public boolean isAnonymous() {
