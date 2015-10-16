@@ -20,7 +20,7 @@
 		<url>https://github.com/tech-advantage/sonar-gerrit-plugin/issues</url>
 	</issueManagement>
 	<scm>
-		<url>git@github.com:tech-advantage/sonar-gerrit-plugin.git</url>
+		<url>http:/github.com/tech-advantage/sonar-gerrit-plugin.git</url>
 		<connection>scm:git:https://github.com/tech-advantage/sonar-gerrit-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:tech-advantage/sonar-gerrit-plugin.git</developerConnection>
 	</scm>
@@ -32,13 +32,13 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonar.buildVersion>5.2-SNAPSHOT</sonar.buildVersion>
+		<sonar.buildVersion>5.2-RC2</sonar.buildVersion>
 		<jdk.min.version>1.7</jdk.min.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.codehaus.sonar</groupId>
+			<groupId>org.sonarsource.sonarqube</groupId>
 			<artifactId>sonar-plugin-api</artifactId>
 			<version>${sonar.buildVersion}</version>
 			<scope>provided</scope>
@@ -56,7 +56,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.sonar</groupId>
+			<groupId>org.sonarsource.sonarqube</groupId>
 			<artifactId>sonar-testing-harness</artifactId>
 			<version>${sonar.buildVersion}</version>
 			<scope>test</scope>
@@ -109,10 +109,10 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.sonar</groupId>
-				<artifactId>sonar-packaging-maven-plugin</artifactId>
-				<version>1.12.1</version>
-				<extensions>true</extensions>
+                <groupId>org.sonarsource.sonar-packaging-maven-plugin</groupId>
+                <artifactId>sonar-packaging-maven-plugin</artifactId>
+                <version>1.15-SNAPSHOT</version>
+                <extensions>true</extensions>
 				<configuration>
 					<pluginKey>gerrit</pluginKey>
 					<pluginName>Gerrit Reviewer</pluginName>
@@ -129,7 +129,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<!-- UTF-8 bundles are not supported by Java, so they must be converted 
+				<!-- UTF-8 bundles are not supported by Java, so they must be converted
 					during build -->
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>native2ascii-maven-plugin</artifactId>
@@ -144,7 +144,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<repositories>
 		<repository>
 			<id>SonarSnapShot</id>
@@ -152,7 +152,7 @@
 			<url>http://repository-sonarplugins.forge.cloudbees.com/snapshot/</url>
 		</repository>
 	</repositories>
-	
+
 	<reporting>
   <plugins>
 	<plugin>
@@ -163,8 +163,8 @@
 			<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 		</configuration>
 	</plugin>
- 
-	<!-- Corbertura --> 
+
+	<!-- Corbertura -->
 	<plugin>
 		<groupId>org.codehaus.mojo</groupId>
 		<artifactId>cobertura-maven-plugin</artifactId>
@@ -176,14 +176,14 @@
 			</formats>
 		</configuration>
 	</plugin>
-	
+
 	<!--  Surefire -->
 	 <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>2.18.1</version>
       </plugin>
- 
+
    </plugins>
 </reporting>
 </project>
