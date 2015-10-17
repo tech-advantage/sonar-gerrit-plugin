@@ -1,17 +1,17 @@
 package fr.techad.sonar;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.ReviewFileComment;
+import fr.techad.sonar.gerrit.ReviewInput;
+import fr.techad.sonar.gerrit.ReviewLineComment;
+import fr.techad.sonar.gerrit.ReviewUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.sonar.api.batch.DecoratorBarriers;
 import org.sonar.api.batch.DependsUpon;
 import org.sonar.api.batch.PostJob;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputPath;
 import org.sonar.api.batch.postjob.PostJobContext;
 import org.sonar.api.batch.postjob.issue.Issue;
@@ -24,11 +24,11 @@ import org.sonar.api.resources.Project;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.ReviewFileComment;
-import fr.techad.sonar.gerrit.ReviewInput;
-import fr.techad.sonar.gerrit.ReviewLineComment;
-import fr.techad.sonar.gerrit.ReviewUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
@@ -63,12 +63,16 @@ public class GerritPostJob implements PostJob {
 
         Map<InputPath,List<Issue>> issueMap = new HashMap<>();
         for (Issue i : postJobContext.issues()) {
-            List<Issue> l = issueMap.get(i.inputPath());
-            if(l==null){
-                l=new ArrayList<>();
-                issueMap.put(i.inputPath(), l);
+            InputComponent inputComponent = i.inputComponent();
+            if(inputComponent instanceof InputPath){
+                InputPath inputPath=(InputPath)inputComponent;
+                List<Issue> l = issueMap.get(inputPath);
+                if(l==null){
+                    l=new ArrayList<>();
+                    issueMap.put(inputPath, l);
+                }
+                l.add(i);
             }
-            l.add(i);
         }
 
         for (Map.Entry<InputPath, List<Issue>> e : issueMap.entrySet()) {
