@@ -28,7 +28,7 @@
   </issueManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sonar.buildVersion>5.2-RC3</sonar.buildVersion>
+    <sonar.buildVersion>5.2</sonar.buildVersion>
     <sonar-packaging.version>1.15</sonar-packaging.version>
     <jdk.min.version>1.7</jdk.min.version>
   </properties>
@@ -37,12 +37,6 @@
       <groupId>org.sonarsource.sonarqube</groupId>
       <artifactId>sonar-plugin-api</artifactId>
       <version>${sonar.buildVersion}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.10</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -84,6 +78,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.10</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
