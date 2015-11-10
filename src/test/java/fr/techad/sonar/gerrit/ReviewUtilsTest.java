@@ -6,8 +6,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.sonar.api.config.Settings;
 
+import fr.techad.sonar.PropertyKey;
 import fr.techad.sonar.gerrit.ReviewFileComment;
 import fr.techad.sonar.gerrit.ReviewInput;
 import fr.techad.sonar.gerrit.ReviewLineComment;
@@ -16,6 +19,8 @@ import static org.fest.assertions.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewUtilsTest {
+	@Mock
+    private Settings settings;
 
     ReviewInput reviewInput;
     ReviewLineComment rlcInfo;
@@ -111,5 +116,16 @@ public class ReviewUtilsTest {
         reviewInput.addComments("TLDR", reviewList);
         // then
         assertThat(ReviewUtils.maxLevel(reviewInput)).isEqualTo(ReviewUtils.thresholdToValue("CRITICAL"));
+    }
+    
+    @Test
+    public void validateSubstitution() {
+    	// given
+    	// when
+    	settings = new Settings().appendProperty(PropertyKey.GERRIT_MESSAGE, "Sonar review at ${sonar.host.url}")
+    			.appendProperty("sonar.host.url", "http://sq.example.com/");
+    	// then
+    	assertThat(ReviewUtils.substituteProperties(settings.getString(PropertyKey.GERRIT_MESSAGE), settings))
+    	.isEqualTo("Sonar review at http://sq.example.com/");
     }
 }
