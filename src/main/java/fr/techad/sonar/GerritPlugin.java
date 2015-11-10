@@ -100,7 +100,7 @@ public final class GerritPlugin extends SonarPlugin {
                 .onQualifiers(Arrays.asList(Qualifiers.PROJECT)).index(reviewBaseIndex++).build();
 
         return Arrays.asList(GerritConfiguration.class, GerritConnector.class, GerritFacade.class,
-                GerritInitializer.class, GerritPostJob.class, enabled, scheme, host, port,
+                GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class, enabled, scheme, host, port,
                 username, password, authScheme, basePath, label, message, forceBranch, newIssuesOnly, threshold,
                 voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold);
     }
