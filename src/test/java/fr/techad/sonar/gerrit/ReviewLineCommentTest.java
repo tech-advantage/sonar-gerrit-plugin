@@ -7,44 +7,42 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import fr.techad.sonar.GerritPluginException;
 import fr.techad.sonar.gerrit.ReviewLineComment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewLineCommentTest {
-    ReviewLineComment reviewLineComment;
+	ReviewLineComment reviewLineComment;
 
-    @Before
-    public void setUp() {
-        reviewLineComment = new ReviewLineComment();
-    }
+	@Before
+	public void setUp() {
+		reviewLineComment = new ReviewLineComment();
+	}
 
-    @Test
-    public void shouldHandleNullLine() throws GerritPluginException, JsonProcessingException {
-        // given
-        // when
-        reviewLineComment.setLine(null);
-        // then
-        assertThat(reviewLineComment.getLine()).isEqualTo(0);
-    }
+	@Test
+	public void shouldHandleNullLine() throws GerritPluginException {
+		// given
+		// when
+		reviewLineComment.setLine(null);
+		// then
+		assertThat(reviewLineComment.getLine()).isEqualTo(0);
+	}
 
-    @Test
-    public void shouldHandleNegativeLine() throws GerritPluginException, JsonProcessingException {
-        // given
-        // when
-        reviewLineComment.setLine(-42);
-        // then
-        assertThat(reviewLineComment.getLine()).isEqualTo(0);
-    }
+	@Test
+	public void shouldHandleNegativeLine() throws GerritPluginException {
+		// given
+		// when
+		reviewLineComment.setLine(-42);
+		// then
+		assertThat(reviewLineComment.getLine()).isEqualTo(0);
+	}
 
-    @Test
-    public void shouldHandleZeroLine() throws GerritPluginException, JsonProcessingException {
-        // given
-        // when
-        reviewLineComment.setLine(0);
-        // then
-        assertThat(reviewLineComment.getLine()).isEqualTo(0);
-    }
+	@Test
+	public void shouldHandleZeroLine() throws GerritPluginException {
+		// given
+		// when
+		reviewLineComment.setLine(0);
+		// then
+		assertThat(reviewLineComment.getLine()).isEqualTo(0);
+	}
 }

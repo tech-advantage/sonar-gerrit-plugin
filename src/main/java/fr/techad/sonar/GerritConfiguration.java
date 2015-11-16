@@ -3,329 +3,349 @@ package fr.techad.sonar;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.sonar.api.BatchComponent;
+import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.config.Settings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
+@BatchSide
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
-public class GerritConfiguration implements BatchComponent {
-    private static final Logger LOG = Loggers.get(GerritConfiguration.class);
+public class GerritConfiguration {
+	private static final Logger LOG = Loggers.get(GerritConfiguration.class);
 
-    private boolean enabled;
-    private boolean valid;
-    private boolean anonymous;
-    private boolean forceBranch;
-    private boolean commentNewIssuesOnly;
+	private boolean enabled;
+	private boolean valid;
+	private boolean anonymous;
+	private boolean forceBranch;
+	private boolean commentNewIssuesOnly;
 
-    private String scheme;
-    private String host;
-    private Integer httpPort;
-    private String httpUsername;
-    private String httpPassword;
-    private String authScheme;
-    private String basePath;
+	private String host;
 
-    private String label;
-    private String message;
-    private String threshold;
-    private int voteNoIssue;
-    private int voteBelowThreshold;
-    private int voteAboveThreshold;
+	private String scheme;
+	private Integer port;
+	private String username;
+	private String password;
+	private String authScheme;
+	private String basePath;
 
-    private String projectName;
-    private String branchName;
-    private String changeId;
-    private String revisionId;
+	private String sshKeyPath;
 
-    public GerritConfiguration(Settings settings) {
-        LOG.debug("[GERRIT PLUGIN] Instanciating GerritConfiguration");
+	private String label;
+	private String message;
+	private String threshold;
+	private int voteNoIssue;
+	private int voteBelowThreshold;
+	private int voteAboveThreshold;
 
-        this.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED));
-        this.commentNewIssuesOnly(settings.getBoolean(PropertyKey.GERRIT_COMMENT_NEW_ISSUES_ONLY));
+	private String projectName;
+	private String branchName;
+	private String changeId;
+	private String revisionId;
 
-        this.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
-        this.setHost(settings.getString(PropertyKey.GERRIT_HOST));
-        this.setHttpPort(settings.getInt(PropertyKey.GERRIT_HTTP_PORT));
-        this.setHttpUsername(settings.getString(PropertyKey.GERRIT_HTTP_USERNAME));
-        this.setHttpPassword(settings.getString(PropertyKey.GERRIT_HTTP_PASSWORD));
-        this.setHttpAuthScheme(settings.getString(PropertyKey.GERRIT_HTTP_AUTH_SCHEME));
-        this.setBasePath(settings.getString(PropertyKey.GERRIT_BASE_PATH));
+	public GerritConfiguration(Settings settings) {
+		LOG.debug("[GERRIT PLUGIN] Instanciating GerritConfiguration");
 
-        this.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
-        this.setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE));
-        this.setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD));
-        this.setVoteNoIssue(settings.getInt(PropertyKey.GERRIT_VOTE_NO_ISSUE));
-        this.setVoteBelowThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD));
-        this.setVoteAboveThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD));
+		this.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED));
+		this.commentNewIssuesOnly(settings.getBoolean(PropertyKey.GERRIT_COMMENT_NEW_ISSUES_ONLY));
 
-        this.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
-        this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
-        this.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
-        this.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
-        this.setForceBranch(settings.getBoolean(PropertyKey.GERRIT_FORCE_BRANCH));
+		this.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
+		this.setHost(settings.getString(PropertyKey.GERRIT_HOST));
+		this.setPort(settings.getInt(PropertyKey.GERRIT_PORT));
 
-        this.assertGerritConfiguration();
-    }
+		this.setUsername(settings.getString(PropertyKey.GERRIT_USERNAME));
+		this.setPassword(settings.getString(PropertyKey.GERRIT_PASSWORD));
+		this.setHttpAuthScheme(settings.getString(PropertyKey.GERRIT_HTTP_AUTH_SCHEME));
+		this.setBasePath(settings.getString(PropertyKey.GERRIT_BASE_PATH));
 
-    public boolean isValid() {
-        assertGerritConfiguration();
-        return valid;
-    }
+		this.setSshKeyPath(settings.getString(PropertyKey.GERRIT_SSH_KEY_PATH));
 
-    public GerritConfiguration enable(boolean serverEnabled) {
-        enabled = serverEnabled;
-        return this;
-    }
+		this.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
+		this.setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE));
+		this.setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD));
+		this.setVoteNoIssue(settings.getInt(PropertyKey.GERRIT_VOTE_NO_ISSUE));
+		this.setVoteBelowThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD));
+		this.setVoteAboveThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD));
 
-    public boolean isEnabled() {
-        boolean ret = enabled;
-        if (StringUtils.isEmpty(changeId) || StringUtils.isEmpty(revisionId)) {
-            LOG.info("[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
-            ret = false;
-        }
-        return ret;
-    }
+		this.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
+		this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
+		this.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
+		this.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
+		this.setForceBranch(settings.getBoolean(PropertyKey.GERRIT_FORCE_BRANCH));
 
-    public boolean isAnonymous() {
-        return anonymous;
-    }
+		this.assertGerritConfiguration();
+	}
 
-    public boolean forceBranch() {
-        return forceBranch;
-    }
+	public boolean isValid() {
+		assertGerritConfiguration();
+		return valid;
+	}
 
-    public GerritConfiguration commentNewIssuesOnly(boolean newIssuesOnly) {
-        commentNewIssuesOnly = newIssuesOnly;
-        return this;
-    }
+	public GerritConfiguration enable(boolean serverEnabled) {
+		enabled = serverEnabled;
+		return this;
+	}
 
-    public boolean shouldCommentNewIssuesOnly() {
-        return commentNewIssuesOnly;
-    }
+	public boolean isEnabled() {
+		boolean ret = enabled;
+		if (StringUtils.isEmpty(changeId) || StringUtils.isEmpty(revisionId)) {
+			LOG.info(
+					"[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
+			ret = false;
+		}
+		return ret;
+	}
 
-    @NotNull
-    public String getScheme() {
-        return scheme;
-    }
+	public boolean isAnonymous() {
+		return anonymous;
+	}
 
-    public GerritConfiguration setScheme(@NotNull String scheme) {
-        this.scheme = scheme;
-        return this;
-    }
+	public boolean forceBranch() {
+		return forceBranch;
+	}
 
-    @NotNull
-    public String getHost() {
-        return host;
-    }
+	public GerritConfiguration commentNewIssuesOnly(boolean newIssuesOnly) {
+		commentNewIssuesOnly = newIssuesOnly;
+		return this;
+	}
 
-    public GerritConfiguration setHost(@NotNull String host) {
-        this.host = host;
-        return this;
-    }
+	public boolean shouldCommentNewIssuesOnly() {
+		return commentNewIssuesOnly;
+	}
 
-    @NotNull
-    public Integer getHttpPort() {
-        return httpPort;
-    }
+	@NotNull
+	public String getScheme() {
+		return scheme;
+	}
 
-    public GerritConfiguration setHttpPort(@NotNull Integer httpPort) {
-        this.httpPort = httpPort;
-        return this;
-    }
+	public GerritConfiguration setScheme(@NotNull String scheme) {
+		this.scheme = scheme;
+		return this;
+	}
 
-    @Nullable
-    public String getHttpUsername() {
-        return httpUsername;
-    }
+	@NotNull
+	public String getHost() {
+		return host;
+	}
 
-    public GerritConfiguration setHttpUsername(@Nullable String httpUsername) {
-        this.httpUsername = httpUsername;
-        if (StringUtils.isBlank(httpUsername)) {
-            anonymous = true;
-        }
-        return this;
-    }
+	public GerritConfiguration setHost(@NotNull String host) {
+		this.host = host;
+		return this;
+	}
 
-    @Nullable
-    public String getHttpPassword() {
-        return httpPassword;
-    }
+	@NotNull
+	public Integer getPort() {
+		return port;
+	}
 
-    public GerritConfiguration setHttpPassword(String httpPassword) {
-        this.httpPassword = httpPassword;
-        return this;
-    }
+	public GerritConfiguration setPort(@NotNull Integer port) {
+		this.port = port;
+		return this;
+	}
 
-    public String getHttpAuthScheme() {
-        return authScheme;
-    }
+	@Nullable
+	public String getUsername() {
+		return username;
+	}
 
-    public GerritConfiguration setHttpAuthScheme(String authScheme) {
-        this.authScheme = authScheme;
-        return this;
-    }
+	public GerritConfiguration setUsername(@Nullable String username) {
+		this.username = username;
+		if (StringUtils.isBlank(username)) {
+			anonymous = true;
+		}
+		return this;
+	}
 
-    @Nullable
-    public String getBasePath() {
-        return basePath;
-    }
+	@Nullable
+	public String getPassword() {
+		return password;
+	}
 
-    public GerritConfiguration setBasePath(@Nullable String basePath) {
-        String newBasePath = basePath;
+	public GerritConfiguration setPassword(String password) {
+		this.password = password;
+		return this;
+	}
 
-        if (StringUtils.isBlank(newBasePath)) {
-            newBasePath = "/";
-        }
+	public String getHttpAuthScheme() {
+		return authScheme;
+	}
 
-        if (newBasePath.charAt(0) != '/') {
-            newBasePath = "/" + newBasePath;
-        }
+	public GerritConfiguration setHttpAuthScheme(String authScheme) {
+		this.authScheme = authScheme;
+		return this;
+	}
 
-        while (newBasePath.startsWith("/", 1) && !newBasePath.isEmpty()) {
-            newBasePath = newBasePath.substring(1, newBasePath.length());
-        }
+	@Nullable
+	public String getBasePath() {
+		return basePath;
+	}
 
-        while (newBasePath.endsWith("/") && 1 < newBasePath.length()) {
-            newBasePath = newBasePath.substring(0, newBasePath.length() - 1);
-        }
+	public GerritConfiguration setBasePath(@Nullable String basePath) {
+		String newBasePath = basePath;
 
-        this.basePath = newBasePath;
+		if (StringUtils.isBlank(newBasePath)) {
+			newBasePath = "/";
+		}
 
-        return this;
-    }
+		if (newBasePath.charAt(0) != '/') {
+			newBasePath = "/" + newBasePath;
+		}
 
-    @NotNull
-    public String getLabel() {
-        return label;
-    }
+		while (newBasePath.startsWith("/", 1) && !newBasePath.isEmpty()) {
+			newBasePath = newBasePath.substring(1, newBasePath.length());
+		}
 
-    public GerritConfiguration setLabel(@NotNull String label) {
-        this.label = label;
-        return this;
-    }
+		while (newBasePath.endsWith("/") && 1 < newBasePath.length()) {
+			newBasePath = newBasePath.substring(0, newBasePath.length() - 1);
+		}
 
-    public String getMessage() {
-        return message;
-    }
+		this.basePath = newBasePath;
 
-    public GerritConfiguration setMessage(String message) {
-        this.message = message;
-        return this;
-    }
+		return this;
+	}
 
-    public String getThreshold() {
-        return threshold;
-    }
+	@NotNull
+	public String getSshKeyPath() {
+		return sshKeyPath;
+	}
 
-    public GerritConfiguration setThreshold(String threshold) {
-        this.threshold = threshold;
-        return this;
-    }
+	public GerritConfiguration setSshKeyPath(String sshKey) {
+		this.sshKeyPath = sshKey;
+		return this;
+	}
 
-    public int getVoteNoIssue() {
-        return voteNoIssue;
-    }
+	@NotNull
+	public String getLabel() {
+		return label;
+	}
 
-    public GerritConfiguration setVoteNoIssue(int voteNoIssue) {
-        this.voteNoIssue = voteNoIssue;
-        return this;
-    }
+	public GerritConfiguration setLabel(@NotNull String label) {
+		this.label = label;
+		return this;
+	}
 
-    public int getVoteBelowThreshold() {
-        return voteBelowThreshold;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public GerritConfiguration setVoteBelowThreshold(int voteBelowThreshold) {
-        this.voteBelowThreshold = voteBelowThreshold;
-        return this;
-    }
+	public GerritConfiguration setMessage(String message) {
+		this.message = message;
+		return this;
+	}
 
-    public int getVoteAboveThreshold() {
-        return voteAboveThreshold;
-    }
+	public String getThreshold() {
+		return threshold;
+	}
 
-    public GerritConfiguration setVoteAboveThreshold(int voteAboveThreshold) {
-        this.voteAboveThreshold = voteAboveThreshold;
-        return this;
-    }
+	public GerritConfiguration setThreshold(String threshold) {
+		this.threshold = threshold;
+		return this;
+	}
 
-    @NotNull
-    public String getProjectName() {
-        return projectName;
-    }
+	public int getVoteNoIssue() {
+		return voteNoIssue;
+	}
 
-    public GerritConfiguration setProjectName(@NotNull String projectName) {
-        this.projectName = projectName;
-        return this;
-    }
+	public GerritConfiguration setVoteNoIssue(int voteNoIssue) {
+		this.voteNoIssue = voteNoIssue;
+		return this;
+	}
 
-    @NotNull
-    public String getBranchName() {
-        return branchName;
-    }
+	public int getVoteBelowThreshold() {
+		return voteBelowThreshold;
+	}
 
-    public GerritConfiguration setBranchName(@NotNull String branchName) {
-        this.branchName = branchName;
-        return this;
-    }
+	public GerritConfiguration setVoteBelowThreshold(int voteBelowThreshold) {
+		this.voteBelowThreshold = voteBelowThreshold;
+		return this;
+	}
 
-    @NotNull
-    public String getChangeId() {
-        return changeId;
-    }
+	public int getVoteAboveThreshold() {
+		return voteAboveThreshold;
+	}
 
-    public GerritConfiguration setChangeId(@NotNull String changeId) {
-        this.changeId = changeId;
-        return this;
-    }
+	public GerritConfiguration setVoteAboveThreshold(int voteAboveThreshold) {
+		this.voteAboveThreshold = voteAboveThreshold;
+		return this;
+	}
 
-    @NotNull
-    public String getRevisionId() {
-        return revisionId;
-    }
+	@NotNull
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public GerritConfiguration setRevisionId(@NotNull String revisionId) {
-        this.revisionId = revisionId;
-        return this;
-    }
+	public GerritConfiguration setProjectName(@NotNull String projectName) {
+		this.projectName = projectName;
+		return this;
+	}
 
-    public GerritConfiguration setForceBranch(boolean forceBranch) {
-        this.forceBranch = forceBranch;
-        return this;
-    }
+	@NotNull
+	public String getBranchName() {
+		return branchName;
+	}
 
-    void assertGerritConfiguration() {
-        if (StringUtils.isBlank(host) || null == httpPort) {
-            valid = false;
-            if (isEnabled() || LOG.isDebugEnabled()) {
-                LOG.error("[GERRIT PLUGIN] ServerConfiguration is not valid : {}", this.toString());
-            }
-        } else {
-            valid = true;
-        }
+	public GerritConfiguration setBranchName(@NotNull String branchName) {
+		this.branchName = branchName;
+		return this;
+	}
 
-        if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
-                || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
-            valid = false;
-            if (isEnabled() || LOG.isDebugEnabled()) {
-                LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
-            }
-        } else {
-            valid &= true;
-        }
-    }
+	@NotNull
+	public String getChangeId() {
+		return changeId;
+	}
 
-    @Override
-    public String toString() {
-        return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
-                + ", httpPort=" + httpPort + ", anonymous=" + anonymous + ", httpUsername=" + httpUsername
-                + ", httpPassword=" + (StringUtils.isBlank(httpPassword) ? "blank" : "*obfuscated*") + ", authScheme="
-                + authScheme + ", basePath=" + basePath + ", label=" + label + ", message=" + message + ", threshold="
-                + threshold + ", voteNoIssue=" + voteNoIssue + ",voteBelowThreshold=" + voteBelowThreshold
-                + ",voteAboveThreshold=" + voteAboveThreshold + ",commentNewIssuesOnly=" + commentNewIssuesOnly
-                + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId=" + changeId
-                + ", revisionId=" + revisionId + ", 'forceBranch=" + forceBranch + "]";
-    }
+	public GerritConfiguration setChangeId(@NotNull String changeId) {
+		this.changeId = changeId;
+		return this;
+	}
+
+	@NotNull
+	public String getRevisionId() {
+		return revisionId;
+	}
+
+	public GerritConfiguration setRevisionId(@NotNull String revisionId) {
+		this.revisionId = revisionId;
+		return this;
+	}
+
+	public GerritConfiguration setForceBranch(boolean forceBranch) {
+		this.forceBranch = forceBranch;
+		return this;
+	}
+
+	void assertGerritConfiguration() {
+		LOG.debug(this.toString());
+
+		if (StringUtils.isBlank(host) || null == port) {
+			valid = false;
+			if (isEnabled() || LOG.isDebugEnabled()) {
+				LOG.error("[GERRIT PLUGIN] ServerConfiguration is not valid : {}", this.toString());
+			}
+		} else {
+			valid = true;
+		}
+
+		if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
+				|| StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
+			valid = false;
+			if (isEnabled() || LOG.isDebugEnabled()) {
+				LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
+			}
+		} else {
+			valid &= true;
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
+				+ ", port=" + port + ", anonymous=" + anonymous + ", username=" + username + ", password="
+				+ (StringUtils.isBlank(password) ? "blank" : "*obfuscated*") + ", authScheme=" + authScheme
+				+ ", basePath=" + basePath + ", sshKeyPath=" + sshKeyPath + ", label=" + label + ", message=" + message
+				+ ", threshold=" + threshold + ", voteNoIssue=" + voteNoIssue + ",voteBelowThreshold="
+				+ voteBelowThreshold + ",voteAboveThreshold=" + voteAboveThreshold + ",commentNewIssuesOnly="
+				+ commentNewIssuesOnly + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId="
+				+ changeId + ", revisionId=" + revisionId + ", 'forceBranch=" + forceBranch + "]";
+	}
 }

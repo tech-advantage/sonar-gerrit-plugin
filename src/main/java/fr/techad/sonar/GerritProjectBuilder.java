@@ -5,6 +5,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.GerritFacadeFactory;
 import fr.techad.sonar.gerrit.ReviewInput;
 
 public class GerritProjectBuilder extends ProjectBuilder {
@@ -12,10 +13,10 @@ public class GerritProjectBuilder extends ProjectBuilder {
 	private final GerritConfiguration gerritConfiguration;
 	private final GerritFacade gerritFacade;
 
-	public GerritProjectBuilder(GerritConfiguration gerritConfiguration, GerritFacade gerritFacade) {
+	public GerritProjectBuilder(GerritConfiguration gerritConfiguration, GerritFacadeFactory gerritFacadeFactory) {
 		LOG.debug("[GERRIT PLUGIN] Instanciating GerritProjectBuilder");
 		this.gerritConfiguration = gerritConfiguration;
-		this.gerritFacade = gerritFacade;
+		this.gerritFacade = gerritFacadeFactory.getFacade();
 	}
 
 	@Override

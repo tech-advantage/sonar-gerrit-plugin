@@ -9,23 +9,23 @@ import org.sonar.api.utils.log.Loggers;
  * only.
  */
 public class ReviewFileComment {
-    private static final Logger LOG = Loggers.get(ReviewFileComment.class);
+	private static final Logger LOG = Loggers.get(ReviewFileComment.class);
 
-    private String message;
+	private String message;
 
-    public String getMessage() {
-        return message;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public void setMessage(@NotNull String message) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] ReviewFileComment setMessage {}", message);
-        }
-        this.message = message;
-    }
+	public void setMessage(@NotNull String message) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("[GERRIT PLUGIN] ReviewFileComment setMessage {}", message);
+		}
+		this.message = message;
+	}
 
-    @Override
-    public String toString() {
-        return "ReviewFileComment [message=" + message + "]";
-    }
+	@Override
+	public String toString() {
+		return "ReviewFileComment [message=" + message + "]";
+	}
 }
