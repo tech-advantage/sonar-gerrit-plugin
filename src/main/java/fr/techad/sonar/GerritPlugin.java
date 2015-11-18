@@ -51,9 +51,8 @@ public final class GerritPlugin extends SonarPlugin {
 		PropertyDefinition username = PropertyDefinition.builder(PropertyKey.GERRIT_USERNAME).category(GERRIT_CATEGORY)
 				.subCategory(GERRIT_SUBCATEGORY_SERVER).index(serverBaseIndex++).build();
 
-		PropertyDefinition password = PropertyDefinition.builder(PropertyKey.GERRIT_PASSWORD)
-				.category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_SERVER).type(PropertyType.PASSWORD)
-				.index(serverBaseIndex++).build();
+		PropertyDefinition password = PropertyDefinition.builder(PropertyKey.GERRIT_PASSWORD).category(GERRIT_CATEGORY)
+				.subCategory(GERRIT_SUBCATEGORY_SERVER).type(PropertyType.PASSWORD).index(serverBaseIndex++).build();
 
 		PropertyDefinition sshKeyPath = PropertyDefinition.builder(PropertyKey.GERRIT_SSH_KEY_PATH)
 				.category(GERRIT_CATEGORY).subCategory(GERRIT_SUBCATEGORY_SERVER).type(PropertyType.STRING)
@@ -106,7 +105,7 @@ public final class GerritPlugin extends SonarPlugin {
 
 		return Arrays.asList(GerritConfiguration.class, GerritConnectorFactory.class, GerritFacadeFactory.class,
 				GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class, enabled, scheme, host, port,
-				username, password, authScheme, basePath, sshKeyPath, label, message, forceBranch, newIssuesOnly, threshold,
-				voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold);
+				username, password, authScheme, basePath, sshKeyPath, label, message, forceBranch, newIssuesOnly,
+				threshold, voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold);
 	}
 }

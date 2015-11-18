@@ -22,13 +22,19 @@ public class GerritProjectBuilder extends ProjectBuilder {
 	@Override
 	public void build(Context context) {
 		if (!gerritConfiguration.isEnabled()) {
+			LOG.error("[GERRIT PLUGIN] Plugin is disabled. Wont send.");
+			return;
+		}
+
+		if (!gerritConfiguration.isValid()) {
+			LOG.error("[GERRIT PLUGIN] Configuration is invalid. Wont send.");
 			return;
 		}
 
 		ReviewInput ri = new ReviewInput();
 		ri.setValueAndLabel(0, gerritConfiguration.getLabel());
 		ri.setMessage("Sonar review in progress …");
-		
+
 		try {
 			gerritFacade.setReview(ri);
 		} catch (GerritPluginException e) {

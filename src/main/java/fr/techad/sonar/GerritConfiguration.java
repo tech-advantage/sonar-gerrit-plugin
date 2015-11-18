@@ -315,7 +315,7 @@ public class GerritConfiguration {
 	}
 
 	void assertGerritConfiguration() {
-		LOG.debug(this.toString());
+		LOG.debug("[GERRIT PLUGIN] Verifying configuration settings …\n{}", this.toString());
 
 		if (StringUtils.isBlank(host) || null == port) {
 			valid = false;
@@ -324,6 +324,20 @@ public class GerritConfiguration {
 			}
 		} else {
 			valid = true;
+		}
+		
+		if (GerritPlugin.SCHEME_SSH.equals(scheme) && StringUtils.isBlank(username)) {
+			valid = false;
+			if (isEnabled() || LOG.isDebugEnabled()) {
+				LOG.error("[GERRIT PLUGIN] Scheme is ssh but username is blank : {}", this.toString());
+			}
+		}
+
+		if (GerritPlugin.SCHEME_SSH.equals(scheme) && StringUtils.isBlank(sshKeyPath)) {
+			valid = false;
+			if (isEnabled() || LOG.isDebugEnabled()) {
+				LOG.error("[GERRIT PLUGIN] Scheme is ssh but keypath is blank : {}", this.toString());
+			}
 		}
 
 		if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
