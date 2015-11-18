@@ -46,7 +46,7 @@ public class GerritSshConnector extends GerritConnector {
 		LOG.info("[GERRIT PLUGIN] Setting review {}", reviewInputAsJson);
 
 		ByteBuffer stdin = ByteBuffer.wrap(reviewInputAsJson.getBytes());
-		SshClient sshClient = new JschSshClient(gerritConfiguration.getSshKeyPath(), "");
+		SshClient sshClient = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword());
 
 		LOG.debug("[GERRIT PLUGIN] Execute command SSH {}",
 				String.format(CMD_SET_REVIEW, gerritConfiguration.getRevisionId()));
