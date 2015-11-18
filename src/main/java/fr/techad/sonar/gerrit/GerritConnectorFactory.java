@@ -6,13 +6,12 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.GerritPlugin;
 
 @BatchSide
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritConnectorFactory {
 	private static final Logger LOG = Loggers.get(GerritConnectorFactory.class);
-	private static final String SCHEME_HTTP = "http";
-	private static final String SCHEME_SSH = "ssh";
 
 	GerritConfiguration gerritConfiguration;
 	GerritConnector gerritConnector;
@@ -20,10 +19,10 @@ public class GerritConnectorFactory {
 	public GerritConnectorFactory(GerritConfiguration gerritConfiguration) {
 		this.gerritConfiguration = gerritConfiguration;
 
-		if (gerritConfiguration.getScheme().startsWith(SCHEME_HTTP)) {
+		if (gerritConfiguration.getScheme().startsWith(GerritPlugin.SCHEME_HTTP)) {
 			LOG.debug("[GERRIT PLUGIN] Using REST connector.");
 			gerritConnector = new GerritRestConnector(gerritConfiguration);
-		} else if (gerritConfiguration.getScheme().equals(SCHEME_SSH)) {
+		} else if (gerritConfiguration.getScheme().equals(GerritPlugin.SCHEME_SSH)) {
 			LOG.debug("[GERRIT PLUGIN] Using SSH connector.");
 			gerritConnector = new GerritSshConnector(gerritConfiguration);
 		} else {

@@ -13,20 +13,20 @@ import fr.techad.sonar.gerrit.GerritConnectorFactory;
 import fr.techad.sonar.gerrit.GerritFacadeFactory;
 
 public final class GerritPlugin extends SonarPlugin {
-	private static final String GERRIT_CATEGORY = "Gerrit";
-	private static final String GERRIT_SUBCATEGORY_SERVER = "Server";
-	private static final String GERRIT_SUBCATEGORY_REVIEW = "Review";
-	private static final String GERRIT_ENABLED_DEFAULT = "true";
-	private static final String GERRIT_FORCE_BRANCH_DEFAULT = "false";
-	private static final String SCHEME_HTTP = "http";
-	private static final String SCHEME_HTTPS = "https";
-	private static final String SCHEME_SSH = "ssh";
-	private static final String AUTH_BASIC = "basic";
-	private static final String AUTH_DIGEST = "digest";
-	private static final String GERRIT_COMMENT_NEW_ISSUES_ONLY = "false";
-	private static final String GERRIT_VOTE_NO_ISSUE_DEFAULT = "+1";
-	private static final String GERRIT_VOTE_ISSUE_BELOW_THRESHOLD_DEFAULT = "+1";
-	private static final String GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD_DEFAULT = "-1";
+	public static final String GERRIT_CATEGORY = "Gerrit";
+	public static final String GERRIT_SUBCATEGORY_SERVER = "Server";
+	public static final String GERRIT_SUBCATEGORY_REVIEW = "Review";
+	public static final String GERRIT_ENABLED_DEFAULT = "true";
+	public static final String GERRIT_FORCE_BRANCH_DEFAULT = "false";
+	public static final String SCHEME_HTTP = "http";
+	public static final String SCHEME_HTTPS = "https";
+	public static final String SCHEME_SSH = "ssh";
+	public static final String AUTH_BASIC = "basic";
+	public static final String AUTH_DIGEST = "digest";
+	public static final String GERRIT_COMMENT_NEW_ISSUES_ONLY = "false";
+	public static final String GERRIT_VOTE_NO_ISSUE_DEFAULT = "+1";
+	public static final String GERRIT_VOTE_ISSUE_BELOW_THRESHOLD_DEFAULT = "+1";
+	public static final String GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD_DEFAULT = "-1";
 	private int serverBaseIndex;
 	private int reviewBaseIndex;
 
