@@ -18,48 +18,52 @@ import org.jetbrains.annotations.NotNull;
  * "message": "[nit] s/conrtol/control" } ] } }
  */
 public class ReviewInput {
-    private String message = "Looks good to me.";
-    private Map<String, Integer> labels = new ConcurrentHashMap<String, Integer>();
-    private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<String, List<ReviewFileComment>>();
+	private String message = "Looks good to me.";
+	private Map<String, Integer> labels = new ConcurrentHashMap<String, Integer>();
+	private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<String, List<ReviewFileComment>>();
 
-    public void setLabelToPlusOne(@NotNull String label) {
-        labels.put(label, 1);
-    }
+	public void setValueAndLabel(@NotNull int value, @NotNull String label) {
+		labels.put(label, value);
+	}
 
-    public void setLabelToMinusOne(@NotNull String label) {
-        labels.put(label, -1);
-    }
+	public void setLabelToPlusOne(@NotNull String label) {
+		this.setValueAndLabel(1, label);
+	}
 
-    public void setMessage(@NotNull String message) {
-        this.message = message;
-    }
+	public void setLabelToMinusOne(@NotNull String label) {
+		this.setValueAndLabel(-1, label);
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public void setMessage(@NotNull String message) {
+		this.message = message;
+	}
 
-    public void addComments(String key, List<ReviewFileComment> reviewFileComments) {
-        comments.put(key, reviewFileComments);
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public int size() {
-        return comments.size();
-    }
+	public void addComments(String key, List<ReviewFileComment> reviewFileComments) {
+		comments.put(key, reviewFileComments);
+	}
 
-    public void emptyComments() {
-        comments.clear();
-    }
+	public int size() {
+		return comments.size();
+	}
 
-    public Map<String, Integer> getLabels() {
-        return labels;
-    }
+	public void emptyComments() {
+		comments.clear();
+	}
 
-    public Map<String, List<ReviewFileComment>> getComments() {
-        return comments;
-    }
+	public Map<String, Integer> getLabels() {
+		return labels;
+	}
 
-    @Override
-    public String toString() {
-        return "ReviewInput [message=" + message + ", labels=" + labels + ", comments=" + comments + "]";
-    }
+	public Map<String, List<ReviewFileComment>> getComments() {
+		return comments;
+	}
+
+	@Override
+	public String toString() {
+		return "ReviewInput [message=" + message + ", labels=" + labels + ", comments=" + comments + "]";
+	}
 }

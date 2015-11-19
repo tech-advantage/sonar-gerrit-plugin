@@ -1,9 +1,5 @@
 package fr.techad.sonar;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.DecoratorBarriers;
@@ -16,24 +12,22 @@ import org.sonar.api.measures.Metric;
 import org.sonar.api.resources.Project;
 
 import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.GerritFacadeFactory;
 import fr.techad.sonar.gerrit.ReviewInput;
 import fr.techad.sonar.gerrit.ReviewUtils;
 
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
     private static final Logger LOG = LoggerFactory.getLogger(GerritPostJob.class);
-    private static final String PROP_START = "${";
-    private static final int PROP_START_LENGTH = PROP_START.length();
-    private static final char PROP_END = '}';
     private final Settings settings;
     private GerritFacade gerritFacade;
     private final GerritConfiguration gerritConfiguration;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
-    public GerritPostJob(Settings settings, GerritFacade gerritFacade, GerritConfiguration gerritConfiguration) {
+    public GerritPostJob(Settings settings, GerritFacadeFactory gerritFacadeFactory, GerritConfiguration gerritConfiguration) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritPostJob");
         this.settings = settings;
-        this.gerritFacade = gerritFacade;
+        this.gerritFacade = gerritFacadeFactory.getFacade();
         this.gerritConfiguration = gerritConfiguration;
     }
 
@@ -51,7 +45,7 @@ public class GerritPostJob implements PostJob {
 
         try {
             LOG.info("[GERRIT PLUGIN] Analysis has finished. Sending results to Gerrit.");
-            reviewInput.setMessage(substituteProperties(gerritConfiguration.getMessage()));
+            reviewInput.setMessage(ReviewUtils.substituteProperties(gerritConfiguration.getMessage(), settings));
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("[GERRIT PLUGIN] Define message : {}", reviewInput.getMessage());
@@ -97,36 +91,5 @@ public class GerritPostJob implements PostJob {
     @DependsUpon
     public Metric<?> dependsOnAlerts() {
         return CoreMetrics.ALERT_STATUS;
-    }
-
-    protected String substituteProperties(String originalMessage) {
-        String subtitutedString = originalMessage;
-
-        if (StringUtils.contains(originalMessage, PROP_START)) {
-            List<String> prop = new ArrayList<String>();
-            String tempString = originalMessage;
-
-            while (StringUtils.contains(tempString, PROP_START)) {
-                tempString = tempString.substring(tempString.indexOf(PROP_START));
-                prop.add(tempString.substring(PROP_START_LENGTH, tempString.indexOf(PROP_END)));
-                tempString = StringUtils.substring(tempString, tempString.indexOf(PROP_END));
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Found {} properties to replace ({})", prop.size(), prop.toString());
-            }
-
-            for (String p : prop) {
-                subtitutedString = StringUtils.replace(subtitutedString, PROP_START + p + PROP_END,
-                        settings.getString(p));
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] New message is {}.", subtitutedString);
-            }
-        } else {
-            LOG.debug("[GERRIT PLUGIN] No message subtitution to do.");
-        }
-
-        return subtitutedString;
     }
 }

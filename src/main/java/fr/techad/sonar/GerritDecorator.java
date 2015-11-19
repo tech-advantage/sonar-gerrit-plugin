@@ -26,6 +26,7 @@ import org.sonar.api.resources.ResourceUtils;
 
 import fr.techad.sonar.GerritConfiguration;
 import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.GerritFacadeFactory;
 import fr.techad.sonar.gerrit.ReviewFileComment;
 import fr.techad.sonar.gerrit.ReviewInput;
 import fr.techad.sonar.gerrit.ReviewLineComment;
@@ -41,11 +42,11 @@ public class GerritDecorator implements Decorator {
     private final GerritFacade gerritFacade;
     private final ResourcePerspectives perspectives;
 
-    public GerritDecorator(ResourcePerspectives perspectives, GerritFacade gerritFacade,
+    public GerritDecorator(ResourcePerspectives perspectives, GerritFacadeFactory gerritFacadeFactory,
             GerritConfiguration gerritConfiguration) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritDecorator");
         this.perspectives = perspectives;
-        this.gerritFacade = gerritFacade;
+        this.gerritFacade = gerritFacadeFactory.getFacade();
         this.gerritConfiguration = gerritConfiguration;
     }
 
