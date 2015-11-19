@@ -30,7 +30,7 @@ import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
 
-public class GerritRestConnector extends GerritConnector {
+public class GerritRestConnector implements GerritConnector {
 	private static final Logger LOG = Loggers.get(GerritRestConnector.class);
 	private static final String BASIC_AUTH_SCHEME = "BASIC";
 	private static final String DIGEST_AUTH_SCHEME = "DIGEST";

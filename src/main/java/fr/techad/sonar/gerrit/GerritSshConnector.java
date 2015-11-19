@@ -14,7 +14,7 @@ import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
 
-public class GerritSshConnector extends GerritConnector {
+public class GerritSshConnector implements GerritConnector {
 	private static final Logger LOG = Loggers.get(GerritSshConnector.class);
 	private static final String CMD_LIST_FILES = "gerrit query --format=JSON --files --current-patch-set status:open change:%s limit:1";
 	private static final String CMD_SET_REVIEW = "gerrit review %s -j";
