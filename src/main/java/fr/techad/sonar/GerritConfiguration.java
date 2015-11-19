@@ -326,14 +326,14 @@ public class GerritConfiguration {
 			valid = true;
 		}
 		
-		if (GerritPlugin.SCHEME_SSH.equals(scheme) && StringUtils.isBlank(username)) {
+		if (GerritConstants.SCHEME_SSH.equals(scheme) && StringUtils.isBlank(username)) {
 			valid = false;
 			if (isEnabled() || LOG.isDebugEnabled()) {
 				LOG.error("[GERRIT PLUGIN] Scheme is ssh but username is blank : {}", this.toString());
 			}
 		}
 
-		if (GerritPlugin.SCHEME_SSH.equals(scheme) && StringUtils.isBlank(sshKeyPath)) {
+		if (GerritConstants.SCHEME_SSH.equals(scheme) && StringUtils.isBlank(sshKeyPath)) {
 			valid = false;
 			if (isEnabled() || LOG.isDebugEnabled()) {
 				LOG.error("[GERRIT PLUGIN] Scheme is ssh but keypath is blank : {}", this.toString());
