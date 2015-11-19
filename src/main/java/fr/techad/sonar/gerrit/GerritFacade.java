@@ -1,82 +1,68 @@
 package fr.techad.sonar.gerrit;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.google.gson.stream.JsonWriter;
 
 import fr.techad.sonar.GerritPluginException;
 
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonar.api.BatchComponent;
-import org.sonar.api.batch.InstantiationStrategy;
+public abstract class GerritFacade {
+	private static final String MAVEN_ENTRY_REGEX = ".*src/";
+	private static final String ERROR_FORMAT = "Error formatting review";
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+	/**
+	 * @return sonarLongName to gerritFileName map
+	 */
+	public abstract Map<String, String> listFiles() throws GerritPluginException;
 
-@InstantiationStrategy(InstantiationStrategy.PER_BATCH)
-public class GerritFacade implements BatchComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(GerritFacade.class);
-    private static final String RESPONSE_PREFIX = ")]}'";
-    private static final String COMMIT_MSG = "/COMMIT_MSG";
-    private static final String MAVEN_ENTRY_REGEX = ".*src/";
+	public abstract void setReview(ReviewInput reviewInput) throws GerritPluginException;
 
-    private static final String ERROR_LISTING = "Error listing files";
-    private static final String ERROR_SETTING = "Error setting review";
-    private final GerritConnector gerritConnector;
-    private ObjectMapper objectMapper = new ObjectMapper();
-    private Map<String, String> gerritFileList = new HashMap<String, String>();
+	String formatReview(ReviewInput reviewInput) throws GerritPluginException {
+		StringWriter stringWriter = new StringWriter();
+		JsonWriter jsonWriter = new JsonWriter(stringWriter);
 
-    public GerritFacade(GerritConnector gerritConnector) {
-        LOG.debug("[GERRIT PLUGIN] Instanciating GerritFacade");
-        this.gerritConnector = gerritConnector;
-    }
+		try {
+			jsonWriter.beginObject();
+			jsonWriter.name("message").value(reviewInput.getMessage());
 
-    /**
-     * @return sonarLongName to gerritFileName map
-     */
-    @NotNull
-    public Map<String, String> listFiles() throws GerritPluginException {
-        if (!gerritFileList.isEmpty()) {
-            LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
-        } else {
-            try {
-                String response = gerritConnector.listFiles();
-                String jsonString = trimResponse(response);
-                ListFilesResponse listFilesResponse = objectMapper.readValue(jsonString, ListFilesResponse.class);
-                Set<String> keys = listFilesResponse.keySet();
-                keys.remove(COMMIT_MSG);
-                for (String key : keys) {
-                    gerritFileList.put(parseFileName(key), key);
-                }
-            } catch (IOException e) {
-                throw new GerritPluginException(ERROR_LISTING, e);
-            }
-        }
-        return Collections.unmodifiableMap(gerritFileList);
-    }
+			if (!reviewInput.getLabels().isEmpty()) {
+				jsonWriter.name("labels").beginObject();
+				for (String label : reviewInput.getLabels().keySet()) {
+					jsonWriter.name(label).value(reviewInput.getLabels().get(label));
+				}
+				jsonWriter.endObject();
+			}
 
-    public void setReview(@NotNull ReviewInput reviewInput) throws GerritPluginException {
-        try {
-            String json = objectMapper.writeValueAsString(reviewInput);
-            gerritConnector.setReview(json);
-        } catch (JsonProcessingException e) {
-            throw new GerritPluginException(ERROR_SETTING, e);
-        } catch (IOException e) {
-            throw new GerritPluginException(ERROR_SETTING, e);
-        }
-    }
+			if (!reviewInput.getComments().isEmpty()) {
+				jsonWriter.name("comments").beginObject();
+				for (String fileName : reviewInput.getComments().keySet()) {
+					if (!reviewInput.getComments().isEmpty()) {
+						jsonWriter.name(fileName).beginArray();
+						for (ReviewFileComment rfc : reviewInput.getComments().get(fileName)) {
+							jsonWriter.beginObject();
+							jsonWriter.name("line").value(((ReviewLineComment) rfc).getLine());
+							jsonWriter.name("message").value(rfc.getMessage());
+							jsonWriter.endObject();
+						}
+						jsonWriter.endArray();
+					}
+				}
+				jsonWriter.endObject();
+			}
+			jsonWriter.endObject();
+			jsonWriter.close();
+		} catch (IOException e) {
+			throw new GerritPluginException(ERROR_FORMAT, e);
+		}
 
-    @NotNull
-    protected String trimResponse(@NotNull String response) {
-        return StringUtils.replaceOnce(response, RESPONSE_PREFIX, "");
-    }
+		return stringWriter.toString();
+	}
 
-    protected String parseFileName(@NotNull String fileName) {
-        return fileName.replaceFirst(MAVEN_ENTRY_REGEX, "src/");
-    }
+	protected String parseFileName(@NotNull String fileName) {
+		return fileName.replaceFirst(MAVEN_ENTRY_REGEX, "src/");
+	}
 }
