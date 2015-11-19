@@ -29,11 +29,10 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.GerritConstants;
 
 public class GerritRestConnector implements GerritConnector {
 	private static final Logger LOG = Loggers.get(GerritRestConnector.class);
-	private static final String BASIC_AUTH_SCHEME = "BASIC";
-	private static final String DIGEST_AUTH_SCHEME = "DIGEST";
 	private static final String URI_AUTH_PREFIX = "/a";
 	private static final String URI_CHANGES = "/changes/%s~%s~%s";
 	private static final String URI_REVISIONS = "/revisions/%s";
@@ -101,9 +100,9 @@ public class GerritRestConnector implements GerritConnector {
 			BasicAuthCache basicAuthCache = new BasicAuthCache();
 			AuthScheme authScheme = null;
 
-			if (BASIC_AUTH_SCHEME.equalsIgnoreCase(gerritConfiguration.getHttpAuthScheme())) {
+			if (GerritConstants.AUTH_BASIC.equalsIgnoreCase(gerritConfiguration.getHttpAuthScheme())) {
 				authScheme = new BasicScheme();
-			} else if (DIGEST_AUTH_SCHEME.equalsIgnoreCase(gerritConfiguration.getHttpAuthScheme())) {
+			} else if (GerritConstants.AUTH_DIGEST.equalsIgnoreCase(gerritConfiguration.getHttpAuthScheme())) {
 				authScheme = new DigestScheme();
 
 			} else {
