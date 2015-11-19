@@ -1,17 +1,24 @@
 package fr.techad.sonar.gerrit;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonar.api.config.Settings;
 import org.sonar.api.rule.Severity;
 
 public final class ReviewUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ReviewUtils.class);
     private static final String LOG_MESSAGE = "[GERRIT PLUGIN] Got review level {}, level is now {}";
     private static final String UNKNOWN = "UNKNOWN";
+
+    private static final String PROP_START = "${";
+    private static final int PROP_START_LENGTH = PROP_START.length();
+    private static final char PROP_END = '}';
+
     private static final int INFO_VALUE = 0;
     private static final int MINOR_VALUE = 1;
     private static final int MAJOR_VALUE = 2;
@@ -111,4 +118,37 @@ public final class ReviewUtils {
 
         return lvl;
     }
+
+	public static String substituteProperties(String originalMessage, Settings settings) {
+	    String substitutedString = originalMessage;
+	
+	    if (StringUtils.contains(originalMessage, PROP_START)) {
+	        List<String> prop = new ArrayList<String>();
+	        String tempString = originalMessage;
+	
+	        while (StringUtils.contains(tempString, PROP_START)) {
+	            tempString = tempString.substring(tempString.indexOf(PROP_START));
+	            prop.add(tempString.substring(PROP_START_LENGTH, tempString.indexOf(PROP_END)));
+	            tempString = StringUtils.substring(tempString, tempString.indexOf(PROP_END));
+	        }
+	
+	        if (LOG.isDebugEnabled()) {
+	            LOG.debug("[GERRIT PLUGIN] Found {} properties to replace ({})", prop.size(), prop.toString());
+	        }
+	
+	        for (String p : prop) {
+	            substitutedString = StringUtils.replace(substitutedString, PROP_START + p + PROP_END,
+	                    settings.getString(p));
+	        }
+	        if (LOG.isDebugEnabled()) {
+	            LOG.debug("[GERRIT PLUGIN] New message is {}.", substitutedString);
+	        }
+	    } else {
+	        LOG.debug("[GERRIT PLUGIN] No message subtitution to do.");
+	    }
+	
+	    return substitutedString;
+	}
+    
+    
 }
