@@ -1,21 +1,22 @@
 package fr.techad.sonar.gerrit;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import fr.techad.sonar.PropertyKey;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.sonar.api.batch.postjob.issue.Issue;
+import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Settings;
+import org.sonar.api.rule.RuleKey;
 
-import fr.techad.sonar.PropertyKey;
-import fr.techad.sonar.gerrit.ReviewFileComment;
-import fr.techad.sonar.gerrit.ReviewInput;
-import fr.techad.sonar.gerrit.ReviewLineComment;
-import fr.techad.sonar.gerrit.ReviewUtils;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewUtilsTest {
@@ -127,5 +128,22 @@ public class ReviewUtilsTest {
     	// then
     	assertThat(ReviewUtils.substituteProperties(settings.getString(PropertyKey.GERRIT_MESSAGE), settings))
     	.isEqualTo("Sonar review at http://sq.example.com/");
+    }
+
+    @Test
+    public void validateIssueSubstitution() {
+        // given
+        Issue issue = mock(Issue.class);
+        when(issue.isNew()).thenReturn(true);
+        when(issue.ruleKey()).thenReturn(RuleKey.of("squid", "XX12"));
+        when(issue.message()).thenReturn("You have a problem there");
+        when(issue.severity()).thenReturn(Severity.BLOCKER);
+        // when
+        settings = new Settings()
+            .appendProperty(PropertyKey.GERRIT_ISSUE_COMMENT, "[${issue.isNew}] New: ${issue.ruleKey} on ${sonar.host.url} Severity: ${issue.severity}, Message: ${issue.message}")
+            .appendProperty("sonar.host.url", "http://sq.example.com/");
+        // then
+        assertThat(ReviewUtils.issueMessage(settings.getString(PropertyKey.GERRIT_ISSUE_COMMENT), settings, issue))
+            .isEqualTo("[true] New: squid:XX12 on http://sq.example.com/ Severity: BLOCKER, Message: You have a problem there");
     }
 }

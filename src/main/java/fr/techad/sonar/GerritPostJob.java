@@ -6,7 +6,6 @@ import fr.techad.sonar.gerrit.ReviewFileComment;
 import fr.techad.sonar.gerrit.ReviewInput;
 import fr.techad.sonar.gerrit.ReviewLineComment;
 import fr.techad.sonar.gerrit.ReviewUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.sonar.api.batch.DecoratorBarriers;
 import org.sonar.api.batch.DependsUpon;
@@ -34,7 +33,6 @@ import java.util.Map;
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
 	private static final Logger LOG = Loggers.get(GerritPostJob.class);
-	private static final String ISSUE_FORMAT = "[%s] New: %s Severity: %s, Message: %s";
 	private static final String ALERT_FORMAT = "[ALERT] Severity: %s, Message: %s";
 	private final Settings settings;
 	private final GerritConfiguration gerritConfiguration;
@@ -183,8 +181,8 @@ public class GerritPostJob implements PostJob {
 		ReviewLineComment result = new ReviewLineComment();
 
 		result.setLine(issue.line());
-		result.setMessage(String.format(ISSUE_FORMAT, issue.isNew(), StringUtils.capitalize(issue.ruleKey().toString()),
-				issue.severity(), issue.message()));
+
+		result.setMessage(ReviewUtils.issueMessage(gerritConfiguration.getIssueComment(), settings, issue));
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("[GERRIT PLUGIN] issueToComment {}", result.toString());
 		}

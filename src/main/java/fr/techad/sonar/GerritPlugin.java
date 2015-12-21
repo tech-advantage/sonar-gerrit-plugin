@@ -1,16 +1,15 @@
 package fr.techad.sonar;
 
-import java.util.Arrays;
-import java.util.List;
-
+import fr.techad.sonar.gerrit.GerritConnectorFactory;
+import fr.techad.sonar.gerrit.GerritFacadeFactory;
 import org.sonar.api.PropertyType;
 import org.sonar.api.SonarPlugin;
 import org.sonar.api.config.PropertyDefinition;
 import org.sonar.api.resources.Qualifiers;
 import org.sonar.api.rule.Severity;
 
-import fr.techad.sonar.gerrit.GerritConnectorFactory;
-import fr.techad.sonar.gerrit.GerritFacadeFactory;
+import java.util.Arrays;
+import java.util.List;
 
 public final class GerritPlugin extends SonarPlugin {
 
@@ -101,9 +100,13 @@ public final class GerritPlugin extends SonarPlugin {
 				.options("-2", "-1", "0").defaultValue(GerritConstants.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD_DEFAULT)
 				.onQualifiers(Arrays.asList(Qualifiers.PROJECT)).index(reviewBaseIndex++).build();
 
+		PropertyDefinition issueComment = PropertyDefinition.builder(PropertyKey.GERRIT_ISSUE_COMMENT)
+			.category(GerritConstants.GERRIT_CATEGORY).subCategory(GerritConstants.GERRIT_SUBCATEGORY_REVIEW)
+			.defaultValue("[${issue.isNew}] New: ${issue.issueKey} Severity: ${issue.severity}, Message: ${issue.message}").index(reviewBaseIndex++).build();
+
 		return Arrays.asList(GerritConfiguration.class, GerritConnectorFactory.class, GerritFacadeFactory.class,
 				GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class, enabled, scheme, host, port,
 				username, password, authScheme, basePath, sshKeyPath, label, message, forceBranch, newIssuesOnly,
-				threshold, voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold);
+				threshold, voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold, issueComment);
 	}
 }
