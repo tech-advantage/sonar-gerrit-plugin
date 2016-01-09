@@ -19,10 +19,6 @@ public final class ReviewUtils {
     private static final String LOG_MESSAGE = "[GERRIT PLUGIN] Got review level {}, level is now {}";
     private static final String UNKNOWN = "UNKNOWN";
 
-    private static final String PROP_START = "${";
-    private static final int PROP_START_LENGTH = PROP_START.length();
-    private static final char PROP_END = '}';
-
     private static final int INFO_VALUE = 0;
     private static final int MINOR_VALUE = 1;
     private static final int MAJOR_VALUE = 2;

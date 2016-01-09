@@ -44,8 +44,7 @@ public class GerritConfiguration {
 	private String changeId;
 	private String revisionId;
 
-	public GerritConfiguration(Settings settings)
-	{
+	public GerritConfiguration(Settings settings) {
 		LOG.debug("[GERRIT PLUGIN] Instanciating GerritConfiguration");
 
 		this.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED));
