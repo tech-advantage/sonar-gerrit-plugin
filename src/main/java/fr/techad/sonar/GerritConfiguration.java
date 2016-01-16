@@ -33,6 +33,7 @@ public class GerritConfiguration {
 
 	private String label;
 	private String message;
+	private String issueComment;
 	private String threshold;
 	private int voteNoIssue;
 	private int voteBelowThreshold;
@@ -62,6 +63,7 @@ public class GerritConfiguration {
 
 		this.setLabel(settings.getString(PropertyKey.GERRIT_LABEL));
 		this.setMessage(settings.getString(PropertyKey.GERRIT_MESSAGE));
+		this.setIssueComment(settings.getString(PropertyKey.GERRIT_ISSUE_COMMENT));
 		this.setThreshold(settings.getString(PropertyKey.GERRIT_THRESHOLD));
 		this.setVoteNoIssue(settings.getInt(PropertyKey.GERRIT_VOTE_NO_ISSUE));
 		this.setVoteBelowThreshold(settings.getInt(PropertyKey.GERRIT_VOTE_ISSUE_BELOW_THRESHOLD));
@@ -233,6 +235,15 @@ public class GerritConfiguration {
 		return this;
 	}
 
+	public void setIssueComment(@NotNull String issueComment) {
+		this.issueComment = issueComment;
+	}
+
+	@NotNull
+	public String getIssueComment() {
+		return issueComment;
+	}
+
 	public String getThreshold() {
 		return threshold;
 	}
@@ -357,6 +368,7 @@ public class GerritConfiguration {
 				+ ", port=" + port + ", anonymous=" + anonymous + ", username=" + username + ", password="
 				+ (StringUtils.isBlank(password) ? "blank" : "*obfuscated*") + ", authScheme=" + authScheme
 				+ ", basePath=" + basePath + ", sshKeyPath=" + sshKeyPath + ", label=" + label + ", message=" + message
+				+ ", issueComment=" + issueComment
 				+ ", threshold=" + threshold + ", voteNoIssue=" + voteNoIssue + ",voteBelowThreshold="
 				+ voteBelowThreshold + ",voteAboveThreshold=" + voteAboveThreshold + ",commentNewIssuesOnly="
 				+ commentNewIssuesOnly + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId="

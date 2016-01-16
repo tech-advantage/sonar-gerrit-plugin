@@ -1,23 +1,23 @@
 package fr.techad.sonar.gerrit;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
+import org.sonar.api.batch.postjob.issue.Issue;
 import org.sonar.api.config.Settings;
 import org.sonar.api.rule.Severity;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 public final class ReviewUtils {
     private static final Logger LOG = Loggers.get(ReviewUtils.class);
     private static final String LOG_MESSAGE = "[GERRIT PLUGIN] Got review level {}, level is now {}";
     private static final String UNKNOWN = "UNKNOWN";
-
-    private static final String PROP_START = "${";
-    private static final int PROP_START_LENGTH = PROP_START.length();
-    private static final char PROP_END = '}';
 
     private static final int INFO_VALUE = 0;
     private static final int MINOR_VALUE = 1;
@@ -25,6 +25,12 @@ public final class ReviewUtils {
     private static final int CRITICAL_VALUE = 3;
     private static final int BLOCKER_VALUE = 4;
     private static final int UNKNOWN_VALUE = -1;
+
+    private static final String ISSUE_PREFIX   = "issue";
+    private static final String ISSUE_IS_NEW   = "isNew";
+    private static final String ISSUE_RULE_KEY = "ruleKey";
+    private static final String ISSUE_SEVERITY = "severity";
+    private static final String ISSUE_MESSAGE  = "message";
 
     private ReviewUtils() {
 
@@ -119,36 +125,28 @@ public final class ReviewUtils {
         return lvl;
     }
 
+    private static String prefixKey(String prefix, String key) {
+        return prefix + "." + key;
+    }
+
+    public static String issueMessage(String originalMessage, Settings settings, Issue issue) {
+        HashMap<String, Object> valueMap = new HashMap<>();
+        valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_IS_NEW), issue.isNew());
+        valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_RULE_KEY), issue.ruleKey());
+        valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_SEVERITY), issue.severity());
+        valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_MESSAGE), issue.message());
+        return substituteProperties(originalMessage, settings, valueMap);
+    }
+
 	public static String substituteProperties(String originalMessage, Settings settings) {
-	    String substitutedString = originalMessage;
-	
-	    if (StringUtils.contains(originalMessage, PROP_START)) {
-	        List<String> prop = new ArrayList<String>();
-	        String tempString = originalMessage;
-	
-	        while (StringUtils.contains(tempString, PROP_START)) {
-	            tempString = tempString.substring(tempString.indexOf(PROP_START));
-	            prop.add(tempString.substring(PROP_START_LENGTH, tempString.indexOf(PROP_END)));
-	            tempString = StringUtils.substring(tempString, tempString.indexOf(PROP_END));
-	        }
-	
-	        if (LOG.isDebugEnabled()) {
-	            LOG.debug("[GERRIT PLUGIN] Found {} properties to replace ({})", prop.size(), prop.toString());
-	        }
-	
-	        for (String p : prop) {
-	            substitutedString = StringUtils.replace(substitutedString, PROP_START + p + PROP_END,
-	                    settings.getString(p));
-	        }
-	        if (LOG.isDebugEnabled()) {
-	            LOG.debug("[GERRIT PLUGIN] New message is {}.", substitutedString);
-	        }
-	    } else {
-	        LOG.debug("[GERRIT PLUGIN] No message subtitution to do.");
-	    }
-	
-	    return substitutedString;
+        return substituteProperties(originalMessage, settings, Collections.<String, Object> emptyMap());
 	}
-    
-    
+
+    private static String substituteProperties(String originalMessage, Settings settings, Map<String, Object> additionalProperties) {
+        if (additionalProperties.isEmpty()) {
+            return StrSubstitutor.replace(originalMessage, settings.getProperties());
+        }
+        additionalProperties.putAll(settings.getProperties());
+        return StrSubstitutor.replace(originalMessage, additionalProperties);
+    }
 }
