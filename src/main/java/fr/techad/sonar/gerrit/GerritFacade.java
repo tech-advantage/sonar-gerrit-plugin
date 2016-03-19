@@ -11,7 +11,7 @@ import com.google.gson.stream.JsonWriter;
 import fr.techad.sonar.GerritPluginException;
 
 public abstract class GerritFacade {
-	private static final String MAVEN_ENTRY_REGEX = ".*src/";
+	private static final String MAVEN_ENTRY_REGEX = ".*?/?src/";
 	private static final String ERROR_FORMAT = "Error formatting review";
 
 	/**
