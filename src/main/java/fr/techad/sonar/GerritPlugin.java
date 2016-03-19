@@ -102,7 +102,7 @@ public final class GerritPlugin extends SonarPlugin {
 
 		PropertyDefinition issueComment = PropertyDefinition.builder(PropertyKey.GERRIT_ISSUE_COMMENT)
 			.category(GerritConstants.GERRIT_CATEGORY).subCategory(GerritConstants.GERRIT_SUBCATEGORY_REVIEW)
-			.defaultValue("[${issue.isNew}] New: ${issue.issueKey} Severity: ${issue.severity}, Message: ${issue.message}").index(reviewBaseIndex++).build();
+			.defaultValue("[${issue.isNew}] New: ${issue.ruleKey} Severity: ${issue.severity}, Message: ${issue.message}").index(reviewBaseIndex++).build();
 
 		return Arrays.asList(GerritConfiguration.class, GerritConnectorFactory.class, GerritFacadeFactory.class,
 				GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class, enabled, scheme, host, port,
