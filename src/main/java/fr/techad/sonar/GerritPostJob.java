@@ -37,7 +37,7 @@ public class GerritPostJob implements PostJob {
 	private final Settings settings;
 	private final GerritConfiguration gerritConfiguration;
 	private final PostJobContext postJobContext;
-	private Map<String, String> gerritModifiedFiles;
+	private List<String> gerritModifiedFiles;
 	private GerritFacade gerritFacade;
 	private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
@@ -151,17 +151,23 @@ public class GerritPostJob implements PostJob {
 		} catch (GerritPluginException e) {
 			LOG.error("[GERRIT PLUGIN] Error getting Gerrit datas", e);
 		}
+
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, name={}",
 					resource.relativePath());
 		}
-		if (gerritModifiedFiles.containsKey(resource.relativePath())) {
-			LOG.info("[GERRIT PLUGIN] File in Sonar {} matches file in Gerrit {}", resource.relativePath(),
-					gerritModifiedFiles.get(resource.relativePath()));
-			processFileResource(resource, context, issues);
+
+		if (gerritModifiedFiles.contains(resource.relativePath())) {
+			LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}", resource.relativePath());
+			processFileResource(resource.relativePath(), context, issues);
+		} else if (gerritModifiedFiles.contains(gerritFacade.parseFileName(resource.relativePath()))) {
+			LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}",
+					gerritFacade.parseFileName(resource.relativePath()));
+			processFileResource(gerritFacade.parseFileName(resource.relativePath()), context, issues);
 		} else {
 			if (LOG.isDebugEnabled()) {
-				LOG.debug("[GERRIT PLUGIN] File {} is not under review", resource.relativePath());
+				LOG.debug("[GERRIT PLUGIN] File is not under review ({} / {})", resource.relativePath(),
+						gerritFacade.parseFileName(resource.relativePath()));
 			}
 		}
 	}
@@ -172,8 +178,7 @@ public class GerritPostJob implements PostJob {
 		}
 		gerritModifiedFiles = gerritFacade.listFiles();
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("[GERRIT PLUGIN] Modified files in gerrit (keys) : {}", gerritModifiedFiles.keySet());
-			LOG.debug("[GERRIT PLUGIN] Modified files in gerrit (values): {}", gerritModifiedFiles.values());
+			LOG.debug("[GERRIT PLUGIN] Modified files in gerrit : {}", gerritModifiedFiles);
 		}
 	}
 
@@ -199,32 +204,23 @@ public class GerritPostJob implements PostJob {
 		return result;
 	}
 
-	protected void processFileResource(@NotNull InputPath resource, @NotNull SensorContext context,
+	protected void processFileResource(@NotNull String file, @NotNull SensorContext context,
 			Collection<Issue> issuable) {
 		List<ReviewFileComment> comments = new ArrayList<ReviewFileComment>();
 		commentIssues(issuable, comments);
 		commentAlerts(context, comments);
 		if (!comments.isEmpty()) {
-			reviewInput.addComments(gerritModifiedFiles.get(resource.relativePath()), comments);
+			reviewInput.addComments(file, comments);
 		}
 	}
 
 	private void commentIssues(Collection<Issue> issues, List<ReviewFileComment> comments) {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("[GERRIT PLUGIN] Found {} issues", issues.size());
-		}
-		for (Issue issue : issues) {
-			LOG.info("[GERRIT PLUGIN] Issue found: {}", issue.toString());
+		LOG.info("[GERRIT PLUGIN] Found {} issues", issues.size());
 
+		for (Issue issue : issues) {
 			if (gerritConfiguration.shouldCommentNewIssuesOnly() && !issue.isNew()) {
 				LOG.info(
 						"[GERRIT PLUGIN] Issue is not new and only new one should be commented. Will not push back to Gerrit.");
-				/*
-				 * } else if (StringUtils.equals(issue.resolution(),
-				 * Issue.RESOLUTION_FALSE_POSITIVE)) { LOG.info(
-				 * "[GERRIT PLUGIN] Issue marked as false-positive. Will not push back to Gerrit."
-				 * );
-				 */
 			} else {
 				comments.add(issueToComment(issue));
 			}
@@ -232,7 +228,7 @@ public class GerritPostJob implements PostJob {
 	}
 
 	private void commentAlerts(SensorContext context, List<ReviewFileComment> comments) {
-		LOG.debug("[GERRIT PLUGIN] Found {} alerts", context.getMeasures(MeasuresFilters.all()).size());
+		LOG.info("[GERRIT PLUGIN] Found {} alerts", context.getMeasures(MeasuresFilters.all()).size());
 		for (Measure<?> measure : context.getMeasures(MeasuresFilters.all())) {
 			Metric.Level level = measure.getAlertStatus();
 			if (level == null || level == Metric.Level.OK) {

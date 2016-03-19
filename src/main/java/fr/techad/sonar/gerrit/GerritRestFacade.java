@@ -1,9 +1,9 @@
 package fr.techad.sonar.gerrit;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ public class GerritRestFacade extends GerritFacade {
 	private static final String ERROR_LISTING = "Error listing files";
 	private static final String ERROR_SETTING = "Error setting review";
 	private final GerritConnector gerritConnector;
-	private Map<String, String> gerritFileList = new HashMap<String, String>();
+	private List<String> gerritFileList = new ArrayList<String>();
 
 	public GerritRestFacade(GerritConnectorFactory gerritConnectorFactory) {
 		LOG.debug("[GERRIT PLUGIN] Instanciating GerritRestFacade");
@@ -32,7 +32,7 @@ public class GerritRestFacade extends GerritFacade {
 
 	@NotNull
 	@Override
-	public Map<String, String> listFiles() throws GerritPluginException {
+	public List<String> listFiles() throws GerritPluginException {
 		if (!gerritFileList.isEmpty()) {
 			LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
 		} else {
@@ -45,13 +45,13 @@ public class GerritRestFacade extends GerritFacade {
 					if (COMMIT_MSG.equals(fileName)) {
 						continue;
 					}
-					gerritFileList.put(parseFileName(fileName), fileName);
+					gerritFileList.add(fileName);
 				}
 			} catch (IOException e) {
 				throw new GerritPluginException(ERROR_LISTING, e);
 			}
 		}
-		return Collections.unmodifiableMap(gerritFileList);
+		return Collections.unmodifiableList(gerritFileList);
 	}
 
 	@Override

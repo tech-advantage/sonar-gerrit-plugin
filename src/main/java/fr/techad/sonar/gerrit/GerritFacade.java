@@ -2,7 +2,7 @@ package fr.techad.sonar.gerrit;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
+import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public abstract class GerritFacade {
 	/**
 	 * @return sonarLongName to gerritFileName map
 	 */
-	public abstract Map<String, String> listFiles() throws GerritPluginException;
+	public abstract List<String> listFiles() throws GerritPluginException;
 
 	public abstract void setReview(ReviewInput reviewInput) throws GerritPluginException;
 
@@ -62,7 +62,7 @@ public abstract class GerritFacade {
 		return stringWriter.toString();
 	}
 
-	protected String parseFileName(@NotNull String fileName) {
+	public String parseFileName(@NotNull String fileName) {
 		return fileName.replaceFirst(MAVEN_ENTRY_REGEX, "src/");
 	}
 }

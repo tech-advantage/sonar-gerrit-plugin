@@ -3,14 +3,14 @@ package fr.techad.sonar.gerrit;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
 
 public class GerritFacadeTest {
 	
 	private GerritFacade facade = new GerritFacade() {
-		public Map<String, String> listFiles() { return null;};
+		public List<String> listFiles() { return null;};
 		public void setReview(ReviewInput reviewInput) {};
 	};
 
