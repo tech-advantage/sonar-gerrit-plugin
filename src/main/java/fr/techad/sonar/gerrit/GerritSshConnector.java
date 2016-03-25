@@ -38,14 +38,14 @@ public class GerritSshConnector implements GerritConnector {
 		Result cmdResult = sshClient.executeCommand(String.format(CMD_LIST_FILES, gerritConfiguration.getChangeId()),
 				userAtHost);
 
-		return cmdResult.stdoutAsText();
+		return cmdResult.stdoutAsText("UTF-8");
 	}
 
 	@NotNull
 	public String setReview(String reviewInputAsJson) throws IOException {
 		LOG.info("[GERRIT PLUGIN] Setting review {}", reviewInputAsJson);
 
-		ByteBuffer stdin = ByteBuffer.wrap(reviewInputAsJson.getBytes());
+		ByteBuffer stdin = ByteBuffer.wrap(reviewInputAsJson.getBytes("UTF-8"));
 		SshClient sshClient = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword());
 
 		LOG.debug("[GERRIT PLUGIN] Execute command SSH {}",
