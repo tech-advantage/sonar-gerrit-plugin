@@ -29,6 +29,7 @@ public class GerritSshConnector implements GerritConnector {
 	}
 
 	@NotNull
+	@Override
 	public String listFiles() throws IOException {
 		SshClient sshClient = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword());
 
@@ -42,6 +43,7 @@ public class GerritSshConnector implements GerritConnector {
 	}
 
 	@NotNull
+	@Override
 	public String setReview(String reviewInputAsJson) throws IOException {
 		LOG.info("[GERRIT PLUGIN] Setting review {}", reviewInputAsJson);
 

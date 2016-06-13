@@ -17,7 +17,6 @@ public class GerritConfiguration {
 	private boolean enabled;
 	private boolean valid;
 	private boolean anonymous;
-	private boolean forceBranch;
 	private boolean commentNewIssuesOnly;
 
 	private String host;
@@ -73,7 +72,6 @@ public class GerritConfiguration {
 		this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
 		this.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
 		this.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
-		this.setForceBranch(settings.getBoolean(PropertyKey.GERRIT_FORCE_BRANCH));
 
 		this.assertGerritConfiguration();
 	}
@@ -100,10 +98,6 @@ public class GerritConfiguration {
 
 	public boolean isAnonymous() {
 		return anonymous;
-	}
-
-	public boolean forceBranch() {
-		return forceBranch;
 	}
 
 	public GerritConfiguration commentNewIssuesOnly(boolean newIssuesOnly) {
@@ -320,11 +314,6 @@ public class GerritConfiguration {
 		return this;
 	}
 
-	public GerritConfiguration setForceBranch(boolean forceBranch) {
-		this.forceBranch = forceBranch;
-		return this;
-	}
-
 	void assertGerritConfiguration() {
 		LOG.debug("[GERRIT PLUGIN] Verifying configuration settings …\n{}", this.toString());
 
@@ -372,6 +361,6 @@ public class GerritConfiguration {
 				+ ", threshold=" + threshold + ", voteNoIssue=" + voteNoIssue + ",voteBelowThreshold="
 				+ voteBelowThreshold + ",voteAboveThreshold=" + voteAboveThreshold + ",commentNewIssuesOnly="
 				+ commentNewIssuesOnly + ", projectName=" + projectName + ", branchName=" + branchName + ", changeId="
-				+ changeId + ", revisionId=" + revisionId + ", 'forceBranch=" + forceBranch + "]";
+				+ changeId + ", revisionId=" + revisionId + "]";
 	}
 }

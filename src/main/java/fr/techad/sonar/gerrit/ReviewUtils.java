@@ -2,7 +2,7 @@ package fr.techad.sonar.gerrit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
-import org.sonar.api.batch.postjob.issue.Issue;
+import org.sonar.api.batch.postjob.issue.PostJobIssue;
 import org.sonar.api.config.Settings;
 import org.sonar.api.rule.Severity;
 import org.sonar.api.utils.log.Logger;
@@ -129,7 +129,7 @@ public final class ReviewUtils {
         return prefix + "." + key;
     }
 
-    public static String issueMessage(String originalMessage, Settings settings, Issue issue) {
+    public static String issueMessage(String originalMessage, Settings settings, PostJobIssue issue) {
         HashMap<String, Object> valueMap = new HashMap<>();
         valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_IS_NEW), issue.isNew());
         valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_RULE_KEY), issue.ruleKey());

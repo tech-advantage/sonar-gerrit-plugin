@@ -1,6 +1,10 @@
 package fr.techad.sonar;
 
 public class GerritConstants {
+	private GerritConstants() {
+		throw new IllegalAccessError("Utility class");
+	}
+
 	public static final String GERRIT_CATEGORY = "Gerrit";
 	public static final String GERRIT_SUBCATEGORY_SERVER = "Server";
 	public static final String GERRIT_SUBCATEGORY_REVIEW = "Review";

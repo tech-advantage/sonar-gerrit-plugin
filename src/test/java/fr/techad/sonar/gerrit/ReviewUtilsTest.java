@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.sonar.api.batch.postjob.issue.Issue;
+import org.sonar.api.batch.postjob.issue.PostJobIssue;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.Settings;
 import org.sonar.api.rule.RuleKey;
@@ -133,7 +133,7 @@ public class ReviewUtilsTest {
     @Test
     public void validateIssueSubstitution() {
         // given
-        Issue issue = mock(Issue.class);
+    	PostJobIssue issue = mock(PostJobIssue.class);
         when(issue.isNew()).thenReturn(true);
         when(issue.ruleKey()).thenReturn(RuleKey.of("squid", "XX12"));
         when(issue.message()).thenReturn("You have a problem there");

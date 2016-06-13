@@ -147,6 +147,8 @@ public class GerritRestConnector implements GerritConnector {
 			result = URLEncoder.encode(content, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			LOG.error("[GERRIT PLUGIN] Error during encodage", e);
+		} catch (NullPointerException npe) {
+			LOG.warn("[GERRIT PLUGIN] Could not encode. Is content empty ?");
 		}
 		return result;
 	}
