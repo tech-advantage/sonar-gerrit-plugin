@@ -45,6 +45,14 @@ public class GerritRestFacade extends GerritFacade {
 					if (COMMIT_MSG.equals(fileName)) {
 						continue;
 					}
+					
+					if (fileList.getValue().getAsJsonObject().has("status")) {
+						if (fileList.getValue().getAsJsonObject().get("status").getAsCharacter() == 'D') {
+							LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
+							continue;
+						}
+					}
+					
 					gerritFileList.add(fileName);
 				}
 			} catch (IOException e) {
