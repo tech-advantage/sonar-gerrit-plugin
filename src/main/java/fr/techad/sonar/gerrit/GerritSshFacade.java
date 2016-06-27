@@ -44,6 +44,14 @@ public class GerritSshFacade extends GerritFacade {
 					if (COMMIT_MSG.equals(fileName)) {
 						continue;
 					}
+					
+					if (jsonElement.getAsJsonObject().has("type")) {
+						if (jsonElement.getAsJsonObject().get("type").getAsString().equals("DELETED")) {
+							LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
+							continue;
+						}
+					}
+					
 					gerritFileList.add(fileName);
 				}
 			} catch (IOException e) {
