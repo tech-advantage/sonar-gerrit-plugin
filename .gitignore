@@ -1,5 +1,11 @@
 *.class
+*.bak
 target/
+bin/
+.settings/
+.externalToolBuilders/
+.classpath
+.project
 
 # Package Files #
 *.jar
