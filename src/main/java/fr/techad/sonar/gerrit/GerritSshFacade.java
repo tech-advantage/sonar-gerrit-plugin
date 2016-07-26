@@ -11,6 +11,7 @@ import org.sonar.api.utils.log.Loggers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.techad.sonar.GerritPluginException;
@@ -34,29 +35,7 @@ public class GerritSshFacade extends GerritFacade {
         if (!gerritFileList.isEmpty()) {
             LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
         } else {
-            try {
-                String rawJsonString = gerritConnector.listFiles();
-                JsonArray files = new JsonParser().parse(rawJsonString.split("\r?\n")[0]).getAsJsonObject()
-                        .getAsJsonObject("currentPatchSet").getAsJsonArray("files");
-
-                for (JsonElement jsonElement : files) {
-                    String fileName = jsonElement.getAsJsonObject().get("file").getAsString();
-                    if (COMMIT_MSG.equals(fileName)) {
-                        continue;
-                    }
-
-                    if (jsonElement.getAsJsonObject().has("type")) {
-                        if (jsonElement.getAsJsonObject().get("type").getAsString().equals("DELETED")) {
-                            LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
-                            continue;
-                        }
-                    }
-
-                    gerritFileList.add(fileName);
-                }
-            } catch (IOException e) {
-                throw new GerritPluginException(ERROR_LISTING, e);
-            }
+            fillListFilesFomGerrit();
         }
         return Collections.unmodifiableList(gerritFileList);
     }
@@ -69,4 +48,34 @@ public class GerritSshFacade extends GerritFacade {
             throw new GerritPluginException(ERROR_SETTING, e);
         }
     }
+
+    private void fillListFilesFomGerrit() throws GerritPluginException {
+        try {
+            String rawJsonString = gerritConnector.listFiles();
+            JsonArray files = new JsonParser().parse(rawJsonString.split("\r?\n")[0]).getAsJsonObject()
+                    .getAsJsonObject("currentPatchSet").getAsJsonArray("files");
+
+            for (JsonElement jsonElement : files) {
+                String fileName = jsonElement.getAsJsonObject().get("file").getAsString();
+                if (COMMIT_MSG.equals(fileName)) {
+                    continue;
+                }
+
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                if (jsonObject.has("type") && isMarkAsDeleted(jsonObject)) {
+                    LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
+                    continue;
+                }
+
+                gerritFileList.add(fileName);
+            }
+        } catch (IOException e) {
+            throw new GerritPluginException(ERROR_LISTING, e);
+        }
+    }
+
+    private boolean isMarkAsDeleted(JsonObject jsonObject) {
+        return "DELETED".equals(jsonObject.get("type").getAsString());
+    }
+
 }
