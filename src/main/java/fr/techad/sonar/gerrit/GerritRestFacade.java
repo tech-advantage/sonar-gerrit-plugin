@@ -17,62 +17,62 @@ import com.google.gson.JsonParser;
 import fr.techad.sonar.GerritPluginException;
 
 public class GerritRestFacade extends GerritFacade {
-	private static final Logger LOG = Loggers.get(GerritRestFacade.class);
-	private static final String JSON_RESPONSE_PREFIX = ")]}'";
-	private static final String COMMIT_MSG = "/COMMIT_MSG";
-	private static final String ERROR_LISTING = "Error listing files";
-	private static final String ERROR_SETTING = "Error setting review";
-	private final GerritConnector gerritConnector;
-	private List<String> gerritFileList = new ArrayList<String>();
+    private static final Logger LOG = Loggers.get(GerritRestFacade.class);
+    private static final String JSON_RESPONSE_PREFIX = ")]}'";
+    private static final String COMMIT_MSG = "/COMMIT_MSG";
+    private static final String ERROR_LISTING = "Error listing files";
+    private static final String ERROR_SETTING = "Error setting review";
+    private final GerritConnector gerritConnector;
+    private List<String> gerritFileList = new ArrayList<String>();
 
-	public GerritRestFacade(GerritConnectorFactory gerritConnectorFactory) {
-		LOG.debug("[GERRIT PLUGIN] Instanciating GerritRestFacade");
-		this.gerritConnector = gerritConnectorFactory.getConnector();
-	}
+    public GerritRestFacade(GerritConnectorFactory gerritConnectorFactory) {
+        LOG.debug("[GERRIT PLUGIN] Instanciating GerritRestFacade");
+        this.gerritConnector = gerritConnectorFactory.getConnector();
+    }
 
-	@NotNull
-	@Override
-	public List<String> listFiles() throws GerritPluginException {
-		if (!gerritFileList.isEmpty()) {
-			LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
-		} else {
-			try {
-				String rawJsonString = gerritConnector.listFiles();
-				String jsonString = trimResponse(rawJsonString);
-				JsonElement rootJsonElement = new JsonParser().parse(jsonString);
-				for (Entry<String, JsonElement> fileList : rootJsonElement.getAsJsonObject().entrySet()) {
-					String fileName = fileList.getKey();
-					if (COMMIT_MSG.equals(fileName)) {
-						continue;
-					}
-					
-					if (fileList.getValue().getAsJsonObject().has("status")) {
-						if (fileList.getValue().getAsJsonObject().get("status").getAsCharacter() == 'D') {
-							LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
-							continue;
-						}
-					}
-					
-					gerritFileList.add(fileName);
-				}
-			} catch (IOException e) {
-				throw new GerritPluginException(ERROR_LISTING, e);
-			}
-		}
-		return Collections.unmodifiableList(gerritFileList);
-	}
+    @NotNull
+    @Override
+    public List<String> listFiles() throws GerritPluginException {
+        if (!gerritFileList.isEmpty()) {
+            LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
+        } else {
+            try {
+                String rawJsonString = gerritConnector.listFiles();
+                String jsonString = trimResponse(rawJsonString);
+                JsonElement rootJsonElement = new JsonParser().parse(jsonString);
+                for (Entry<String, JsonElement> fileList : rootJsonElement.getAsJsonObject().entrySet()) {
+                    String fileName = fileList.getKey();
+                    if (COMMIT_MSG.equals(fileName)) {
+                        continue;
+                    }
 
-	@Override
-	public void setReview(@NotNull ReviewInput reviewInput) throws GerritPluginException {
-		try {
-			gerritConnector.setReview(formatReview(reviewInput));
-		} catch (IOException e) {
-			throw new GerritPluginException(ERROR_SETTING, e);
-		}
-	}
+                    if (fileList.getValue().getAsJsonObject().has("status")) {
+                        if (fileList.getValue().getAsJsonObject().get("status").getAsCharacter() == 'D') {
+                            LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
+                            continue;
+                        }
+                    }
 
-	@NotNull
-	protected String trimResponse(@NotNull String response) {
-		return StringUtils.replaceOnce(response, JSON_RESPONSE_PREFIX, "");
-	}
+                    gerritFileList.add(fileName);
+                }
+            } catch (IOException e) {
+                throw new GerritPluginException(ERROR_LISTING, e);
+            }
+        }
+        return Collections.unmodifiableList(gerritFileList);
+    }
+
+    @Override
+    public void setReview(@NotNull ReviewInput reviewInput) throws GerritPluginException {
+        try {
+            gerritConnector.setReview(formatReview(reviewInput));
+        } catch (IOException e) {
+            throw new GerritPluginException(ERROR_SETTING, e);
+        }
+    }
+
+    @NotNull
+    protected String trimResponse(@NotNull String response) {
+        return StringUtils.replaceOnce(response, JSON_RESPONSE_PREFIX, "");
+    }
 }

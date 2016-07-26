@@ -26,11 +26,11 @@ public final class ReviewUtils {
     private static final int BLOCKER_VALUE = 4;
     private static final int UNKNOWN_VALUE = -1;
 
-    private static final String ISSUE_PREFIX   = "issue";
-    private static final String ISSUE_IS_NEW   = "isNew";
+    private static final String ISSUE_PREFIX = "issue";
+    private static final String ISSUE_IS_NEW = "isNew";
     private static final String ISSUE_RULE_KEY = "ruleKey";
     private static final String ISSUE_SEVERITY = "severity";
-    private static final String ISSUE_MESSAGE  = "message";
+    private static final String ISSUE_MESSAGE = "message";
 
     private ReviewUtils() {
 
@@ -138,11 +138,12 @@ public final class ReviewUtils {
         return substituteProperties(originalMessage, settings, valueMap);
     }
 
-	public static String substituteProperties(String originalMessage, Settings settings) {
+    public static String substituteProperties(String originalMessage, Settings settings) {
         return substituteProperties(originalMessage, settings, Collections.<String, Object> emptyMap());
-	}
+    }
 
-    private static String substituteProperties(String originalMessage, Settings settings, Map<String, Object> additionalProperties) {
+    private static String substituteProperties(String originalMessage, Settings settings,
+            Map<String, Object> additionalProperties) {
         if (additionalProperties.isEmpty()) {
             return StrSubstitutor.replace(originalMessage, settings.getProperties());
         }

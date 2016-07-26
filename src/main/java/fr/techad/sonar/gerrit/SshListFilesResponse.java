@@ -8,6 +8,6 @@ import java.util.Map;
  */
 public class SshListFilesResponse extends HashMap<String, Map<String, String>> {
 
-	private static final long serialVersionUID = -8867590486493558118L;
+    private static final long serialVersionUID = -8867590486493558118L;
 
 }

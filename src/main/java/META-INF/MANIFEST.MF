@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Created-By: Apache Maven
 Built-By: TECH advantage
-Build-Jdk: 1.6
+Build-Jdk: 1.7
 Plugin-Class: fr.techad.sonar.GerritPlugin
