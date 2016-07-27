@@ -33,7 +33,7 @@ public class GerritPostJob implements PostJob {
     private static final Logger LOG = Loggers.get(GerritPostJob.class);
     private final Settings settings;
     private final GerritConfiguration gerritConfiguration;
-    private List<String> gerritModifiedFiles;
+    private Map<String, String> gerritModifiedFiles;
     private GerritFacade gerritFacade;
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
@@ -158,17 +158,13 @@ public class GerritPostJob implements PostJob {
                     resource.relativePath());
         }
 
-        if (gerritModifiedFiles.contains(resource.relativePath())) {
-            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}", resource.relativePath());
+        if (gerritModifiedFiles.containsKey(resource.relativePath())) {
+            LOG.info("[GERRIT PLUGIN] File in Sonar {} matches file in Gerrit {}", resource.relativePath(),
+                    gerritModifiedFiles.get(resource.relativePath()));
             processFileResource(resource.relativePath(), issues);
-        } else if (gerritModifiedFiles.contains(gerritFacade.parseFileName(resource.relativePath()))) {
-            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}",
-                    gerritFacade.parseFileName(resource.relativePath()));
-            processFileResource(gerritFacade.parseFileName(resource.relativePath()), issues);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] File is not under review ({} / {})", resource.relativePath(),
-                        gerritFacade.parseFileName(resource.relativePath()));
+                LOG.debug("[GERRIT PLUGIN] File {} is not under review", resource.relativePath());
             }
         }
     }
@@ -179,7 +175,8 @@ public class GerritPostJob implements PostJob {
         }
         gerritModifiedFiles = gerritFacade.listFiles();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] Modified files in gerrit : {}", gerritModifiedFiles);
+            LOG.debug("[GERRIT PLUGIN] Modified files in gerrit (keys) : {}", gerritModifiedFiles.keySet());
+            LOG.debug("[GERRIT PLUGIN] Modified files in gerrit (values): {}", gerritModifiedFiles.values());
         }
     }
 
