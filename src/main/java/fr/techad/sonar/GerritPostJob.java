@@ -161,7 +161,7 @@ public class GerritPostJob implements PostJob {
         if (gerritModifiedFiles.containsKey(resource.relativePath())) {
             LOG.info("[GERRIT PLUGIN] File in Sonar {} matches file in Gerrit {}", resource.relativePath(),
                     gerritModifiedFiles.get(resource.relativePath()));
-            processFileResource(resource.relativePath(), issues);
+            processFileResource(gerritModifiedFiles.get(resource.relativePath()), issues);
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("[GERRIT PLUGIN] File {} is not under review", resource.relativePath());
