@@ -169,9 +169,7 @@ public class GerritRestConnector implements GerritConnector {
                 encode(gerritConfiguration.getBranchName()), encode(gerritConfiguration.getChangeId())));
         uri = uri.concat(String.format(URI_REVISIONS, encode(gerritConfiguration.getRevisionId())));
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] Built URI : {}", uri);
-        }
+        LOG.debug("[GERRIT PLUGIN] Built URI : {}", uri);
 
         return uri;
     }

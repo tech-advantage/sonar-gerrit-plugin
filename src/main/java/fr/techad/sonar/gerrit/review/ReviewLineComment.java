@@ -20,9 +20,7 @@ public class ReviewLineComment extends ReviewFileComment {
         } else if (1 > setLine) {
             LOG.debug("[GERRIT PLUGIN] ReviewLineComment line < 0, forcing to 0");
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] ReviewLineComment setLine {}", setLine);
-            }
+            LOG.debug("[GERRIT PLUGIN] ReviewLineComment setLine {}", setLine);
             tmpLine = setLine;
         }
 

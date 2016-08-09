@@ -18,9 +18,7 @@ public class ReviewFileComment {
     }
 
     public void setMessage(@NotNull String message) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] ReviewFileComment setMessage {}", message);
-        }
+        LOG.debug("[GERRIT PLUGIN] ReviewFileComment setMessage {}", message);
         this.message = message;
     }
 
