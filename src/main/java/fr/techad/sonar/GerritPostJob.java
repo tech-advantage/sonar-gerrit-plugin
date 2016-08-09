@@ -1,20 +1,19 @@
 package fr.techad.sonar;
 
-import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.GerritFacadeFactory;
-import fr.techad.sonar.gerrit.ReviewFileComment;
-import fr.techad.sonar.gerrit.ReviewInput;
-import fr.techad.sonar.gerrit.ReviewLineComment;
-import fr.techad.sonar.gerrit.ReviewUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 import org.sonar.api.batch.DecoratorBarriers;
 import org.sonar.api.batch.DependsUpon;
-import org.sonar.api.batch.postjob.PostJob;
-import org.sonar.api.batch.postjob.PostJobDescriptor;
 import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputPath;
+import org.sonar.api.batch.postjob.PostJob;
 import org.sonar.api.batch.postjob.PostJobContext;
+import org.sonar.api.batch.postjob.PostJobDescriptor;
 import org.sonar.api.batch.postjob.issue.PostJobIssue;
 import org.sonar.api.config.Settings;
 import org.sonar.api.measures.CoreMetrics;
@@ -22,11 +21,12 @@ import org.sonar.api.measures.Metric;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
+import fr.techad.sonar.gerrit.review.ReviewFileComment;
+import fr.techad.sonar.gerrit.review.ReviewInput;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
 
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
@@ -154,22 +154,16 @@ public class GerritPostJob implements PostJob {
         }
 
         if (LOG.isDebugEnabled()) {
+            LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, resource={}", resource);
             LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, name={}",
                     resource.relativePath());
+            LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, key={}", resource.key());
         }
 
-        if (gerritModifiedFiles.contains(resource.relativePath())) {
-            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}", resource.relativePath());
-            processFileResource(resource.relativePath(), issues);
-        } else if (gerritModifiedFiles.contains(gerritFacade.parseFileName(resource.relativePath()))) {
-            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}",
-                    gerritFacade.parseFileName(resource.relativePath()));
-            processFileResource(gerritFacade.parseFileName(resource.relativePath()), issues);
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] File is not under review ({} / {})", resource.relativePath(),
-                        gerritFacade.parseFileName(resource.relativePath()));
-            }
+        String filename = getFileNameFromInputPath(resource);
+        if (filename!=null) {
+            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}: ", resource.relativePath(), filename);
+            processFileResource(filename, issues);
         }
     }
 
@@ -214,5 +208,32 @@ public class GerritPostJob implements PostJob {
                 comments.add(issueToComment(issue));
             }
         }
+    }
+
+    private String getFileNameFromInputPath(InputPath resource) {
+        String filename = null;
+        if (gerritModifiedFiles.contains(resource.relativePath())) {
+            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}", resource.relativePath());
+            filename = resource.relativePath();
+        } else if (gerritModifiedFiles.contains(gerritFacade.parseFileName(resource.relativePath()))) {
+            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}",
+                    gerritFacade.parseFileName(resource.relativePath()));
+            filename = gerritFacade.parseFileName(resource.relativePath());
+        } else {
+            LOG.debug("[GERRIT PLUGIN] Parse the Gerrit List to look for the resource: {}", resource.relativePath());
+            // Loop on each item
+            for (String fileGerrit : gerritModifiedFiles) {
+                if (gerritFacade.parseFileName(fileGerrit).equals(resource.relativePath())) {
+                    filename = fileGerrit;
+                    break;
+                }
+            }
+        }
+        if (filename == null) {
+            LOG.debug("[GERRIT PLUGIN] File '{}' was not found in the review list)", resource.relativePath());
+            LOG.debug("[GERRIT PLUGIN] Try to find with: '{}', '{}' and '{}'", resource.relativePath(),
+                    gerritFacade.parseFileName(resource.relativePath()));
+        }
+        return filename;
     }
 }

@@ -1,6 +1,11 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.utils;
 
 import fr.techad.sonar.PropertyKey;
+import fr.techad.sonar.gerrit.review.ReviewFileComment;
+import fr.techad.sonar.gerrit.review.ReviewInput;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

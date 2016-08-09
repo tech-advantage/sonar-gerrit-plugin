@@ -1,4 +1,4 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.network.rest;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -30,6 +30,7 @@ import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
 import fr.techad.sonar.GerritConstants;
+import fr.techad.sonar.gerrit.GerritConnector;
 
 public class GerritRestConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritRestConnector.class);

@@ -1,4 +1,4 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.review;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;

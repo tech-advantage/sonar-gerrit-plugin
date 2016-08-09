@@ -1,4 +1,4 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.network.ssh;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -13,6 +13,7 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.gerrit.GerritConnector;
 
 public class GerritSshConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritSshConnector.class);

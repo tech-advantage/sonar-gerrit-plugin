@@ -1,18 +1,42 @@
 package fr.techad.sonar.gerrit;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-import java.util.List;
-
+import org.junit.Before;
 import org.junit.Test;
+import org.sonar.api.config.Settings;
+
+import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.GerritPluginException;
+import fr.techad.sonar.PropertyKey;
+import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 
 public class GerritFacadeTest {
 	
-	private GerritFacade facade = new GerritFacade() {
-		public List<String> listFiles() { return null;};
-		public void setReview(ReviewInput reviewInput) {};
-	};
+	private GerritFacade facade = null;
+	
+	@Before
+	public void setUp() {
+	    Settings settings = new Settings().appendProperty(PropertyKey.GERRIT_SCHEME, "http")
+                .appendProperty(PropertyKey.GERRIT_HOST, "localhost").appendProperty(PropertyKey.GERRIT_PORT, "8080")
+                .appendProperty(PropertyKey.GERRIT_USERNAME, "sonar")
+                .appendProperty(PropertyKey.GERRIT_PASSWORD, "sonar").appendProperty(PropertyKey.GERRIT_BASE_PATH, "")
+                .appendProperty(PropertyKey.GERRIT_PROJECT, "project")
+                .appendProperty(PropertyKey.GERRIT_BRANCH, "branch/subbranch")
+                .appendProperty(PropertyKey.GERRIT_CHANGE_ID, "changeid")
+                .appendProperty(PropertyKey.GERRIT_REVISION_ID, "revisionid")
+                .appendProperty(PropertyKey.GERRIT_LABEL, "Code-Review");
+	    GerritConfiguration gerritConfiguration = new GerritConfiguration(settings);
+        // when
+	    GerritConnectorFactory connectorFactory = new GerritConnectorFactory(gerritConfiguration);
+	    facade = new GerritFacade(connectorFactory) {
+
+	        @Override
+	        protected void fillListFilesFomGerrit() throws GerritPluginException {
+	        }
+	    };
+	}
 
 	@Test
 	public void testParseFileName() {

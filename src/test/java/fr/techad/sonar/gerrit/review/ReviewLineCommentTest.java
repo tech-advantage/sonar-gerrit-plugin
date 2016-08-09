@@ -1,4 +1,4 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.review;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +8,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.fest.assertions.Assertions.assertThat;
 
 import fr.techad.sonar.GerritPluginException;
-import fr.techad.sonar.gerrit.ReviewLineComment;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewLineCommentTest {

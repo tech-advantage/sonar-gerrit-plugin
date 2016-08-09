@@ -1,11 +1,7 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.network.ssh;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -15,43 +11,23 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.techad.sonar.GerritPluginException;
+import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 
 public class GerritSshFacade extends GerritFacade {
     private static final Logger LOG = Loggers.get(GerritSshFacade.class);
     private static final String COMMIT_MSG = "/COMMIT_MSG";
     private static final String ERROR_LISTING = "Error listing files";
-    private static final String ERROR_SETTING = "Error setting review";
-
-    private final GerritConnector gerritConnector;
-    private List<String> gerritFileList = new ArrayList<String>();
 
     public GerritSshFacade(GerritConnectorFactory gerritConnectorFactory) {
-        LOG.debug("[GERRIT PLUGIN] Instanciating GerritRestFacade");
-        this.gerritConnector = gerritConnectorFactory.getConnector();
-    }
-
-    @NotNull
-    public List<String> listFiles() throws GerritPluginException {
-        if (!gerritFileList.isEmpty()) {
-            LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
-        } else {
-            fillListFilesFomGerrit();
-        }
-        return Collections.unmodifiableList(gerritFileList);
+        super(gerritConnectorFactory);
+        LOG.debug("[GERRIT PLUGIN] Instanciating GerritSshFacade");
     }
 
     @Override
-    public void setReview(@NotNull ReviewInput reviewInput) throws GerritPluginException {
+    protected void fillListFilesFomGerrit() throws GerritPluginException {
         try {
-            gerritConnector.setReview(formatReview(reviewInput));
-        } catch (IOException e) {
-            throw new GerritPluginException(ERROR_SETTING, e);
-        }
-    }
-
-    private void fillListFilesFomGerrit() throws GerritPluginException {
-        try {
-            String rawJsonString = gerritConnector.listFiles();
+            String rawJsonString = getGerritConnector().listFiles();
             JsonArray files = new JsonParser().parse(rawJsonString.split("\r?\n")[0]).getAsJsonObject()
                     .getAsJsonObject("currentPatchSet").getAsJsonArray("files");
 
@@ -67,7 +43,7 @@ public class GerritSshFacade extends GerritFacade {
                     continue;
                 }
 
-                gerritFileList.add(fileName);
+                addFile(fileName);
             }
         } catch (IOException e) {
             throw new GerritPluginException(ERROR_LISTING, e);

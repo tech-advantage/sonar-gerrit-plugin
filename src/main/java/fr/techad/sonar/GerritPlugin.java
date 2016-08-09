@@ -1,7 +1,8 @@
 package fr.techad.sonar;
 
-import fr.techad.sonar.gerrit.GerritConnectorFactory;
-import fr.techad.sonar.gerrit.GerritFacadeFactory;
+import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
+import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
+
 import org.sonar.api.PropertyType;
 import org.sonar.api.Plugin;
 import org.sonar.api.config.PropertyDefinition;

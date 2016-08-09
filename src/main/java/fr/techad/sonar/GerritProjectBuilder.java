@@ -5,8 +5,8 @@ import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
 import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.GerritFacadeFactory;
-import fr.techad.sonar.gerrit.ReviewInput;
+import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
+import fr.techad.sonar.gerrit.review.ReviewInput;
 
 public class GerritProjectBuilder extends ProjectBuilder {
     private static final Logger LOG = Loggers.get(GerritProjectBuilder.class);

@@ -1,4 +1,4 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.review;
 
 import org.jetbrains.annotations.NotNull;
 import org.sonar.api.utils.log.Logger;

@@ -1,4 +1,4 @@
-package fr.techad.sonar.gerrit;
+package fr.techad.sonar.gerrit.network.rest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,10 +13,10 @@ import fr.techad.sonar.GerritConfiguration;
 import fr.techad.sonar.GerritPluginException;
 import fr.techad.sonar.PropertyKey;
 import fr.techad.sonar.gerrit.GerritConnector;
-import static org.fest.assertions.Assertions.assertThat;
+import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GerritConnectorTest {
+public class GerritRestConnectorTest {
 	@Mock
 	private Project projectMock;
 	@Mock
