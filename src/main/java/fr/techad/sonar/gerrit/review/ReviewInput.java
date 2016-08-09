@@ -1,6 +1,7 @@
 package fr.techad.sonar.gerrit.review;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class ReviewInput {
     }
 
     public void addComments(String key, List<ReviewFileComment> reviewFileComments) {
-        comments.put(key, reviewFileComments);
+        comments.put(key, new ArrayList<ReviewFileComment>(reviewFileComments));
     }
 
     public int size() {
