@@ -11,11 +11,7 @@ public final class ReviewUtils {
     private static final Logger LOG = Loggers.get(ReviewUtils.class);
     private static final String UNKNOWN = "UNKNOWN";
 
-    private ReviewUtils() {
-        super();
-    }
-
-    public static int thresholdToValue(String threshold) {
+    public int thresholdToValue(String threshold) {
         int thresholdValue = ReviewFileComment.UNKNOWN_VALUE;
 
         if (StringUtils.equals(threshold, Severity.INFO)) {
@@ -37,7 +33,7 @@ public final class ReviewUtils {
         return thresholdValue;
     }
 
-    public static String valueToThreshold(int value) {
+    public String valueToThreshold(int value) {
         String threshold = UNKNOWN;
 
         switch (value) {

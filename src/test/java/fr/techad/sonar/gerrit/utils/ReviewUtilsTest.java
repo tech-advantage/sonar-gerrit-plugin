@@ -17,10 +17,12 @@ import fr.techad.sonar.gerrit.review.ReviewLineComment;
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewUtilsTest {
 
-    ReviewInput reviewInput;
-    ReviewLineComment rlcInfo;
-    ReviewLineComment rlcCritical;
-    List<ReviewFileComment> reviewList;
+    private ReviewInput reviewInput;
+    private ReviewLineComment rlcInfo;
+    private ReviewLineComment rlcCritical;
+    private List<ReviewFileComment> reviewList;
+    
+    private ReviewUtils reviewUtilsUnderTest;
 
     @Before
     public void setUp() {
@@ -41,6 +43,8 @@ public class ReviewUtilsTest {
         reviewList = new ArrayList<ReviewFileComment>(2);
         reviewList.add(rlcInfo);
         reviewList.add(rlcCritical);
+        
+        reviewUtilsUnderTest = new ReviewUtils();
     }
 
     @Test
@@ -48,12 +52,12 @@ public class ReviewUtilsTest {
         // given
         // when
         // then
-        assertThat(ReviewUtils.thresholdToValue("INFO")).isEqualTo(0);
-        assertThat(ReviewUtils.thresholdToValue("MINOR")).isEqualTo(1);
-        assertThat(ReviewUtils.thresholdToValue("MAJOR")).isEqualTo(2);
-        assertThat(ReviewUtils.thresholdToValue("CRITICAL")).isEqualTo(3);
-        assertThat(ReviewUtils.thresholdToValue("BLOCKER")).isEqualTo(4);
-        assertThat(ReviewUtils.thresholdToValue("NOOP")).isEqualTo(-1);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("INFO")).isEqualTo(ReviewFileComment.INFO_VALUE);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("MINOR")).isEqualTo(ReviewFileComment.MINOR_VALUE);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("MAJOR")).isEqualTo(ReviewFileComment.MAJOR_VALUE);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("CRITICAL")).isEqualTo(ReviewFileComment.CRITICAL_VALUE);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("BLOCKER")).isEqualTo(ReviewFileComment.BLOCKER_VALUE);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("NOOP")).isEqualTo(ReviewFileComment.UNKNOWN_VALUE);
     }
 
     @Test
@@ -61,13 +65,13 @@ public class ReviewUtilsTest {
         // given
         // when
         // then
-        assertThat(ReviewUtils.valueToThreshold(0)).isEqualTo("INFO");
-        assertThat(ReviewUtils.valueToThreshold(1)).isEqualTo("MINOR");
-        assertThat(ReviewUtils.valueToThreshold(2)).isEqualTo("MAJOR");
-        assertThat(ReviewUtils.valueToThreshold(3)).isEqualTo("CRITICAL");
-        assertThat(ReviewUtils.valueToThreshold(4)).isEqualTo("BLOCKER");
-        assertThat(ReviewUtils.valueToThreshold(42)).isEqualTo("UNKNOWN");
-        assertThat(ReviewUtils.valueToThreshold(-1)).isEqualTo("UNKNOWN");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(0)).isEqualTo("INFO");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(1)).isEqualTo("MINOR");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(2)).isEqualTo("MAJOR");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(3)).isEqualTo("CRITICAL");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(4)).isEqualTo("BLOCKER");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(42)).isEqualTo("UNKNOWN");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(-1)).isEqualTo("UNKNOWN");
     }
 
     @Test
@@ -79,7 +83,7 @@ public class ReviewUtilsTest {
         // when
         reviewInput.addComments("TLDR", reviewList);
         // then
-        assertThat(reviewInput.maxLevelSeverity()).isEqualTo(ReviewUtils.thresholdToValue("INFO"));
+        assertThat(reviewInput.maxLevelSeverity()).isEqualTo(reviewUtilsUnderTest.thresholdToValue("INFO"));
     }
 
     @Test
@@ -88,6 +92,6 @@ public class ReviewUtilsTest {
         // when
         reviewInput.addComments("TLDR", reviewList);
         // then
-        assertThat(reviewInput.maxLevelSeverity()).isEqualTo(ReviewUtils.thresholdToValue("CRITICAL"));
+        assertThat(reviewInput.maxLevelSeverity()).isEqualTo(reviewUtilsUnderTest.thresholdToValue("CRITICAL"));
     }
 }

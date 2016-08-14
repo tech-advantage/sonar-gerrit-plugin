@@ -17,10 +17,6 @@ public class MessageUtils {
     private static final String ISSUE_MESSAGE = "message";
     private static final String ISSUE_SEPARATOR = ".";
 
-    private MessageUtils() {
-        super();
-    }
-
     /**
      * Create the issue message. The variables contained in the original message
      * are replaced by the settings values and the issue data.
@@ -33,7 +29,7 @@ public class MessageUtils {
      *            the issue
      * @return a new message with the replaced variables by data.
      */
-    public static String createIssueMessage(String originalMessage, Settings settings, PostJobIssue issue) {
+    public String createIssueMessage(String originalMessage, Settings settings, PostJobIssue issue) {
         HashMap<String, Object> valueMap = new HashMap<>();
         valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_IS_NEW), issue.isNew());
         valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_RULE_KEY), issue.ruleKey());
@@ -52,7 +48,7 @@ public class MessageUtils {
      *            the settings
      * @return a new string with substituted variables.
      */
-    public static String createMessage(String originalMessage, Settings settings) {
+    public String createMessage(String originalMessage, Settings settings) {
         return substituteProperties(originalMessage, settings, Collections.<String, Object>emptyMap());
     }
 
@@ -68,7 +64,7 @@ public class MessageUtils {
      *            the additional values
      * @return the built message
      */
-    private static String substituteProperties(String originalMessage, Settings settings,
+    private String substituteProperties(String originalMessage, Settings settings,
             Map<String, Object> additionalProperties) {
         if (additionalProperties.isEmpty()) {
             return StrSubstitutor.replace(originalMessage, settings.getProperties());
@@ -86,7 +82,7 @@ public class MessageUtils {
      *            the key
      * @return the key
      */
-    private static String prefixKey(String prefix, String key) {
+    private String prefixKey(String prefix, String key) {
         return new StringBuffer(prefix).append(ISSUE_SEPARATOR).append(key).toString();
     }
 

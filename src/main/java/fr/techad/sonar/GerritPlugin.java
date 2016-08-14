@@ -2,6 +2,8 @@ package fr.techad.sonar;
 
 import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
+import fr.techad.sonar.utils.MessageUtils;
 
 import org.sonar.api.PropertyType;
 import org.sonar.api.Plugin;
@@ -103,7 +105,8 @@ public final class GerritPlugin implements Plugin {
 
         context.addExtensions(Arrays.asList(GerritConfiguration.class, GerritConnectorFactory.class,
                 GerritFacadeFactory.class, GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class,
-                enabled, scheme, host, port, username, password, authScheme, basePath, sshKeyPath, label, message,
-                newIssuesOnly, threshold, voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold, issueComment));
+                ReviewUtils.class, MessageUtils.class, enabled, scheme, host, port, username, password, authScheme,
+                basePath, sshKeyPath, label, message, newIssuesOnly, threshold, voteNoIssue, voteIssueBelowThreshold,
+                voteIssueAboveThreshold, issueComment));
     }
 }

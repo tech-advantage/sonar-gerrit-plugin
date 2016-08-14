@@ -4,6 +4,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.sonar.api.batch.postjob.issue.PostJobIssue;
 import org.sonar.api.batch.rule.Severity;
@@ -13,6 +14,14 @@ import org.sonar.api.rule.RuleKey;
 import fr.techad.sonar.PropertyKey;
 
 public class MessageUtilsTest {
+
+    private MessageUtils messageUtils;
+
+    @Before
+    public void setUp() {
+        messageUtils = new MessageUtils();
+    }
+
     @Test
     public void validateSubstitution() {
         // given
@@ -21,7 +30,7 @@ public class MessageUtilsTest {
                 .appendProperty(PropertyKey.GERRIT_MESSAGE, "Sonar review at ${sonar.host.url}")
                 .appendProperty("sonar.host.url", "http://sq.example.com/");
         // then
-        assertThat(MessageUtils.createMessage(settings.getString(PropertyKey.GERRIT_MESSAGE), settings))
+        assertThat(messageUtils.createMessage(settings.getString(PropertyKey.GERRIT_MESSAGE), settings))
                 .isEqualTo("Sonar review at http://sq.example.com/");
     }
 
@@ -39,8 +48,8 @@ public class MessageUtilsTest {
                         "[${issue.isNew}] New: ${issue.ruleKey} on ${sonar.host.url} Severity: ${issue.severity}, Message: ${issue.message}")
                 .appendProperty("sonar.host.url", "http://sq.example.com/");
         // then
-        assertThat(MessageUtils.createIssueMessage(settings.getString(PropertyKey.GERRIT_ISSUE_COMMENT), settings, issue))
-                .isEqualTo(
+        assertThat(messageUtils.createIssueMessage(settings.getString(PropertyKey.GERRIT_ISSUE_COMMENT), settings,
+                issue)).isEqualTo(
                         "[true] New: squid:XX12 on http://sq.example.com/ Severity: BLOCKER, Message: You have a problem there");
     }
 
