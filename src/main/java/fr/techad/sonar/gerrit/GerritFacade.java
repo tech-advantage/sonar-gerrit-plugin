@@ -26,9 +26,9 @@ public abstract class GerritFacade {
     private final GerritConnector gerritConnector;
     private List<String> gerritFileList = new ArrayList<String>();
 
-    public GerritFacade(GerritConnectorFactory gerritConnectorFactory) {
+    public GerritFacade(GerritConnector gerritConnector) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritFacade");
-        this.gerritConnector = gerritConnectorFactory.getConnector();
+        this.gerritConnector = gerritConnector;
     }
 
     @NotNull

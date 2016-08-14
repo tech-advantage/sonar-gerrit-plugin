@@ -11,16 +11,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.techad.sonar.GerritPluginException;
+import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 
 public class GerritSshFacade extends GerritFacade {
     private static final Logger LOG = Loggers.get(GerritSshFacade.class);
     private static final String COMMIT_MSG = "/COMMIT_MSG";
     private static final String ERROR_LISTING = "Error listing files";
 
-    public GerritSshFacade(GerritConnectorFactory gerritConnectorFactory) {
-        super(gerritConnectorFactory);
+    public GerritSshFacade(GerritConnector gerritConnector) {
+        super(gerritConnector);
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritSshFacade");
     }
 

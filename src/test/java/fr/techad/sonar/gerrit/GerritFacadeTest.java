@@ -30,7 +30,7 @@ public class GerritFacadeTest {
 	    GerritConfiguration gerritConfiguration = new GerritConfiguration(settings);
         // when
 	    GerritConnectorFactory connectorFactory = new GerritConnectorFactory(gerritConfiguration);
-	    facade = new GerritFacade(connectorFactory) {
+	    facade = new GerritFacade(connectorFactory.getConnector()) {
 
 	        @Override
 	        protected void fillListFilesFomGerrit() throws GerritPluginException {

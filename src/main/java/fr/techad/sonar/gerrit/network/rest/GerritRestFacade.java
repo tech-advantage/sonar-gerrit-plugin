@@ -13,8 +13,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import fr.techad.sonar.GerritPluginException;
+import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 
 public class GerritRestFacade extends GerritFacade {
     private static final Logger LOG = Loggers.get(GerritRestFacade.class);
@@ -22,8 +22,8 @@ public class GerritRestFacade extends GerritFacade {
     private static final String COMMIT_MSG = "/COMMIT_MSG";
     private static final String ERROR_LISTING = "Error listing files";
 
-    public GerritRestFacade(GerritConnectorFactory gerritConnectorFactory) {
-        super(gerritConnectorFactory);
+    public GerritRestFacade(GerritConnector gerritConnector) {
+        super(gerritConnector);
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritRestFacade");
     }
 

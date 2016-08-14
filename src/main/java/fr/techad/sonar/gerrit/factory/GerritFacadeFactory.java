@@ -17,17 +17,16 @@ import fr.techad.sonar.gerrit.network.ssh.GerritSshFacade;
 public class GerritFacadeFactory {
     private static final Logger LOG = Loggers.get(GerritFacadeFactory.class);
 
-    GerritConnector gerritConnector;
-    GerritFacade gerritFacade;
+    private GerritFacade gerritFacade;
 
     public GerritFacadeFactory(GerritConnectorFactory gerritConnectorFactory) {
-        this.gerritConnector = gerritConnectorFactory.getConnector();
+        GerritConnector gerritConnector = gerritConnectorFactory.getConnector();
         if (gerritConnector instanceof GerritRestConnector) {
             LOG.debug("[GERRIT PLUGIN] Using REST connector.");
-            gerritFacade = new GerritRestFacade(gerritConnectorFactory);
+            gerritFacade = new GerritRestFacade(gerritConnector);
         } else if (gerritConnector instanceof GerritSshConnector) {
             LOG.debug("[GERRIT PLUGIN] Using SSH facade.");
-            gerritFacade = new GerritSshFacade(gerritConnectorFactory);
+            gerritFacade = new GerritSshFacade(gerritConnector);
         } else {
             LOG.error("[GERRIT PLUGIN] Unknown type of connector. Cannot assign facade.");
         }
