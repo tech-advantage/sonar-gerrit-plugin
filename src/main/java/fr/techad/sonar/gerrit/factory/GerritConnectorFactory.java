@@ -1,7 +1,7 @@
 package fr.techad.sonar.gerrit.factory;
 
-import org.sonar.api.batch.BatchSide;
 import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -11,7 +11,7 @@ import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.network.rest.GerritRestConnector;
 import fr.techad.sonar.gerrit.network.ssh.GerritSshConnector;
 
-@BatchSide
+@ScannerSide
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)
 public class GerritConnectorFactory {
     private static final Logger LOG = Loggers.get(GerritConnectorFactory.class);
