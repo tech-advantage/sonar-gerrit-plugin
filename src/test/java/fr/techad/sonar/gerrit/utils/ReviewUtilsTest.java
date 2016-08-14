@@ -1,32 +1,21 @@
 package fr.techad.sonar.gerrit.utils;
 
-import fr.techad.sonar.PropertyKey;
-import fr.techad.sonar.gerrit.review.ReviewFileComment;
-import fr.techad.sonar.gerrit.review.ReviewInput;
-import fr.techad.sonar.gerrit.review.ReviewLineComment;
-import fr.techad.sonar.gerrit.utils.ReviewUtils;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.sonar.api.batch.postjob.issue.PostJobIssue;
-import org.sonar.api.batch.rule.Severity;
-import org.sonar.api.config.Settings;
-import org.sonar.api.rule.RuleKey;
+import static org.fest.assertions.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import fr.techad.sonar.gerrit.review.ReviewFileComment;
+import fr.techad.sonar.gerrit.review.ReviewInput;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewUtilsTest {
-	@Mock
-    private Settings settings;
 
     ReviewInput reviewInput;
     ReviewLineComment rlcInfo;
@@ -41,11 +30,13 @@ public class ReviewUtilsTest {
 
         rlcInfo = new ReviewLineComment();
         rlcInfo.setLine(12);
-        rlcInfo.setMessage("INFO tldr");
+        rlcInfo.setMessage("INFORMATION tldr");
+        rlcInfo.setSeverity(ReviewFileComment.INFO_VALUE);
 
         rlcCritical = new ReviewLineComment();
         rlcCritical.setLine(34);
-        rlcCritical.setMessage("CRITICAL tldr");
+        rlcCritical.setMessage("CRITI tldr");
+        rlcCritical.setSeverity(ReviewFileComment.CRITICAL_VALUE);
 
         reviewList = new ArrayList<ReviewFileComment>(2);
         reviewList.add(rlcInfo);
@@ -80,27 +71,6 @@ public class ReviewUtilsTest {
     }
 
     @Test
-    public void detectFilledReviewInput() {
-        // given
-        assertThat(reviewList.size() > 0);
-        // when
-        reviewInput.addComments("TLDR", reviewList);
-        // then
-        assertThat(ReviewUtils.isEmpty(reviewInput)).isFalse();
-    }
-
-    @Test
-    public void detectEmptyReviewInput() {
-        // given
-        assertThat(reviewList.size() > 0);
-        // when
-        reviewInput.addComments("TLDR", reviewList);
-        reviewInput.emptyComments();
-        // then
-        assertThat(ReviewUtils.isEmpty(reviewInput)).isTrue();
-    }
-
-    @Test
     public void detectInfoLevel() {
         // given
         reviewInput.emptyComments();
@@ -109,46 +79,15 @@ public class ReviewUtilsTest {
         // when
         reviewInput.addComments("TLDR", reviewList);
         // then
-        assertThat(ReviewUtils.maxLevel(reviewInput)).isEqualTo(ReviewUtils.thresholdToValue("INFO"));
+        assertThat(reviewInput.maxLevelSeverity()).isEqualTo(ReviewUtils.thresholdToValue("INFO"));
     }
 
     @Test
     public void detectCriticalLevel() {
         // given
-        reviewInput.emptyComments();
-        reviewList.add(rlcInfo);
-        reviewList.add(rlcCritical);
         // when
         reviewInput.addComments("TLDR", reviewList);
         // then
-        assertThat(ReviewUtils.maxLevel(reviewInput)).isEqualTo(ReviewUtils.thresholdToValue("CRITICAL"));
-    }
-    
-    @Test
-    public void validateSubstitution() {
-    	// given
-    	// when
-    	settings = new Settings().appendProperty(PropertyKey.GERRIT_MESSAGE, "Sonar review at ${sonar.host.url}")
-    			.appendProperty("sonar.host.url", "http://sq.example.com/");
-    	// then
-    	assertThat(ReviewUtils.substituteProperties(settings.getString(PropertyKey.GERRIT_MESSAGE), settings))
-    	.isEqualTo("Sonar review at http://sq.example.com/");
-    }
-
-    @Test
-    public void validateIssueSubstitution() {
-        // given
-    	PostJobIssue issue = mock(PostJobIssue.class);
-        when(issue.isNew()).thenReturn(true);
-        when(issue.ruleKey()).thenReturn(RuleKey.of("squid", "XX12"));
-        when(issue.message()).thenReturn("You have a problem there");
-        when(issue.severity()).thenReturn(Severity.BLOCKER);
-        // when
-        settings = new Settings()
-            .appendProperty(PropertyKey.GERRIT_ISSUE_COMMENT, "[${issue.isNew}] New: ${issue.ruleKey} on ${sonar.host.url} Severity: ${issue.severity}, Message: ${issue.message}")
-            .appendProperty("sonar.host.url", "http://sq.example.com/");
-        // then
-        assertThat(ReviewUtils.issueMessage(settings.getString(PropertyKey.GERRIT_ISSUE_COMMENT), settings, issue))
-            .isEqualTo("[true] New: squid:XX12 on http://sq.example.com/ Severity: BLOCKER, Message: You have a problem there");
+        assertThat(reviewInput.maxLevelSeverity()).isEqualTo(ReviewUtils.thresholdToValue("CRITICAL"));
     }
 }

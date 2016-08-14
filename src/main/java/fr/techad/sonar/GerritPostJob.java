@@ -27,6 +27,7 @@ import fr.techad.sonar.gerrit.review.ReviewFileComment;
 import fr.techad.sonar.gerrit.review.ReviewInput;
 import fr.techad.sonar.gerrit.review.ReviewLineComment;
 import fr.techad.sonar.gerrit.utils.ReviewUtils;
+import fr.techad.sonar.utils.MessageUtils;
 
 @DependsUpon(DecoratorBarriers.ISSUES_TRACKED)
 public class GerritPostJob implements PostJob {
@@ -78,45 +79,33 @@ public class GerritPostJob implements PostJob {
 
         try {
             LOG.info("[GERRIT PLUGIN] Analysis has finished. Sending results to Gerrit.");
-            reviewInput.setMessage(ReviewUtils.substituteProperties(gerritConfiguration.getMessage(), settings));
+            reviewInput.setMessage(MessageUtils.createMessage(gerritConfiguration.getMessage(), settings));
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Define message : {}", reviewInput.getMessage());
-                LOG.debug("[GERRIT PLUGIN] Number of comments : {}", reviewInput.size());
-            }
+            LOG.debug("[GERRIT PLUGIN] Define message : {}", reviewInput.getMessage());
+            LOG.debug("[GERRIT PLUGIN] Number of comments : {}", reviewInput.size());
 
-            int maxLevel = ReviewUtils.maxLevel(reviewInput);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Configured threshold {}, max review level {}",
-                        gerritConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
-            }
+            int maxLevel = reviewInput.maxLevelSeverity();
+            LOG.debug("[GERRIT PLUGIN] Configured threshold {}, max review level {}",
+                    gerritConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
 
-            if (ReviewUtils.isEmpty(reviewInput)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] No issues ! Vote {} for the label : {}",
-                            gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
-                }
+            if (reviewInput.isEmpty()) {
+                LOG.debug("[GERRIT PLUGIN] No issues ! Vote {} for the label : {}",
+                        gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
             } else if (maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Issues below threshold. Vote {} for the label : {}",
-                            gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
-                }
+                LOG.debug("[GERRIT PLUGIN] Issues below threshold. Vote {} for the label : {}",
+                        gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteBelowThreshold(),
                         gerritConfiguration.getLabel());
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("[GERRIT PLUGIN] Issues above threshold. Vote {} for the label : {}",
-                            gerritConfiguration.getVoteAboveThreshold(), gerritConfiguration.getLabel());
-                }
+                LOG.debug("[GERRIT PLUGIN] Issues above threshold. Vote {} for the label : {}",
+                        gerritConfiguration.getVoteAboveThreshold(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteAboveThreshold(),
                         gerritConfiguration.getLabel());
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Send review for ChangeId={}, RevisionId={}",
-                        gerritConfiguration.getChangeId(), gerritConfiguration.getRevisionId());
-            }
+            LOG.debug("[GERRIT PLUGIN] Send review for ChangeId={}, RevisionId={}", gerritConfiguration.getChangeId(),
+                    gerritConfiguration.getRevisionId());
 
             gerritFacade.setReview(reviewInput);
 
@@ -136,13 +125,9 @@ public class GerritPostJob implements PostJob {
     }
 
     public void decorate(InputPath resource, PostJobContext context, Collection<PostJobIssue> issues) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] Decorate: {}", resource.relativePath());
-        }
+        LOG.debug("[GERRIT PLUGIN] Decorate: {}", resource.relativePath());
         if (!resource.file().isFile()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] {} is not a file", resource.relativePath());
-            }
+            LOG.debug("[GERRIT PLUGIN] {} is not a file", resource.relativePath());
             return;
         }
 
@@ -153,16 +138,14 @@ public class GerritPostJob implements PostJob {
             LOG.error("[GERRIT PLUGIN] Error getting Gerrit datas", e);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, resource={}", resource);
-            LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, name={}",
-                    resource.relativePath());
-            LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, key={}", resource.key());
-        }
+        LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, resource={}", resource);
+        LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, name={}", resource.relativePath());
+        LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, key={}", resource.key());
 
         String filename = getFileNameFromInputPath(resource);
-        if (filename!=null) {
-            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}: ", resource.relativePath(), filename);
+        if (filename != null) {
+            LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}: ", resource.relativePath(),
+                    filename);
             processFileResource(filename, issues);
         }
     }
@@ -172,20 +155,17 @@ public class GerritPostJob implements PostJob {
             return;
         }
         gerritModifiedFiles = gerritFacade.listFiles();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] Modified files in gerrit : {}", gerritModifiedFiles);
-        }
+        LOG.debug("[GERRIT PLUGIN] Modified files in gerrit : {}", gerritModifiedFiles);
     }
 
     protected ReviewLineComment issueToComment(PostJobIssue issue) {
         ReviewLineComment result = new ReviewLineComment();
 
         result.setLine(issue.line());
+        result.setSeverity(ReviewUtils.thresholdToValue(issue.severity().toString()));
 
-        result.setMessage(ReviewUtils.issueMessage(gerritConfiguration.getIssueComment(), settings, issue));
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("[GERRIT PLUGIN] issueToComment {}", result.toString());
-        }
+        result.setMessage(MessageUtils.createIssueMessage(gerritConfiguration.getIssueComment(), settings, issue));
+        LOG.debug("[GERRIT PLUGIN] issueToComment {}", result.toString());
         return result;
     }
 

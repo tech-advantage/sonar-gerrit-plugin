@@ -13,7 +13,6 @@ public class ReviewFileCommentTest {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(MESSAGE);
         Assert.assertEquals(MESSAGE, reviewFileComment.getMessage());
-        Assert.assertEquals("ReviewFileComment [message=" + MESSAGE + "]", reviewFileComment.toString());
     }
 
     @Test
@@ -21,6 +20,24 @@ public class ReviewFileCommentTest {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(null);
         Assert.assertEquals(null, reviewFileComment.getMessage());
+    }
+
+    @Test
+    public void testSeverity() {
+        ReviewFileComment reviewFileComment = new ReviewFileComment();
+        reviewFileComment.setMessage(MESSAGE);
+        reviewFileComment.setSeverity(ReviewFileComment.BLOCKER_VALUE);
+        Assert.assertEquals(ReviewFileComment.BLOCKER_VALUE, reviewFileComment.getSeverity());
+    }
+
+    @Test
+    public void testToString() {
+        ReviewFileComment reviewFileComment = new ReviewFileComment();
+        reviewFileComment.setMessage(MESSAGE);
+        reviewFileComment.setSeverity(ReviewFileComment.BLOCKER_VALUE);
+        Assert.assertEquals(
+                "ReviewFileComment [message:" + MESSAGE + ", severity: " + ReviewFileComment.BLOCKER_VALUE + "]",
+                reviewFileComment.toString());
     }
 
 }

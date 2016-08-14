@@ -1,5 +1,6 @@
 package fr.techad.sonar.gerrit.review;
 
+import static org.fest.assertions.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.Map;
 
 import org.assertj.core.util.Lists;
 import org.junit.Test;
+
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
 
 public class ReviewInputTest {
     private static final String DEFAULT_MESSAGE = "Looks good to me.";
@@ -123,7 +126,23 @@ public class ReviewInputTest {
         reviewInput.setMessage(NEW_MESSAGE);
         ArrayList<ReviewFileComment> list1 = Lists.newArrayList();
         list1.add(new ReviewFileComment());
-        assertEquals("ReviewInput [message=A new message, labels={+1 Label=1}, comments={}]",
-                reviewInput.toString());
+        assertEquals("ReviewInput [message=A new message, labels={+1 Label=1}, comments={}]", reviewInput.toString());
     }
+
+    @Test
+    public void shoulsHaveAEmptyReview() {
+        ReviewInput reviewInput = new ReviewInput();
+        reviewInput.emptyComments();
+        assertThat(reviewInput.isEmpty()).isTrue();
+    }
+
+    @Test
+    public void shouldHaveANoEmptyReview() {
+        ReviewInput reviewInput = new ReviewInput();
+        ArrayList<ReviewFileComment> list = Lists.newArrayList();
+        list.add(new ReviewFileComment());
+        reviewInput.addComments(KEY_COMMENT1, list);
+        assertThat(reviewInput.isEmpty()).isFalse();
+    }
+
 }

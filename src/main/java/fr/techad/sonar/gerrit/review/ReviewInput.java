@@ -1,11 +1,14 @@
 package fr.techad.sonar.gerrit.review;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.NotNull;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 /**
  * Gerrit request for review input. Used with JSON marshaller only.
@@ -19,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
  * "message": "[nit] s/conrtol/control" } ] } }
  */
 public class ReviewInput {
+    private static final Logger LOG = Loggers.get(ReviewInput.class);
     private String message = "Looks good to me.";
     private Map<String, Integer> labels = new ConcurrentHashMap<String, Integer>();
     private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<String, List<ReviewFileComment>>();
@@ -61,6 +65,24 @@ public class ReviewInput {
 
     public Map<String, List<ReviewFileComment>> getComments() {
         return comments;
+    }
+    
+    public boolean isEmpty() {
+        return comments.isEmpty();
+    }
+
+    public int maxLevelSeverity() {
+        int lvl = ReviewFileComment.UNKNOWN_VALUE;
+
+        for (Iterator<List<ReviewFileComment>> i = comments.values().iterator(); i.hasNext();) {
+            List<ReviewFileComment> lrfc = i.next();
+            for (ReviewFileComment review : lrfc) {
+                lvl = Math.max(review.getSeverity(), lvl);
+            }
+        }
+        LOG.debug("[GERRIT PLUGIN] The max level severity is {}", lvl);
+
+        return lvl;
     }
 
     @Override
