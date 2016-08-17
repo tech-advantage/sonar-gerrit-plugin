@@ -58,7 +58,7 @@ public class ReviewUtilsTest {
         assertThat(reviewUtilsUnderTest.thresholdToValue("MAJOR")).isEqualTo(Severity.MAJOR.ordinal());
         assertThat(reviewUtilsUnderTest.thresholdToValue("CRITICAL")).isEqualTo(Severity.CRITICAL.ordinal());
         assertThat(reviewUtilsUnderTest.thresholdToValue("BLOCKER")).isEqualTo(Severity.BLOCKER.ordinal());
-        assertThat(reviewUtilsUnderTest.thresholdToValue("NOOP")).isEqualTo(ReviewFileComment.UNKNOWN_VALUE);
+        assertThat(reviewUtilsUnderTest.thresholdToValue("NOOP")).isEqualTo(ReviewUtils.UNKNOWN_VALUE);
     }
 
     @Test
@@ -71,8 +71,8 @@ public class ReviewUtilsTest {
         assertThat(reviewUtilsUnderTest.valueToThreshold(Severity.MAJOR.ordinal())).isEqualTo("MAJOR");
         assertThat(reviewUtilsUnderTest.valueToThreshold(Severity.CRITICAL.ordinal())).isEqualTo("CRITICAL");
         assertThat(reviewUtilsUnderTest.valueToThreshold(Severity.BLOCKER.ordinal())).isEqualTo("BLOCKER");
-        assertThat(reviewUtilsUnderTest.valueToThreshold(42)).isEqualTo("UNKNOWN");
-        assertThat(reviewUtilsUnderTest.valueToThreshold(-1)).isEqualTo("UNKNOWN");
+        assertThat(reviewUtilsUnderTest.valueToThreshold(42)).isEqualTo(ReviewUtils.UNKNOWN);
+        assertThat(reviewUtilsUnderTest.valueToThreshold(-1)).isEqualTo(ReviewUtils.UNKNOWN);
     }
 
     @Test

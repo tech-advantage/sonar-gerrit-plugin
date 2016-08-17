@@ -11,8 +11,6 @@ import org.sonar.api.utils.log.Loggers;
 public class ReviewFileComment {
     private static final Logger LOG = Loggers.get(ReviewFileComment.class);
 
-    public static final int UNKNOWN_VALUE = -1;
-
     private String message;
     private int severity;
 

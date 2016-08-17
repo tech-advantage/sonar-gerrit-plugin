@@ -4,21 +4,21 @@ import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import fr.techad.sonar.gerrit.review.ReviewFileComment;
-
 public final class ReviewUtils {
     private static final Logger LOG = Loggers.get(ReviewUtils.class);
-    private static final String UNKNOWN = "UNKNOWN";
+    public static final String UNKNOWN = "UNKNOWN";
+    public static final int UNKNOWN_VALUE = -1;
+
 
     public int thresholdToValue(String threshold) {
-        int thresholdValue = ReviewFileComment.UNKNOWN_VALUE;
+        int thresholdValue = UNKNOWN_VALUE;
         
         try {
         	thresholdValue = Severity.valueOf(threshold).ordinal();
         }
         catch (Exception e) {
         	LOG.warn("[GERRIT PLUGIN] Cannot convert threshold String {} to int. Using UNKNOWN.", threshold);
-        	thresholdValue = ReviewFileComment.UNKNOWN_VALUE;
+        	thresholdValue = UNKNOWN_VALUE;
         }
 
         LOG.debug("[GERRIT PLUGIN] {} is converted to {}", threshold, thresholdValue);
