@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
+
 /**
  * Gerrit request for review input. Used with JSON marshaller only.
  *
@@ -72,7 +74,7 @@ public class ReviewInput {
     }
 
     public int maxLevelSeverity() {
-        int lvl = ReviewFileComment.UNKNOWN_VALUE;
+        int lvl = ReviewUtils.UNKNOWN_VALUE;
 
         for (Iterator<List<ReviewFileComment>> i = comments.values().iterator(); i.hasNext();) {
             List<ReviewFileComment> lrfc = i.next();

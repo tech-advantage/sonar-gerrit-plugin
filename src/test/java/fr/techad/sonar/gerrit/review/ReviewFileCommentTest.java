@@ -1,7 +1,7 @@
 package fr.techad.sonar.gerrit.review;
 
 import org.junit.Test;
-
+import org.sonar.api.batch.rule.Severity;
 import org.junit.Assert;
 
 public class ReviewFileCommentTest {
@@ -26,17 +26,17 @@ public class ReviewFileCommentTest {
     public void testSeverity() {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(MESSAGE);
-        reviewFileComment.setSeverity(ReviewFileComment.BLOCKER_VALUE);
-        Assert.assertEquals(ReviewFileComment.BLOCKER_VALUE, reviewFileComment.getSeverity());
+        reviewFileComment.setSeverity(Severity.BLOCKER.ordinal());
+        Assert.assertEquals(Severity.BLOCKER.ordinal(), reviewFileComment.getSeverity());
     }
 
     @Test
     public void testToString() {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(MESSAGE);
-        reviewFileComment.setSeverity(ReviewFileComment.BLOCKER_VALUE);
+        reviewFileComment.setSeverity(Severity.BLOCKER.ordinal());
         Assert.assertEquals(
-                "ReviewFileComment [message:" + MESSAGE + ", severity: " + ReviewFileComment.BLOCKER_VALUE + "]",
+                "ReviewFileComment [message:" + MESSAGE + ", severity: " + Severity.BLOCKER.ordinal() + "]",
                 reviewFileComment.toString());
     }
 
