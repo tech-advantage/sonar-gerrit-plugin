@@ -23,6 +23,7 @@ public final class PropertyKey {
     public static final String GERRIT_VOTE_ISSUE_BELOW_THRESHOLD = "GERRIT_VOTE_ISSUE_BELOW_THRESHOLD";
     public static final String GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD = "GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD";
     public static final String GERRIT_ISSUE_COMMENT = "GERRIT_ISSUE_COMMENT";
+    public static final String GERRIT_STRICT_HOSTKEY = "GERRIT_STRICT_HOSTKEY";
 
     private PropertyKey() {
     }
