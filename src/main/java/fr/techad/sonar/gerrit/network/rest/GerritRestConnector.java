@@ -39,7 +39,6 @@ public class GerritRestConnector implements GerritConnector {
     private static final String URI_REVISIONS = "/revisions/%s";
     private static final String URI_LIST_FILES_SUFFIX = "/files/";
     private static final String URI_SET_REVIEW = "/review";
-    private static int REQUEST_COUNTER;
     private HttpHost httpHost;
     private CloseableHttpClient httpClient;
     private HttpClientContext httpClientContext;
@@ -121,23 +120,20 @@ public class GerritRestConnector implements GerritConnector {
             createHttpContext();
         }
 
-        LOG.info("[GERRIT PLUGIN] Request {}: {} to {}",
-                new Object[] { ++REQUEST_COUNTER, request.getMethod(), request.getURI().toString() });
+        LOG.info("[GERRIT PLUGIN] Request {} to {}", request.getMethod(), request.getURI().toString());
         CloseableHttpResponse httpResponse = httpClient.execute(httpHost, request, httpClientContext);
-        LOG.info("[GERRIT PLUGIN] Response {}: {}", REQUEST_COUNTER, httpResponse.getStatusLine().toString());
+        LOG.info("[GERRIT PLUGIN] Response {}", httpResponse.getStatusLine().toString());
         return httpResponse;
     }
 
     @NotNull
     private String consumeAndLogEntity(@NotNull CloseableHttpResponse response) throws IOException {
         if (response.getEntity() == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("[GERRIT PLUGIN] Entity {}: no entity", REQUEST_COUNTER);
-            }
+            LOG.debug("[GERRIT PLUGIN] Entity : no entity");
             return StringUtils.EMPTY;
         }
         String content = EntityUtils.toString(response.getEntity());
-        LOG.info("[GERRIT PLUGIN] Entity {}: {}", REQUEST_COUNTER, content);
+        LOG.info("[GERRIT PLUGIN] Entity : {}", content);
         return content;
     }
 
