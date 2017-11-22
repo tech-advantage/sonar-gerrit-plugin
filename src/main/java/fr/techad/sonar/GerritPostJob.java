@@ -159,7 +159,7 @@ public class GerritPostJob implements PostJob {
     }
 
     protected void processFileResource(@NotNull String file, @NotNull Collection<PostJobIssue> issuable) {
-        List<ReviewFileComment> comments = new ArrayList<ReviewFileComment>();
+        List<ReviewFileComment> comments = new ArrayList<>();
         commentIssues(issuable, comments);
         if (!comments.isEmpty()) {
             reviewInput.addComments(file, comments);

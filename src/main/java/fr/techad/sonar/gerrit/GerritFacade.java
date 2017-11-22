@@ -13,7 +13,6 @@ import org.sonar.api.utils.log.Loggers;
 import com.google.gson.stream.JsonWriter;
 
 import fr.techad.sonar.GerritPluginException;
-import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
 import fr.techad.sonar.gerrit.review.ReviewFileComment;
 import fr.techad.sonar.gerrit.review.ReviewInput;
 import fr.techad.sonar.gerrit.review.ReviewLineComment;
@@ -23,8 +22,10 @@ public abstract class GerritFacade {
     private static final String MAVEN_ENTRY_REGEX = ".*?/?src/";
     private static final String ERROR_FORMAT = "Error formatting review";
     private static final String ERROR_SETTING = "Error setting review";
+    private static final String COMMIT_MSG = "/COMMIT_MSG";
+
     private final GerritConnector gerritConnector;
-    private List<String> gerritFileList = new ArrayList<String>();
+    private List<String> gerritFileList = new ArrayList<>();
 
     public GerritFacade(GerritConnector gerritConnector) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritFacade");
@@ -59,7 +60,11 @@ public abstract class GerritFacade {
     }
 
     protected void addFile(String fileName) {
-        gerritFileList.add(fileName);
+        if (COMMIT_MSG.equals(fileName)) {
+            LOG.debug("[GERRIT PLUGIN] File is commit message, not adding");
+        } else {
+            gerritFileList.add(fileName);
+        }
     }
 
     protected abstract void fillListFilesFomGerrit() throws GerritPluginException;

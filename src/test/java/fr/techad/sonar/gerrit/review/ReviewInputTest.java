@@ -10,8 +10,6 @@ import java.util.Map;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
 
-import fr.techad.sonar.gerrit.utils.ReviewUtils;
-
 public class ReviewInputTest {
     private static final String DEFAULT_MESSAGE = "Looks good to me.";
     private static final String NEW_MESSAGE = "A new message";

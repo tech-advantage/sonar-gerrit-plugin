@@ -19,7 +19,6 @@ import fr.techad.sonar.gerrit.GerritFacade;
 public class GerritRestFacade extends GerritFacade {
     private static final Logger LOG = Loggers.get(GerritRestFacade.class);
     private static final String JSON_RESPONSE_PREFIX = ")]}'";
-    private static final String COMMIT_MSG = "/COMMIT_MSG";
     private static final String ERROR_LISTING = "Error listing files";
 
     public GerritRestFacade(GerritConnector gerritConnector) {
@@ -34,18 +33,13 @@ public class GerritRestFacade extends GerritFacade {
             String jsonString = trimResponse(rawJsonString);
             JsonElement rootJsonElement = new JsonParser().parse(jsonString);
             for (Entry<String, JsonElement> fileList : rootJsonElement.getAsJsonObject().entrySet()) {
-                String fileName = fileList.getKey();
-                if (COMMIT_MSG.equals(fileName)) {
-                    continue;
-                }
-
                 JsonObject jsonObject = fileList.getValue().getAsJsonObject();
                 if (jsonObject.has("status") && isMarkAsDeleted(jsonObject)) {
                     LOG.debug("[GERRIT PLUGIN] File is marked as deleted, won't comment.");
                     continue;
                 }
 
-                addFile(fileName);
+                addFile(fileList.getKey());
             }
         } catch (IOException e) {
             throw new GerritPluginException(ERROR_LISTING, e);
