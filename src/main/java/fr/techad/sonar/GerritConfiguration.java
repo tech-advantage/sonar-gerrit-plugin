@@ -1,8 +1,6 @@
 package fr.techad.sonar;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.sonar.api.batch.InstantiationStrategy;
 import org.sonar.api.batch.ScannerSide;
 import org.sonar.api.config.Settings;
@@ -120,42 +118,38 @@ public class GerritConfiguration {
         return strictHostkey;
     }
 
-    @NotNull
     public String getScheme() {
         return scheme;
     }
 
-    public GerritConfiguration setScheme(@NotNull String scheme) {
+    public GerritConfiguration setScheme(String scheme) {
         this.scheme = scheme;
         return this;
     }
 
-    @NotNull
     public String getHost() {
         return host;
     }
 
-    public GerritConfiguration setHost(@NotNull String host) {
+    public GerritConfiguration setHost(String host) {
         this.host = host;
         return this;
     }
 
-    @NotNull
     public Integer getPort() {
         return port;
     }
 
-    public GerritConfiguration setPort(@NotNull Integer port) {
+    public GerritConfiguration setPort(Integer port) {
         this.port = port;
         return this;
     }
 
-    @Nullable
     public String getUsername() {
         return username;
     }
 
-    public GerritConfiguration setUsername(@Nullable String username) {
+    public GerritConfiguration setUsername(String username) {
         this.username = username;
         if (StringUtils.isBlank(username)) {
             anonymous = true;
@@ -163,7 +157,6 @@ public class GerritConfiguration {
         return this;
     }
 
-    @Nullable
     public String getPassword() {
         return password;
     }
@@ -182,12 +175,11 @@ public class GerritConfiguration {
         return this;
     }
 
-    @Nullable
     public String getBasePath() {
         return basePath;
     }
 
-    public GerritConfiguration setBasePath(@Nullable String basePath) {
+    public GerritConfiguration setBasePath(String basePath) {
         String newBasePath = basePath;
 
         if (StringUtils.isBlank(newBasePath)) {
@@ -211,7 +203,6 @@ public class GerritConfiguration {
         return this;
     }
 
-    @NotNull
     public String getSshKeyPath() {
         return sshKeyPath;
     }
@@ -221,12 +212,11 @@ public class GerritConfiguration {
         return this;
     }
 
-    @NotNull
     public String getLabel() {
         return label;
     }
 
-    public GerritConfiguration setLabel(@NotNull String label) {
+    public GerritConfiguration setLabel(String label) {
         this.label = label;
         return this;
     }
@@ -240,11 +230,10 @@ public class GerritConfiguration {
         return this;
     }
 
-    public void setIssueComment(@NotNull String issueComment) {
+    public void setIssueComment(String issueComment) {
         this.issueComment = issueComment;
     }
 
-    @NotNull
     public String getIssueComment() {
         return issueComment;
     }
@@ -285,42 +274,38 @@ public class GerritConfiguration {
         return this;
     }
 
-    @NotNull
     public String getProjectName() {
         return projectName;
     }
 
-    public GerritConfiguration setProjectName(@NotNull String projectName) {
+    public GerritConfiguration setProjectName(String projectName) {
         this.projectName = projectName;
         return this;
     }
 
-    @NotNull
     public String getBranchName() {
         return branchName;
     }
 
-    public GerritConfiguration setBranchName(@NotNull String branchName) {
+    public GerritConfiguration setBranchName(String branchName) {
         this.branchName = branchName;
         return this;
     }
 
-    @NotNull
     public String getChangeId() {
         return changeId;
     }
 
-    public GerritConfiguration setChangeId(@NotNull String changeId) {
+    public GerritConfiguration setChangeId(String changeId) {
         this.changeId = changeId;
         return this;
     }
 
-    @NotNull
     public String getRevisionId() {
         return revisionId;
     }
 
-    public GerritConfiguration setRevisionId(@NotNull String revisionId) {
+    public GerritConfiguration setRevisionId(String revisionId) {
         this.revisionId = revisionId;
         return this;
     }

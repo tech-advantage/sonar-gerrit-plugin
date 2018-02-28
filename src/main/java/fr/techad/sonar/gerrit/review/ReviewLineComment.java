@@ -1,6 +1,5 @@
 package fr.techad.sonar.gerrit.review;
 
-import org.jetbrains.annotations.NotNull;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -12,7 +11,7 @@ public class ReviewLineComment extends ReviewFileComment {
         return line;
     }
 
-    public void setLine(@NotNull Integer setLine) {
+    public void setLine(Integer setLine) {
         Integer tmpLine = 0;
 
         if (null == setLine) {

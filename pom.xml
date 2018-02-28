@@ -30,7 +30,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <sonar.buildVersion>6.0</sonar.buildVersion>
     <sonar-packaging.version>1.15</sonar-packaging.version>
-    <jdk.min.version>1.7</jdk.min.version>
+    <jdk.min.version>1.8</jdk.min.version>
   </properties>
   <dependencies>
     <dependency>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.4</version>
+      <version>3.6</version>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>

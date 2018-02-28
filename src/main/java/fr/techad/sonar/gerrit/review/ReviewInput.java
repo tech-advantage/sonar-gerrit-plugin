@@ -26,8 +26,8 @@ import fr.techad.sonar.gerrit.utils.ReviewUtils;
 public class ReviewInput {
     private static final Logger LOG = Loggers.get(ReviewInput.class);
     private String message = "Looks good to me.";
-    private Map<String, Integer> labels = new ConcurrentHashMap<String, Integer>();
-    private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<String, List<ReviewFileComment>>();
+    private Map<String, Integer> labels = new ConcurrentHashMap<>();
+    private Map<String, List<ReviewFileComment>> comments = new ConcurrentHashMap<>();
 
     public void setValueAndLabel(@NotNull int value, @NotNull String label) {
         labels.put(label, value);
