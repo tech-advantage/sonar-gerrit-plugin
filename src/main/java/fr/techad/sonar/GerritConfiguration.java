@@ -16,6 +16,7 @@ public class GerritConfiguration {
     private boolean valid;
     private boolean anonymous;
     private boolean commentNewIssuesOnly;
+    private boolean strictHostkey;
 
     private String host;
 
@@ -46,6 +47,7 @@ public class GerritConfiguration {
 
         this.enable(settings.getBoolean(PropertyKey.GERRIT_ENABLED));
         this.commentNewIssuesOnly(settings.getBoolean(PropertyKey.GERRIT_COMMENT_NEW_ISSUES_ONLY));
+        this.strictlyCheckHostkey(settings.getBoolean(PropertyKey.GERRIT_STRICT_HOSTKEY));
 
         this.setScheme(settings.getString(PropertyKey.GERRIT_SCHEME));
         this.setHost(settings.getString(PropertyKey.GERRIT_HOST));
@@ -105,6 +107,15 @@ public class GerritConfiguration {
 
     public boolean shouldCommentNewIssuesOnly() {
         return commentNewIssuesOnly;
+    }
+
+    public GerritConfiguration strictlyCheckHostkey(boolean strictHostkey) {
+        this.strictHostkey = strictHostkey;
+        return this;
+    }
+
+    public boolean shouldStrictlyCheckHostKey() {
+        return strictHostkey;
     }
 
     public String getScheme() {
