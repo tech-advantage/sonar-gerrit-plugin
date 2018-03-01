@@ -1,5 +1,6 @@
 package fr.techad.sonar.gerrit.network.ssh;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
@@ -23,7 +24,7 @@ public class GerritSshConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritSshConnector.class);
     private static final String CMD_LIST_FILES = "gerrit query --format=JSON --files --current-patch-set status:open change:%s limit:1";
     private static final String CMD_SET_REVIEW = "gerrit review %s -j";
-    private static final String SSH_KNWON_HOSTS = "~/.ssh/known_hosts";
+    private static final String SSH_KNWON_HOSTS = ".ssh/known_hosts";
     private static final String SSH_STRICT_NO = "StrictHostKeyChecking=no";
 
     private final GerritConfiguration gerritConfiguration;
@@ -74,21 +75,22 @@ public class GerritSshConnector implements GerritConnector {
             sc = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword());
         } else {
             LOG.debug("[GERRIT PLUGIN] SSH will not check host key.");
-            Boolean knownHostsExists = Files.exists(Paths.get(SSH_KNWON_HOSTS), LinkOption.NOFOLLOW_LINKS);
+            String userKnownHosts = System.getProperty("user.home") + File.pathSeparator + SSH_KNWON_HOSTS;
+            Boolean knownHostsExists = Files.exists(Paths.get(userKnownHosts), LinkOption.NOFOLLOW_LINKS);
             
             if (!knownHostsExists) {
-                LOG.debug("[GERRIT PLUGIN] {} does not exist. Creating.", SSH_KNWON_HOSTS);
+                LOG.debug("[GERRIT PLUGIN] {} does not exist. Creating.", userKnownHosts);
                 // known_hosts DOES NOT exists => create it
                 try {
-                    Files.createFile(Paths.get(SSH_KNWON_HOSTS));
+                    Files.createFile(Paths.get(userKnownHosts));
                 } catch (IOException e) {
                     LOG.warn("[GERRIT PLUGIN] Could not create known_hosts", e);
                 }
-                LOG.debug("[GERRIT PLUGIN] {} created.", SSH_KNWON_HOSTS);
+                LOG.debug("[GERRIT PLUGIN] {} created.", userKnownHosts);
             }
             
             sc = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword(),
-                    SSH_KNWON_HOSTS, new Options("5s", "0s", "1M", "1M", SSH_STRICT_NO, false));
+                    userKnownHosts, new Options("5s", "0s", "1M", "1M", SSH_STRICT_NO, false));
         }
 
         return sc;
