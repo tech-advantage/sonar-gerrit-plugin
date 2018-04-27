@@ -1,22 +1,21 @@
 package fr.techad.sonar.gerrit.review;
 
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
+import org.jetbrains.annotations.NotNull;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jetbrains.annotations.NotNull;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
-import fr.techad.sonar.gerrit.utils.ReviewUtils;
-
 /**
  * Gerrit request for review input. Used with JSON marshaller only.
- *
+ * <p>
  * Example JSON:
- *
+ * <p>
  * { "message": "Some nits need to be fixed.", "labels": { "Code-Review": -1 },
  * "comments": {
  * "gerrit-server/src/main/java/com/google/gerrit/server/project/RefControl.java"
@@ -41,12 +40,12 @@ public class ReviewInput {
         this.setValueAndLabel(-1, label);
     }
 
-    public void setMessage(@NotNull String message) {
-        this.message = message;
-    }
-
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(@NotNull String message) {
+        this.message = message;
     }
 
     public void addComments(String key, List<ReviewFileComment> reviewFileComments) {
@@ -68,7 +67,7 @@ public class ReviewInput {
     public Map<String, List<ReviewFileComment>> getComments() {
         return comments;
     }
-    
+
     public boolean isEmpty() {
         return comments.isEmpty();
     }
@@ -76,7 +75,7 @@ public class ReviewInput {
     public int maxLevelSeverity() {
         int lvl = ReviewUtils.UNKNOWN_VALUE;
 
-        for (Iterator<List<ReviewFileComment>> i = comments.values().iterator(); i.hasNext();) {
+        for (Iterator<List<ReviewFileComment>> i = comments.values().iterator(); i.hasNext(); ) {
             List<ReviewFileComment> lrfc = i.next();
             for (ReviewFileComment review : lrfc) {
                 lvl = Math.max(review.getSeverity(), lvl);

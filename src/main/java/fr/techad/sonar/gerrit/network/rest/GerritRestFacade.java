@@ -1,20 +1,18 @@
 package fr.techad.sonar.gerrit.network.rest;
 
-import java.io.IOException;
-import java.util.Map.Entry;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import fr.techad.sonar.GerritPluginException;
+import fr.techad.sonar.gerrit.GerritConnector;
+import fr.techad.sonar.gerrit.GerritFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
-import fr.techad.sonar.GerritPluginException;
-import fr.techad.sonar.gerrit.GerritConnector;
-import fr.techad.sonar.gerrit.GerritFacade;
+import java.io.IOException;
+import java.util.Map.Entry;
 
 public class GerritRestFacade extends GerritFacade {
     private static final Logger LOG = Loggers.get(GerritRestFacade.class);

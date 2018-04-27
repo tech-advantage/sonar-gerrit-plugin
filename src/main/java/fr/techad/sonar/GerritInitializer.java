@@ -1,11 +1,10 @@
 package fr.techad.sonar;
 
+import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
 import org.sonar.api.batch.Initializer;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
-
-import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
 
 public class GerritInitializer extends Initializer {
     private static final Logger LOG = Loggers.get(GerritInitializer.class);

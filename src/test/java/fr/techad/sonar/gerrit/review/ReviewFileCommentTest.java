@@ -1,8 +1,8 @@
 package fr.techad.sonar.gerrit.review;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.sonar.api.batch.rule.Severity;
-import org.junit.Assert;
 
 public class ReviewFileCommentTest {
 
@@ -36,8 +36,8 @@ public class ReviewFileCommentTest {
         reviewFileComment.setMessage(MESSAGE);
         reviewFileComment.setSeverity(Severity.BLOCKER.ordinal());
         Assert.assertEquals(
-                "ReviewFileComment [message:" + MESSAGE + ", severity: " + Severity.BLOCKER.ordinal() + "]",
-                reviewFileComment.toString());
+            "ReviewFileComment [message:" + MESSAGE + ", severity: " + Severity.BLOCKER.ordinal() + "]",
+            reviewFileComment.toString());
     }
 
 }

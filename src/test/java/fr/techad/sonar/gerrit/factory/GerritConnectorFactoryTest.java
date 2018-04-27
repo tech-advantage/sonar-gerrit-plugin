@@ -1,18 +1,17 @@
 package fr.techad.sonar.gerrit.factory;
 
-import static org.junit.Assert.assertEquals;
-
+import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.GerritConstants;
+import fr.techad.sonar.gerrit.GerritConnector;
+import fr.techad.sonar.gerrit.network.rest.GerritRestConnector;
+import fr.techad.sonar.gerrit.network.ssh.GerritSshConnector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fr.techad.sonar.GerritConfiguration;
-import fr.techad.sonar.GerritConstants;
-import fr.techad.sonar.gerrit.GerritConnector;
-import fr.techad.sonar.gerrit.network.rest.GerritRestConnector;
-import fr.techad.sonar.gerrit.network.ssh.GerritSshConnector;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GerritConnectorFactoryTest {

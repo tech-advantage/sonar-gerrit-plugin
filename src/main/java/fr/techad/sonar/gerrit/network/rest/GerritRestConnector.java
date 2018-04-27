@@ -1,9 +1,8 @@
 package fr.techad.sonar.gerrit.network.rest;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
+import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.GerritConstants;
+import fr.techad.sonar.gerrit.GerritConnector;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScheme;
@@ -28,9 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import fr.techad.sonar.GerritConfiguration;
-import fr.techad.sonar.GerritConstants;
-import fr.techad.sonar.gerrit.GerritConnector;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class GerritRestConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritRestConnector.class);
@@ -39,10 +38,10 @@ public class GerritRestConnector implements GerritConnector {
     private static final String URI_REVISIONS = "/revisions/%s";
     private static final String URI_LIST_FILES_SUFFIX = "/files/";
     private static final String URI_SET_REVIEW = "/review";
+    private final GerritConfiguration gerritConfiguration;
     private HttpHost httpHost;
     private CloseableHttpClient httpClient;
     private HttpClientContext httpClientContext;
-    private final GerritConfiguration gerritConfiguration;
 
     public GerritRestConnector(GerritConfiguration gerritConfiguration) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritConnector");
@@ -84,7 +83,7 @@ public class GerritRestConnector implements GerritConnector {
     // http://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientPreemptiveDigestAuthentication.java
     private void createHttpContext() {
         httpHost = new HttpHost(gerritConfiguration.getHost(), gerritConfiguration.getPort(),
-                gerritConfiguration.getScheme());
+            gerritConfiguration.getScheme());
         httpClientContext = HttpClientContext.create();
 
         if (gerritConfiguration.isAnonymous()) {
@@ -92,9 +91,9 @@ public class GerritRestConnector implements GerritConnector {
         } else {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(
-                    new AuthScope(gerritConfiguration.getHost(), gerritConfiguration.getPort()),
-                    new UsernamePasswordCredentials(gerritConfiguration.getUsername(),
-                            gerritConfiguration.getPassword()));
+                new AuthScope(gerritConfiguration.getHost(), gerritConfiguration.getPort()),
+                new UsernamePasswordCredentials(gerritConfiguration.getUsername(),
+                    gerritConfiguration.getPassword()));
             httpClient = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
 
             BasicAuthCache basicAuthCache = new BasicAuthCache();
@@ -107,7 +106,7 @@ public class GerritRestConnector implements GerritConnector {
 
             } else {
                 LOG.error("[GERRIT PLUGIN] createHttpContext called with AUTH_SCHEME {} instead of digest or basic",
-                        gerritConfiguration.getHttpAuthScheme());
+                    gerritConfiguration.getHttpAuthScheme());
             }
             basicAuthCache.put(httpHost, authScheme);
             httpClientContext.setAuthCache(basicAuthCache);
@@ -162,7 +161,7 @@ public class GerritRestConnector implements GerritConnector {
             uri = uri.concat(URI_AUTH_PREFIX);
         }
         uri = uri.concat(String.format(URI_CHANGES, encode(gerritConfiguration.getProjectName()),
-                encode(gerritConfiguration.getBranchName()), encode(gerritConfiguration.getChangeId())));
+            encode(gerritConfiguration.getBranchName()), encode(gerritConfiguration.getChangeId())));
         uri = uri.concat(String.format(URI_REVISIONS, encode(gerritConfiguration.getRevisionId())));
 
         LOG.debug("[GERRIT PLUGIN] Built URI : {}", uri);
