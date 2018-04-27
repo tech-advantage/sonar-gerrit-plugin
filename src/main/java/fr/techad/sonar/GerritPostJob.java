@@ -1,11 +1,12 @@
 package fr.techad.sonar;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fr.techad.sonar.gerrit.GerritFacade;
+import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
+import fr.techad.sonar.gerrit.review.ReviewFileComment;
+import fr.techad.sonar.gerrit.review.ReviewInput;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
+import fr.techad.sonar.gerrit.utils.ReviewUtils;
+import fr.techad.sonar.utils.MessageUtils;
 import org.jetbrains.annotations.NotNull;
 import org.sonar.api.batch.fs.InputComponent;
 import org.sonar.api.batch.fs.InputPath;
@@ -17,13 +18,11 @@ import org.sonar.api.config.Settings;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
-import fr.techad.sonar.gerrit.GerritFacade;
-import fr.techad.sonar.gerrit.factory.GerritFacadeFactory;
-import fr.techad.sonar.gerrit.review.ReviewFileComment;
-import fr.techad.sonar.gerrit.review.ReviewInput;
-import fr.techad.sonar.gerrit.review.ReviewLineComment;
-import fr.techad.sonar.gerrit.utils.ReviewUtils;
-import fr.techad.sonar.utils.MessageUtils;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GerritPostJob implements PostJob {
     private static final Logger LOG = Loggers.get(GerritPostJob.class);
@@ -36,7 +35,7 @@ public class GerritPostJob implements PostJob {
     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
     public GerritPostJob(Settings settings, GerritConfiguration gerritConfiguration,
-            GerritFacadeFactory gerritFacadeFactory, ReviewUtils reviewUtils, MessageUtils messageUtils) {
+                         GerritFacadeFactory gerritFacadeFactory, ReviewUtils reviewUtils, MessageUtils messageUtils) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritPostJob");
         this.settings = settings;
         this.gerritFacade = gerritFacadeFactory.getFacade();
@@ -85,26 +84,26 @@ public class GerritPostJob implements PostJob {
 
             int maxLevel = reviewInput.maxLevelSeverity();
             LOG.debug("[GERRIT PLUGIN] Configured threshold {}, max review level {}",
-                    gerritConfiguration.getThreshold(), reviewUtils.valueToThreshold(maxLevel));
+                gerritConfiguration.getThreshold(), reviewUtils.valueToThreshold(maxLevel));
 
             if (reviewInput.isEmpty()) {
                 LOG.debug("[GERRIT PLUGIN] No issues ! Vote {} for the label : {}",
-                        gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
+                    gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
             } else if (maxLevel < reviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
                 LOG.debug("[GERRIT PLUGIN] Issues below threshold. Vote {} for the label : {}",
-                        gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
+                    gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteBelowThreshold(),
-                        gerritConfiguration.getLabel());
+                    gerritConfiguration.getLabel());
             } else {
                 LOG.debug("[GERRIT PLUGIN] Issues above threshold. Vote {} for the label : {}",
-                        gerritConfiguration.getVoteAboveThreshold(), gerritConfiguration.getLabel());
+                    gerritConfiguration.getVoteAboveThreshold(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteAboveThreshold(),
-                        gerritConfiguration.getLabel());
+                    gerritConfiguration.getLabel());
             }
 
             LOG.debug("[GERRIT PLUGIN] Send review for ChangeId={}, RevisionId={}", gerritConfiguration.getChangeId(),
-                    gerritConfiguration.getRevisionId());
+                gerritConfiguration.getRevisionId());
 
             gerritFacade.setReview(reviewInput);
 
@@ -134,7 +133,7 @@ public class GerritPostJob implements PostJob {
         String filename = getFileNameFromInputPath(resource);
         if (filename != null) {
             LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}: ", resource.relativePath(),
-                    filename);
+                filename);
             processFileResource(filename, issues);
         }
     }
@@ -172,7 +171,7 @@ public class GerritPostJob implements PostJob {
         for (PostJobIssue issue : issues) {
             if (gerritConfiguration.shouldCommentNewIssuesOnly() && !issue.isNew()) {
                 LOG.info(
-                        "[GERRIT PLUGIN] Issue is not new and only new one should be commented. Will not push back to Gerrit.");
+                    "[GERRIT PLUGIN] Issue is not new and only new one should be commented. Will not push back to Gerrit.");
             } else {
                 comments.add(issueToComment(issue));
             }
@@ -186,7 +185,7 @@ public class GerritPostJob implements PostJob {
             filename = resource.relativePath();
         } else if (gerritModifiedFiles.contains(gerritFacade.parseFileName(resource.relativePath()))) {
             LOG.info("[GERRIT PLUGIN] Found a match between Sonar and Gerrit for {}",
-                    gerritFacade.parseFileName(resource.relativePath()));
+                gerritFacade.parseFileName(resource.relativePath()));
             filename = gerritFacade.parseFileName(resource.relativePath());
         } else {
             LOG.debug("[GERRIT PLUGIN] Parse the Gerrit List to look for the resource: {}", resource.relativePath());
@@ -201,7 +200,7 @@ public class GerritPostJob implements PostJob {
         if (filename == null) {
             LOG.debug("[GERRIT PLUGIN] File '{}' was not found in the review list)", resource.relativePath());
             LOG.debug("[GERRIT PLUGIN] Try to find with: '{}', '{}' and '{}'", resource.relativePath(),
-                    gerritFacade.parseFileName(resource.relativePath()));
+                gerritFacade.parseFileName(resource.relativePath()));
         }
         return filename;
     }

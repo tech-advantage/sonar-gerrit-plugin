@@ -1,21 +1,19 @@
 package fr.techad.sonar.gerrit;
 
+import com.google.gson.stream.JsonWriter;
+import fr.techad.sonar.GerritPluginException;
+import fr.techad.sonar.gerrit.review.ReviewFileComment;
+import fr.techad.sonar.gerrit.review.ReviewInput;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
+import org.jetbrains.annotations.NotNull;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
-import com.google.gson.stream.JsonWriter;
-
-import fr.techad.sonar.GerritPluginException;
-import fr.techad.sonar.gerrit.review.ReviewFileComment;
-import fr.techad.sonar.gerrit.review.ReviewInput;
-import fr.techad.sonar.gerrit.review.ReviewLineComment;
 
 public abstract class GerritFacade {
     private static final Logger LOG = Loggers.get(GerritFacade.class);

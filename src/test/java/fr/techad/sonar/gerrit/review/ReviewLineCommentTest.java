@@ -1,13 +1,12 @@
 package fr.techad.sonar.gerrit.review;
 
-import static org.fest.assertions.Assertions.assertThat;
-
+import fr.techad.sonar.GerritPluginException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fr.techad.sonar.GerritPluginException;
+import static org.fest.assertions.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewLineCommentTest {
@@ -31,7 +30,7 @@ public class ReviewLineCommentTest {
         // then
         assertThat(reviewLineComment.getLine()).isEqualTo(42);
         assertThat(reviewLineComment.toString())
-                .isEqualTo("ReviewLineComment [line=" + LINE + ", message=" + MESSAGE + "]");
+            .isEqualTo("ReviewLineComment [line=" + LINE + ", message=" + MESSAGE + "]");
     }
 
     @Test

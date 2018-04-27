@@ -90,7 +90,7 @@ public class GerritConfiguration {
         boolean ret = enabled;
         if (StringUtils.isEmpty(changeId) || StringUtils.isEmpty(revisionId)) {
             LOG.info(
-                    "[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
+                "[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
             ret = false;
         }
         return ret;
@@ -230,12 +230,12 @@ public class GerritConfiguration {
         return this;
     }
 
-    public void setIssueComment(String issueComment) {
-        this.issueComment = issueComment;
-    }
-
     public String getIssueComment() {
         return issueComment;
+    }
+
+    public void setIssueComment(String issueComment) {
+        this.issueComment = issueComment;
     }
 
     public String getThreshold() {
@@ -337,7 +337,7 @@ public class GerritConfiguration {
         }
 
         if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
-                || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
+            || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
             valid = false;
             if (isEnabled() || LOG.isDebugEnabled()) {
                 LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
@@ -350,12 +350,12 @@ public class GerritConfiguration {
     @Override
     public String toString() {
         return "GerritConfiguration [valid=" + valid + ", enabled=" + enabled + ", scheme=" + scheme + ", host=" + host
-                + ", port=" + port + ", anonymous=" + anonymous + ", username=" + username + ", password="
-                + (StringUtils.isBlank(password) ? "blank" : "*obfuscated*") + ", authScheme=" + authScheme
-                + ", basePath=" + basePath + ", sshKeyPath=" + sshKeyPath + ", label=" + label + ", message=" + message
-                + ", issueComment=" + issueComment + ", threshold=" + threshold + ", voteNoIssue=" + voteNoIssue
-                + ",voteBelowThreshold=" + voteBelowThreshold + ",voteAboveThreshold=" + voteAboveThreshold
-                + ",commentNewIssuesOnly=" + commentNewIssuesOnly + ", projectName=" + projectName + ", branchName="
-                + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId + "]";
+            + ", port=" + port + ", anonymous=" + anonymous + ", username=" + username + ", password="
+            + (StringUtils.isBlank(password) ? "blank" : "*obfuscated*") + ", authScheme=" + authScheme
+            + ", basePath=" + basePath + ", sshKeyPath=" + sshKeyPath + ", label=" + label + ", message=" + message
+            + ", issueComment=" + issueComment + ", threshold=" + threshold + ", voteNoIssue=" + voteNoIssue
+            + ",voteBelowThreshold=" + voteBelowThreshold + ",voteAboveThreshold=" + voteAboveThreshold
+            + ",commentNewIssuesOnly=" + commentNewIssuesOnly + ", projectName=" + projectName + ", branchName="
+            + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId + "]";
     }
 }

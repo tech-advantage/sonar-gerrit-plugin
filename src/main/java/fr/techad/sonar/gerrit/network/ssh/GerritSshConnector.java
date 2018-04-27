@@ -1,24 +1,22 @@
 package fr.techad.sonar.gerrit.network.ssh;
 
+import fi.jpalomaki.ssh.Result;
+import fi.jpalomaki.ssh.SshClient;
+import fi.jpalomaki.ssh.UserAtHost;
+import fi.jpalomaki.ssh.jsch.JschSshClient;
+import fi.jpalomaki.ssh.jsch.JschSshClient.Options;
+import fr.techad.sonar.GerritConfiguration;
+import fr.techad.sonar.gerrit.GerritConnector;
+import org.jetbrains.annotations.NotNull;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Paths;
-
-import fi.jpalomaki.ssh.Result;
-import fi.jpalomaki.ssh.SshClient;
-import fi.jpalomaki.ssh.UserAtHost;
-import fi.jpalomaki.ssh.jsch.JschSshClient;
-import fi.jpalomaki.ssh.jsch.JschSshClient.Options;
-
-import org.jetbrains.annotations.NotNull;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
-import fr.techad.sonar.GerritConfiguration;
-import fr.techad.sonar.gerrit.GerritConnector;
 
 public class GerritSshConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritSshConnector.class);
@@ -34,7 +32,7 @@ public class GerritSshConnector implements GerritConnector {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritSshConnector");
         this.gerritConfiguration = gerritConfiguration;
         userAtHost = new UserAtHost(gerritConfiguration.getUsername(), gerritConfiguration.getHost(),
-                gerritConfiguration.getPort());
+            gerritConfiguration.getPort());
     }
 
     @NotNull
@@ -43,10 +41,10 @@ public class GerritSshConnector implements GerritConnector {
         SshClient sshClient = getSshClient();
 
         LOG.debug("[GERRIT PLUGIN] Execute command SSH {}",
-                String.format(CMD_LIST_FILES, gerritConfiguration.getChangeId()));
+            String.format(CMD_LIST_FILES, gerritConfiguration.getChangeId()));
 
         Result cmdResult = sshClient.executeCommand(String.format(CMD_LIST_FILES, gerritConfiguration.getChangeId()),
-                userAtHost);
+            userAtHost);
 
         return cmdResult.stdoutAsText("UTF-8");
     }
@@ -59,10 +57,10 @@ public class GerritSshConnector implements GerritConnector {
         ByteBuffer stdin = ByteBuffer.wrap(reviewInputAsJson.getBytes("UTF-8"));
         SshClient sshClient = getSshClient();
         LOG.debug("[GERRIT PLUGIN] Execute command SSH {}",
-                String.format(CMD_SET_REVIEW, gerritConfiguration.getRevisionId()));
+            String.format(CMD_SET_REVIEW, gerritConfiguration.getRevisionId()));
 
         Result cmdResult = sshClient.executeCommand(String.format(CMD_SET_REVIEW, gerritConfiguration.getRevisionId()),
-                stdin, userAtHost);
+            stdin, userAtHost);
 
         return cmdResult.stdoutAsText();
     }
@@ -77,7 +75,7 @@ public class GerritSshConnector implements GerritConnector {
             LOG.debug("[GERRIT PLUGIN] SSH will not check host key.");
             String userKnownHosts = System.getProperty("user.home") + File.pathSeparator + SSH_KNWON_HOSTS;
             Boolean knownHostsExists = Files.exists(Paths.get(userKnownHosts), LinkOption.NOFOLLOW_LINKS);
-            
+
             if (!knownHostsExists) {
                 LOG.debug("[GERRIT PLUGIN] {} does not exist. Creating.", userKnownHosts);
                 // known_hosts DOES NOT exists => create it
@@ -88,9 +86,9 @@ public class GerritSshConnector implements GerritConnector {
                 }
                 LOG.debug("[GERRIT PLUGIN] {} created.", userKnownHosts);
             }
-            
+
             sc = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword(),
-                    userKnownHosts, new Options("5s", "0s", "1M", "1M", SSH_STRICT_NO, false));
+                userKnownHosts, new Options("5s", "0s", "1M", "1M", SSH_STRICT_NO, false));
         }
 
         return sc;

@@ -1,19 +1,18 @@
 package fr.techad.sonar.gerrit.utils;
 
-import static org.fest.assertions.Assertions.assertThat;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import fr.techad.sonar.gerrit.review.ReviewFileComment;
+import fr.techad.sonar.gerrit.review.ReviewInput;
+import fr.techad.sonar.gerrit.review.ReviewLineComment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.sonar.api.batch.rule.Severity;
 
-import fr.techad.sonar.gerrit.review.ReviewFileComment;
-import fr.techad.sonar.gerrit.review.ReviewInput;
-import fr.techad.sonar.gerrit.review.ReviewLineComment;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReviewUtilsTest {
@@ -22,7 +21,7 @@ public class ReviewUtilsTest {
     private ReviewLineComment rlcInfo;
     private ReviewLineComment rlcCritical;
     private List<ReviewFileComment> reviewList;
-    
+
     private ReviewUtils reviewUtilsUnderTest;
 
     @Before
@@ -44,7 +43,7 @@ public class ReviewUtilsTest {
         reviewList = new ArrayList<ReviewFileComment>(2);
         reviewList.add(rlcInfo);
         reviewList.add(rlcCritical);
-        
+
         reviewUtilsUnderTest = new ReviewUtils();
     }
 

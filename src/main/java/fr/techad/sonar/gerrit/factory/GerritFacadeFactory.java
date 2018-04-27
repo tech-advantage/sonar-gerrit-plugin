@@ -1,16 +1,15 @@
 package fr.techad.sonar.gerrit.factory;
 
-import org.sonar.api.batch.InstantiationStrategy;
-import org.sonar.api.batch.ScannerSide;
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
 import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.GerritFacade;
 import fr.techad.sonar.gerrit.network.rest.GerritRestConnector;
 import fr.techad.sonar.gerrit.network.rest.GerritRestFacade;
 import fr.techad.sonar.gerrit.network.ssh.GerritSshConnector;
 import fr.techad.sonar.gerrit.network.ssh.GerritSshFacade;
+import org.sonar.api.batch.InstantiationStrategy;
+import org.sonar.api.batch.ScannerSide;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
 
 @ScannerSide
 @InstantiationStrategy(InstantiationStrategy.PER_BATCH)

@@ -1,18 +1,16 @@
 package fr.techad.sonar.gerrit.network.ssh;
 
-import java.io.IOException;
-
-import org.sonar.api.utils.log.Logger;
-import org.sonar.api.utils.log.Loggers;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import fr.techad.sonar.GerritPluginException;
 import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.GerritFacade;
+import org.sonar.api.utils.log.Logger;
+import org.sonar.api.utils.log.Loggers;
+
+import java.io.IOException;
 
 public class GerritSshFacade extends GerritFacade {
     private static final Logger LOG = Loggers.get(GerritSshFacade.class);
@@ -28,7 +26,7 @@ public class GerritSshFacade extends GerritFacade {
         try {
             String rawJsonString = getGerritConnector().listFiles();
             JsonArray files = new JsonParser().parse(rawJsonString.split("\r?\n")[0]).getAsJsonObject()
-                    .getAsJsonObject("currentPatchSet").getAsJsonArray("files");
+                .getAsJsonObject("currentPatchSet").getAsJsonArray("files");
 
             for (JsonElement jsonElement : files) {
                 JsonObject jsonObject = jsonElement.getAsJsonObject();

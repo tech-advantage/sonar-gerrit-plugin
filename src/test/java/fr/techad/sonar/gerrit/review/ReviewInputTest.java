@@ -1,14 +1,13 @@
 package fr.techad.sonar.gerrit.review;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.util.Lists;
-import org.junit.Test;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class ReviewInputTest {
     private static final String DEFAULT_MESSAGE = "Looks good to me.";
@@ -78,7 +77,7 @@ public class ReviewInputTest {
     @Test
     public void shouldEmptyTheComments() {
         ReviewInput reviewInput = new ReviewInput();
-        ArrayList<ReviewFileComment> list = Lists.newArrayList();
+        List<ReviewFileComment> list = new ArrayList<>();
         list.add(new ReviewFileComment());
         reviewInput.addComments(KEY_COMMENT1, list);
         assertEquals(1, reviewInput.size());
@@ -89,11 +88,11 @@ public class ReviewInputTest {
     @Test
     public void shouldHaveTheComments() {
         ReviewInput reviewInput = new ReviewInput();
-        ArrayList<ReviewFileComment> list1 = Lists.newArrayList();
+        List<ReviewFileComment> list1 = new ArrayList<>();
         list1.add(new ReviewFileComment());
         list1.add(new ReviewFileComment());
         reviewInput.addComments(KEY_COMMENT1, list1);
-        ArrayList<ReviewFileComment> list2 = Lists.newArrayList();
+        List<ReviewFileComment> list2 = new ArrayList<>();
         list2.add(new ReviewFileComment());
         reviewInput.addComments(KEY_COMMENT2, list2);
         assertEquals(2, reviewInput.size());
@@ -106,7 +105,7 @@ public class ReviewInputTest {
     @Test
     public void shouldHaveTheUnmodifiedComments() {
         ReviewInput reviewInput = new ReviewInput();
-        ArrayList<ReviewFileComment> list1 = Lists.newArrayList();
+        List<ReviewFileComment> list1 = new ArrayList<>();
         list1.add(new ReviewFileComment());
         list1.add(new ReviewFileComment());
         reviewInput.addComments(KEY_COMMENT1, list1);
@@ -122,7 +121,7 @@ public class ReviewInputTest {
         ReviewInput reviewInput = new ReviewInput();
         reviewInput.setLabelToPlusOne(PLUS_ONE_LABEL);
         reviewInput.setMessage(NEW_MESSAGE);
-        ArrayList<ReviewFileComment> list1 = Lists.newArrayList();
+        List<ReviewFileComment> list1 = new ArrayList<>();
         list1.add(new ReviewFileComment());
         assertEquals("ReviewInput [message=A new message, labels={+1 Label=1}, comments={}]", reviewInput.toString());
     }
@@ -137,7 +136,7 @@ public class ReviewInputTest {
     @Test
     public void shouldHaveANoEmptyReview() {
         ReviewInput reviewInput = new ReviewInput();
-        ArrayList<ReviewFileComment> list = Lists.newArrayList();
+        List<ReviewFileComment> list = new ArrayList<>();
         list.add(new ReviewFileComment());
         reviewInput.addComments(KEY_COMMENT1, list);
         assertThat(reviewInput.isEmpty()).isFalse();
