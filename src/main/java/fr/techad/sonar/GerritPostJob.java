@@ -30,18 +30,14 @@ public class GerritPostJob implements PostJob {
     private final GerritConfiguration gerritConfiguration;
     private List<String> gerritModifiedFiles;
     private GerritFacade gerritFacade;
-    private ReviewUtils reviewUtils;
-    private MessageUtils messageUtils;
-    private ReviewInput reviewInput = ReviewHolder.getReviewInput();
+     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
     public GerritPostJob(Settings settings, GerritConfiguration gerritConfiguration,
-                         GerritFacadeFactory gerritFacadeFactory, ReviewUtils reviewUtils, MessageUtils messageUtils) {
+                         GerritFacadeFactory gerritFacadeFactory) {
         LOG.debug("[GERRIT PLUGIN] Instanciating GerritPostJob");
         this.settings = settings;
         this.gerritFacade = gerritFacadeFactory.getFacade();
         this.gerritConfiguration = gerritConfiguration;
-        this.reviewUtils = reviewUtils;
-        this.messageUtils = messageUtils;
     }
 
     @Override
@@ -77,20 +73,20 @@ public class GerritPostJob implements PostJob {
 
         try {
             LOG.info("[GERRIT PLUGIN] Analysis has finished. Sending results to Gerrit.");
-            reviewInput.setMessage(messageUtils.createMessage(gerritConfiguration.getMessage(), settings));
+            reviewInput.setMessage(MessageUtils.createMessage(gerritConfiguration.getMessage(), settings));
 
             LOG.debug("[GERRIT PLUGIN] Define message : {}", reviewInput.getMessage());
             LOG.debug("[GERRIT PLUGIN] Number of comments : {}", reviewInput.size());
 
             int maxLevel = reviewInput.maxLevelSeverity();
             LOG.debug("[GERRIT PLUGIN] Configured threshold {}, max review level {}",
-                gerritConfiguration.getThreshold(), reviewUtils.valueToThreshold(maxLevel));
+                gerritConfiguration.getThreshold(), ReviewUtils.valueToThreshold(maxLevel));
 
             if (reviewInput.isEmpty()) {
                 LOG.debug("[GERRIT PLUGIN] No issues ! Vote {} for the label : {}",
                     gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteNoIssue(), gerritConfiguration.getLabel());
-            } else if (maxLevel < reviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
+            } else if (maxLevel < ReviewUtils.thresholdToValue(gerritConfiguration.getThreshold())) {
                 LOG.debug("[GERRIT PLUGIN] Issues below threshold. Vote {} for the label : {}",
                     gerritConfiguration.getVoteBelowThreshold(), gerritConfiguration.getLabel());
                 reviewInput.setValueAndLabel(gerritConfiguration.getVoteBelowThreshold(),
@@ -150,9 +146,9 @@ public class GerritPostJob implements PostJob {
         ReviewLineComment result = new ReviewLineComment();
 
         result.setLine(issue.line());
-        result.setSeverity(reviewUtils.thresholdToValue(issue.severity().toString()));
+        result.setSeverity(ReviewUtils.thresholdToValue(issue.severity().toString()));
 
-        result.setMessage(messageUtils.createIssueMessage(gerritConfiguration.getIssueComment(), settings, issue));
+        result.setMessage(MessageUtils.createIssueMessage(gerritConfiguration.getIssueComment(), settings, issue));
         LOG.debug("[GERRIT PLUGIN] issueToComment {}", result.toString());
         return result;
     }

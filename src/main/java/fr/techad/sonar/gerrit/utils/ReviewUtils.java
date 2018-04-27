@@ -9,7 +9,11 @@ public final class ReviewUtils {
     public static final int UNKNOWN_VALUE = -1;
     private static final Logger LOG = Loggers.get(ReviewUtils.class);
 
-    public int thresholdToValue(String threshold) {
+    private ReviewUtils() {
+        super();
+    }
+
+    public static int thresholdToValue(String threshold) {
         int thresholdValue = UNKNOWN_VALUE;
 
         try {
@@ -24,7 +28,7 @@ public final class ReviewUtils {
         return thresholdValue;
     }
 
-    public String valueToThreshold(int value) {
+    public static String valueToThreshold(int value) {
         String threshold = UNKNOWN;
 
         try {

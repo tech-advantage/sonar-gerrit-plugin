@@ -17,7 +17,7 @@ public class MessageUtils {
     private static final String ISSUE_MESSAGE = "message";
     private static final String ISSUE_SEPARATOR = ".";
 
-    public MessageUtils() {
+    private MessageUtils() {
         super();
     }
 
@@ -30,7 +30,7 @@ public class MessageUtils {
      * @param issue           the issue
      * @return a new message with the replaced variables by data.
      */
-    public String createIssueMessage(String originalMessage, Settings settings, PostJobIssue issue) {
+    public static String createIssueMessage(String originalMessage, Settings settings, PostJobIssue issue) {
         HashMap<String, Object> valueMap = new HashMap<>();
         valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_IS_NEW), issue.isNew());
         valueMap.put(prefixKey(ISSUE_PREFIX, ISSUE_RULE_KEY), issue.ruleKey());
@@ -47,7 +47,7 @@ public class MessageUtils {
      * @param settings        the settings
      * @return a new string with substituted variables.
      */
-    public String createMessage(String originalMessage, Settings settings) {
+    public static String createMessage(String originalMessage, Settings settings) {
         return substituteProperties(originalMessage, settings, Collections.<String, Object>emptyMap());
     }
 
@@ -60,8 +60,8 @@ public class MessageUtils {
      * @param additionalProperties the additional values
      * @return the built message
      */
-    private String substituteProperties(String originalMessage, Settings settings,
-                                        Map<String, Object> additionalProperties) {
+    private static String substituteProperties(String originalMessage, Settings settings,
+                                               Map<String, Object> additionalProperties) {
         if (additionalProperties.isEmpty()) {
             return StrSubstitutor.replace(originalMessage, settings.getProperties());
         }
@@ -76,7 +76,7 @@ public class MessageUtils {
      * @param key    the key
      * @return the key
      */
-    private String prefixKey(String prefix, String key) {
+    private static String prefixKey(String prefix, String key) {
         return new StringBuffer(prefix).append(ISSUE_SEPARATOR).append(key).toString();
     }
 
