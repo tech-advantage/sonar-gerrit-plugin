@@ -1,5 +1,5 @@
 Travis status : [![Build Status](https://travis-ci.org/tech-advantage/sonar-gerrit-plugin.svg?branch=master)](https://travis-ci.org/tech-advantage/sonar-gerrit-plugin)
-SonarQube quality : [![SonarQube Quality](https://sonarcloud.io/api/project_badges/measure?project=fr.techad%3Asonar-gerrit-plugin&metric=alert_status)
+SonarQube quality : [![SonarQube Quality](https://sonarcloud.io/api/project_badges/measure?project=fr.techad%3Asonar-gerrit-plugin&metric=alert_status)](https://sonarcloud.io/dashboard?id=fr.techad%3Asonar-gerrit-plugin)
 
 Gerrit Plugin for SonarQube™
 ============================
