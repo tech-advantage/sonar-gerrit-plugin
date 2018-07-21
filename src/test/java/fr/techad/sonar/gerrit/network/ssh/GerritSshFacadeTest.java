@@ -24,14 +24,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 public class GerritSshFacadeTest {
-
+    private static String COMMON_RESPONSE = "\"project\":\"sonar-gerrit-plugin\",\"branch\":\"feature/test\",\"id\":\"I218fb47cc01cbca2809dc82d54de019a60\",\"number\":11782,\"subject\":\"To develop\",";
     @Mock
     private GerritConnector gerritConnector;
 
     @Test
     @DisplayName("Should return a list files")
     public void shouldGetListFiles() throws IOException, GerritPluginException {
-        String response = "{" +
+        String response = "{" + COMMON_RESPONSE +
             " \"currentPatchSet\": {" +
             "\"files\": [" +
             "{ " +
@@ -58,7 +58,7 @@ public class GerritSshFacadeTest {
     @Test
     @DisplayName("Should return a list files with a defined type")
     public void shouldGetListFilesWithType() throws IOException, GerritPluginException {
-        String response = "{" +
+        String response = "{" + COMMON_RESPONSE +
             " \"currentPatchSet\": {" +
             "\"files\": [" +
             "{ " +
@@ -80,7 +80,7 @@ public class GerritSshFacadeTest {
     @Test
     @DisplayName("Should ignored deleted file")
     public void shouldIgnoredDeletedFiles() throws IOException, GerritPluginException {
-        String response = "{" +
+        String response = "{" + COMMON_RESPONSE +
             " \"currentPatchSet\": {" +
             "\"files\": [" +
             "{ " +
@@ -101,7 +101,7 @@ public class GerritSshFacadeTest {
     @Test
     @DisplayName("Should return an empty list if the review doesn't contain file")
     public void shouldReturnEmptyListIfReviewIsEmpty() throws IOException, GerritPluginException {
-        String response = "{" +
+        String response = "{" + COMMON_RESPONSE +
             " \"currentPatchSet\": {" +
             "\"files\": [" +
             "]" +
