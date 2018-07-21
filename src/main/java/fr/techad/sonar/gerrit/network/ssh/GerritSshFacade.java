@@ -22,7 +22,7 @@ public class GerritSshFacade extends GerritFacade {
     }
 
     @Override
-    protected void fillListFilesFomGerrit() throws GerritPluginException {
+    protected void fillListFilesFromGerrit() throws GerritPluginException {
         try {
             String rawJsonString = getGerritConnector().listFiles();
             JsonArray files = new JsonParser().parse(rawJsonString.split("\r?\n")[0]).getAsJsonObject()

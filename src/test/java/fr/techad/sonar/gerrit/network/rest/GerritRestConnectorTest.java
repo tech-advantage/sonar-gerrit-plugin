@@ -6,20 +6,22 @@ import fr.techad.sonar.GerritPluginException;
 import fr.techad.sonar.PropertyKey;
 import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.factory.GerritConnectorFactory;
-import org.junit.Before;
-import org.junit.Test;
+import fr.techad.sonar.mockito.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.sonar.api.config.Settings;
 import org.sonar.api.config.internal.MapSettings;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
 public class GerritRestConnectorTest {
-    private Settings settings;
+    private MapSettings settings;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // Common Settings
         settings = new MapSettings();

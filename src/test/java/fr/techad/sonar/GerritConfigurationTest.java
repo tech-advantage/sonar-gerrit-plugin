@@ -1,23 +1,16 @@
 package fr.techad.sonar;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.sonar.api.config.Settings;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.config.internal.MapSettings;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class GerritConfigurationTest {
-    @Mock
-    private Settings settings;
-    @Mock
+
     private GerritConfiguration gerritConfiguration;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         MapSettings settings = new MapSettings();
         settings.setProperty(PropertyKey.GERRIT_SCHEME, "http").setProperty(PropertyKey.GERRIT_HOST, "localhost")
@@ -28,7 +21,6 @@ public class GerritConfigurationTest {
             .setProperty(PropertyKey.GERRIT_REVISION_ID, "674ac754f91e64a0efb8087e59a176484bd534d1")
             .setProperty(PropertyKey.GERRIT_LABEL, "Code-Review");
         gerritConfiguration = new GerritConfiguration(settings);
-
     }
 
     @Test

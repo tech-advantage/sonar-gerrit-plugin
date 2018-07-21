@@ -35,7 +35,7 @@ public abstract class GerritFacade {
         if (!gerritFileList.isEmpty()) {
             LOG.debug("[GERRIT PLUGIN] File list already filled. Not calling Gerrit.");
         } else {
-            fillListFilesFomGerrit();
+            fillListFilesFromGerrit();
         }
         return Collections.unmodifiableList(gerritFileList);
     }
@@ -65,7 +65,7 @@ public abstract class GerritFacade {
         }
     }
 
-    protected abstract void fillListFilesFomGerrit() throws GerritPluginException;
+    protected abstract void fillListFilesFromGerrit() throws GerritPluginException;
 
     @NotNull
     private String formatReview(ReviewInput reviewInput) throws GerritPluginException {

@@ -3,10 +3,9 @@ package fr.techad.sonar.gerrit.utils;
 import fr.techad.sonar.gerrit.review.ReviewFileComment;
 import fr.techad.sonar.gerrit.review.ReviewInput;
 import fr.techad.sonar.gerrit.review.ReviewLineComment;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.rule.Severity;
 
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ReviewUtilsTest {
 
     private ReviewInput reviewInput;
@@ -22,7 +20,7 @@ public class ReviewUtilsTest {
     private ReviewLineComment rlcCritical;
     private List<ReviewFileComment> reviewList;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         reviewInput = new ReviewInput();
 
@@ -44,6 +42,7 @@ public class ReviewUtilsTest {
     }
 
     @Test
+    @DisplayName("Validate Threshold To Value")
     public void validateThresholdToValue() {
         // given
         // when

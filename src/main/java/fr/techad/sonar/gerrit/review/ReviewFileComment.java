@@ -1,8 +1,10 @@
 package fr.techad.sonar.gerrit.review;
 
-import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.StringUtils;
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
+
+import java.util.Objects;
 
 /**
  * Gerrit comment used with request for review input. Used with JSON marshaller
@@ -18,9 +20,11 @@ public class ReviewFileComment {
         return message;
     }
 
-    public void setMessage(@NotNull String message) {
+    public void setMessage(String message) {
         LOG.debug("[GERRIT PLUGIN] ReviewFileComment setMessage {}", message);
         this.message = message;
+        if (Objects.isNull(this.message))
+            this.message = StringUtils.EMPTY;
     }
 
     public int getSeverity() {
