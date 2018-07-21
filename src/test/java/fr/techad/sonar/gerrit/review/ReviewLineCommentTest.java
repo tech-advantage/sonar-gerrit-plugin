@@ -1,14 +1,17 @@
 package fr.techad.sonar.gerrit.review;
 
 import fr.techad.sonar.GerritPluginException;
-import org.junit.Before;
-import org.junit.Test;
+import fr.techad.sonar.mockito.MockitoExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
 public class ReviewLineCommentTest {
     static final private String MESSAGE = "Gerrit Message";
     static final private Integer DEFAULT_LINE = new Integer(0);
@@ -16,7 +19,7 @@ public class ReviewLineCommentTest {
     static final private Integer NEGATIVE_LINE = -42;
     private ReviewLineComment reviewLineComment;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         reviewLineComment = new ReviewLineComment();
     }

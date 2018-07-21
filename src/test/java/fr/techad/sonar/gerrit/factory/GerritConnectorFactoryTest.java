@@ -5,15 +5,18 @@ import fr.techad.sonar.GerritConstants;
 import fr.techad.sonar.gerrit.GerritConnector;
 import fr.techad.sonar.gerrit.network.rest.GerritRestConnector;
 import fr.techad.sonar.gerrit.network.ssh.GerritSshConnector;
-import org.junit.Test;
+import fr.techad.sonar.mockito.MockitoExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
+@RunWith(JUnitPlatform.class)
 public class GerritConnectorFactoryTest {
     @Mock
     private GerritConfiguration gerritConfiguration;

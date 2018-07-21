@@ -1,7 +1,7 @@
 package fr.techad.sonar.utils;
 
 import fr.techad.sonar.PropertyKey;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.postjob.issue.PostJobIssue;
 import org.sonar.api.batch.rule.Severity;
 import org.sonar.api.config.internal.MapSettings;

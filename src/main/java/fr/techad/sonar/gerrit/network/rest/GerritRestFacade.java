@@ -25,7 +25,7 @@ public class GerritRestFacade extends GerritFacade {
     }
 
     @Override
-    protected void fillListFilesFomGerrit() throws GerritPluginException {
+    protected void fillListFilesFromGerrit() throws GerritPluginException {
         try {
             String rawJsonString = getGerritConnector().listFiles();
             String jsonString = trimResponse(rawJsonString);

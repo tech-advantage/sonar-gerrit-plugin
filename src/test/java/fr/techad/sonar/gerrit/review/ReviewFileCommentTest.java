@@ -1,7 +1,8 @@
 package fr.techad.sonar.gerrit.review;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.sonar.api.batch.rule.Severity;
 
 public class ReviewFileCommentTest {
@@ -12,14 +13,14 @@ public class ReviewFileCommentTest {
     public void testMessage() {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(MESSAGE);
-        Assert.assertEquals(MESSAGE, reviewFileComment.getMessage());
+        Assertions.assertEquals(MESSAGE, reviewFileComment.getMessage());
     }
 
     @Test
     public void testNullMessage() {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(null);
-        Assert.assertEquals(null, reviewFileComment.getMessage());
+        Assertions.assertEquals(StringUtils.EMPTY, reviewFileComment.getMessage());
     }
 
     @Test
@@ -27,7 +28,7 @@ public class ReviewFileCommentTest {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(MESSAGE);
         reviewFileComment.setSeverity(Severity.BLOCKER.ordinal());
-        Assert.assertEquals(Severity.BLOCKER.ordinal(), reviewFileComment.getSeverity());
+        Assertions.assertEquals(Severity.BLOCKER.ordinal(), reviewFileComment.getSeverity());
     }
 
     @Test
@@ -35,7 +36,7 @@ public class ReviewFileCommentTest {
         ReviewFileComment reviewFileComment = new ReviewFileComment();
         reviewFileComment.setMessage(MESSAGE);
         reviewFileComment.setSeverity(Severity.BLOCKER.ordinal());
-        Assert.assertEquals(
+        Assertions.assertEquals(
             "ReviewFileComment [message:" + MESSAGE + ", severity: " + Severity.BLOCKER.ordinal() + "]",
             reviewFileComment.toString());
     }
