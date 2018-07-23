@@ -44,6 +44,7 @@
         <httpclient.version>4.5.6</httpclient.version>
         <maven-project.version>2.2.1</maven-project.version>
         <annotations.version>16.0.2</annotations.version>
+        <mockserver-netty.version>5.4.1</mockserver-netty.version>
         <!-- Plugins -->
         <plugin.sonar-packaging.version>1.18.0.372</plugin.sonar-packaging.version>
         <plugin.maven-compiler-plugin.version>3.7.0</plugin.maven-compiler-plugin.version>
@@ -96,6 +97,12 @@
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <version>${mockserver-netty.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
