@@ -44,7 +44,7 @@ class GerritInitializerTest {
     }
 
     @Test
-    public void shoulNotdListFilesWhenDisables() throws GerritPluginException {
+    public void shouldNotListFilesWhenDisables() throws GerritPluginException {
         when(gerritConfiguration.isEnabled()).thenReturn(false);
         when(gerritConfiguration.isValid()).thenReturn(true);
         when(gerritFacadeFactory.getFacade()).thenReturn(gerritFacade);
@@ -63,6 +63,18 @@ class GerritInitializerTest {
         GerritInitializer gerritInitializer = new GerritInitializer(gerritConfiguration, gerritFacadeFactory);
         gerritInitializer.execute();
         verify(gerritFacade, never()).listFiles();
+    }
+
+    @Test
+    public void shouldCatchExceptionIfListFilesThrowsIt() throws GerritPluginException {
+        when(gerritConfiguration.isEnabled()).thenReturn(true);
+        when(gerritConfiguration.isValid()).thenReturn(true);
+        when(gerritFacadeFactory.getFacade()).thenReturn(gerritFacade);
+        when(gerritFacade.listFiles()).thenThrow(new GerritPluginException("Mock Exception During Test"));
+
+        GerritInitializer gerritInitializer = new GerritInitializer(gerritConfiguration, gerritFacadeFactory);
+        gerritInitializer.execute();
+        verify(gerritFacade, times(1)).listFiles();
     }
 
 }
