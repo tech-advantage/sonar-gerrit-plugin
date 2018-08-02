@@ -105,7 +105,7 @@ public class GerritFacadeTest {
     }
 
     @Test
-    public void shouldThrowException() throws GerritPluginException, IOException {
+    public void shouldThrowException() {
         Assertions.assertThrows(GerritPluginException.class, () -> {
             ReviewInput reviewInputMock = Mockito.mock(ReviewInput.class);
             GerritFacade gerritFacade = new GerritFacadeUT(gerritConnectorMock);

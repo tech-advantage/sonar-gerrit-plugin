@@ -30,7 +30,7 @@ public class GerritPostJob implements PostJob {
     private final GerritConfiguration gerritConfiguration;
     private List<String> gerritModifiedFiles;
     private GerritFacade gerritFacade;
-     private ReviewInput reviewInput = ReviewHolder.getReviewInput();
+    private ReviewInput reviewInput = ReviewHolder.getReviewInput();
 
     public GerritPostJob(Settings settings, GerritConfiguration gerritConfiguration,
                          GerritFacadeFactory gerritFacadeFactory) {
@@ -120,6 +120,7 @@ public class GerritPostJob implements PostJob {
             assertOrFetchGerritModifiedFiles();
         } catch (GerritPluginException e) {
             LOG.error("[GERRIT PLUGIN] Error getting Gerrit datas", e);
+            return;
         }
 
         LOG.debug("[GERRIT PLUGIN] Look for in Gerrit if the file was under review, resource={}", resource);
@@ -167,7 +168,7 @@ public class GerritPostJob implements PostJob {
         for (PostJobIssue issue : issues) {
             if (gerritConfiguration.shouldCommentNewIssuesOnly() && !issue.isNew()) {
                 LOG.info(
-                    "[GERRIT PLUGIN] Issue is not new and only new one should be commented. Will not push back to Gerrit.");
+                    "[GERRIT PLUGIN] Issue is not new and only new one should be commented. Will not push back to Gerrit. Issue: {}", issue);
             } else {
                 comments.add(issueToComment(issue));
             }
