@@ -52,6 +52,11 @@ public class GerritPostJob implements PostJob {
             LOG.info("[GERRIT PLUGIN] PostJob : analysis has finished. Plugin is disabled. No actions taken.");
             return;
         }
+        
+        if (!gerritConfiguration.isValid()) {
+            LOG.info("[GERRIT PLUGIN] PostJob : Configuration is not valid, no actions taken.");
+            return;
+        }
 
         Map<InputPath, List<PostJobIssue>> issueMap = new HashMap<>();
         for (PostJobIssue i : postJobContext.issues()) {
