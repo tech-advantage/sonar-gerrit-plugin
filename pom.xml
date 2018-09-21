@@ -32,7 +32,7 @@
         <jdk.min.version>1.8</jdk.min.version>
         <maven.min.version>3.5.0</maven.min.version>
         <!-- Dependencies -->
-        <sonar.buildVersion>7.0</sonar.buildVersion>
+        <sonar.buildVersion>7.3</sonar.buildVersion>
         <commons-logging.version>1.2</commons-logging.version>
         <commons-lang3.version>3.7</commons-lang3.version>
         <commons-codec.version>1.10</commons-codec.version>
