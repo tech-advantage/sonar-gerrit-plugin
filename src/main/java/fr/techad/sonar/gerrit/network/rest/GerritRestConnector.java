@@ -82,8 +82,15 @@ public class GerritRestConnector implements GerritConnector {
     // Example
     // http://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientPreemptiveDigestAuthentication.java
     private void createHttpContext() {
-        httpHost = new HttpHost(gerritConfiguration.getHost(), gerritConfiguration.getPort(),
-            gerritConfiguration.getScheme());
+        if ((GerritConstants.SCHEME_HTTPS.equals(gerritConfiguration.getScheme())
+                && 443 == gerritConfiguration.getPort())
+                || (GerritConstants.SCHEME_HTTP.equals(gerritConfiguration.getScheme())
+                        && 80 == gerritConfiguration.getPort())) {
+            httpHost = new HttpHost(gerritConfiguration.getHost(), -1, gerritConfiguration.getScheme());
+        } else {
+            httpHost = new HttpHost(gerritConfiguration.getHost(), gerritConfiguration.getPort(),
+                    gerritConfiguration.getScheme());
+        }
         httpClientContext = HttpClientContext.create();
 
         if (gerritConfiguration.isAnonymous()) {
@@ -91,9 +98,9 @@ public class GerritRestConnector implements GerritConnector {
         } else {
             CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
             credentialsProvider.setCredentials(
-                new AuthScope(gerritConfiguration.getHost(), gerritConfiguration.getPort()),
-                new UsernamePasswordCredentials(gerritConfiguration.getUsername(),
-                    gerritConfiguration.getPassword()));
+                    new AuthScope(gerritConfiguration.getHost(), gerritConfiguration.getPort()),
+                    new UsernamePasswordCredentials(gerritConfiguration.getUsername(),
+                            gerritConfiguration.getPassword()));
             httpClient = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
 
             BasicAuthCache basicAuthCache = new BasicAuthCache();
@@ -106,7 +113,7 @@ public class GerritRestConnector implements GerritConnector {
 
             } else {
                 LOG.error("[GERRIT PLUGIN] createHttpContext called with AUTH_SCHEME {} instead of digest or basic",
-                    gerritConfiguration.getHttpAuthScheme());
+                        gerritConfiguration.getHttpAuthScheme());
             }
             basicAuthCache.put(httpHost, authScheme);
             httpClientContext.setAuthCache(basicAuthCache);
@@ -161,7 +168,7 @@ public class GerritRestConnector implements GerritConnector {
             uri = uri.concat(URI_AUTH_PREFIX);
         }
         uri = uri.concat(String.format(URI_CHANGES, encode(gerritConfiguration.getProjectName()),
-            encode(gerritConfiguration.getBranchName()), encode(gerritConfiguration.getChangeId())));
+                encode(gerritConfiguration.getBranchName()), encode(gerritConfiguration.getChangeId())));
         uri = uri.concat(String.format(URI_REVISIONS, encode(gerritConfiguration.getRevisionId())));
 
         LOG.debug("[GERRIT PLUGIN] Built URI : {}", uri);
