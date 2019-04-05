@@ -13,6 +13,7 @@ public final class GerritConstants {
     public static final String AUTH_BASIC = "basic";
     public static final String AUTH_DIGEST = "digest";
     public static final String GERRIT_COMMENT_NEW_ISSUES_ONLY = "false";
+    public static final String GERRIT_STRICT_HOSTKEY_DEFAULT = "true";
     public static final String GERRIT_VOTE_NO_ISSUE_DEFAULT = "+1";
     public static final String GERRIT_VOTE_ISSUE_BELOW_THRESHOLD_DEFAULT = "+1";
     public static final String GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD_DEFAULT = "-1";
