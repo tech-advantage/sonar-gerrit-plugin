@@ -73,7 +73,7 @@ public class GerritSshConnector implements GerritConnector {
             sc = new JschSshClient(gerritConfiguration.getSshKeyPath(), gerritConfiguration.getPassword());
         } else {
             LOG.debug("[GERRIT PLUGIN] SSH will not check host key.");
-            String userKnownHosts = System.getProperty("user.home") + File.pathSeparator + SSH_KNWON_HOSTS;
+            String userKnownHosts = System.getProperty("user.home") + File.separator + SSH_KNWON_HOSTS;
             Boolean knownHostsExists = Files.exists(Paths.get(userKnownHosts), LinkOption.NOFOLLOW_LINKS);
 
             if (!knownHostsExists) {
