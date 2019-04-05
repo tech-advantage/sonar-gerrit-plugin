@@ -45,8 +45,13 @@ public final class GerritPlugin implements Plugin {
                 .type(PropertyType.PASSWORD).index(serverBaseIndex++).build();
 
         PropertyDefinition sshKeyPath = PropertyDefinition.builder(PropertyKey.GERRIT_SSH_KEY_PATH)
-                .category(GerritConstants.GERRIT_CATEGORY).subCategory(GerritConstants.GERRIT_SUBCATEGORY_SERVER)
-                .type(PropertyType.STRING).index(serverBaseIndex++).build();
+            .category(GerritConstants.GERRIT_CATEGORY).subCategory(GerritConstants.GERRIT_SUBCATEGORY_SERVER)
+            .type(PropertyType.STRING).index(serverBaseIndex++).build();
+
+        PropertyDefinition strictHostkey = PropertyDefinition.builder(PropertyKey.GERRIT_STRICT_HOSTKEY)
+            .category(GerritConstants.GERRIT_CATEGORY).subCategory(GerritConstants.GERRIT_SUBCATEGORY_SERVER)
+            .type(PropertyType.BOOLEAN).defaultValue(GerritConstants.GERRIT_STRICT_HOSTKEY_DEFAULT)
+            .index(serverBaseIndex++).build();
 
         PropertyDefinition authScheme = PropertyDefinition.builder(PropertyKey.GERRIT_HTTP_AUTH_SCHEME)
                 .category(GerritConstants.GERRIT_CATEGORY).subCategory(GerritConstants.GERRIT_SUBCATEGORY_SERVER)
@@ -102,7 +107,7 @@ public final class GerritPlugin implements Plugin {
 
         context.addExtensions(Arrays.asList(GerritConfiguration.class, GerritConnectorFactory.class,
                 GerritFacadeFactory.class, GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class,
-                enabled, scheme, host, port, username, password, authScheme, basePath, sshKeyPath, label, message,
-                newIssuesOnly, threshold, voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold, issueComment));
+                enabled, scheme, host, port, username, password, authScheme, basePath, sshKeyPath, strictHostkey, label,
+                message, newIssuesOnly, threshold, voteNoIssue, voteIssueBelowThreshold, voteIssueAboveThreshold, issueComment));
     }
 }
