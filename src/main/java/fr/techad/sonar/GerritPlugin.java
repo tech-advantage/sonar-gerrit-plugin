@@ -109,7 +109,7 @@ public final class GerritPlugin implements Plugin {
             .index(reviewBaseIndex++).build();
 
         context.addExtensions(Arrays.asList(GerritConfiguration.class, GerritConnectorFactory.class,
-            GerritFacadeFactory.class, GerritInitializer.class, GerritProjectBuilder.class, GerritPostJob.class,
+            GerritFacadeFactory.class, GerritProjectBuilder.class, GerritPostJob.class,
             enabled, scheme, host, port, username, password, authScheme,
             basePath, sshKeyPath, strictHostkey, label, message, newIssuesOnly, threshold, voteNoIssue,
             voteIssueBelowThreshold, voteIssueAboveThreshold, issueComment));
