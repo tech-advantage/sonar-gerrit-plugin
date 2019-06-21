@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 
 public class GerritSshConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritSshConnector.class);
-    private static final String CMD_LIST_FILES = "gerrit query --format=JSON --files --current-patch-set status:open change:%s limit:1";
+    private static final String CMD_LIST_FILES = "gerrit query --format=JSON --files --current-patch-set -- status:open change:%s limit:1";
     private static final String CMD_SET_REVIEW = "gerrit review %s -j";
     private static final String SSH_KNWON_HOSTS = ".ssh/known_hosts";
     private static final String SSH_STRICT_NO = "StrictHostKeyChecking=no";
@@ -41,9 +41,9 @@ public class GerritSshConnector implements GerritConnector {
         SshClient sshClient = getSshClient();
 
         LOG.debug("[GERRIT PLUGIN] Execute command SSH {}",
-            String.format(CMD_LIST_FILES, gerritConfiguration.getChangeId()));
+            String.format(CMD_LIST_FILES, gerritConfiguration.getChangeNumber()));
 
-        Result cmdResult = sshClient.executeCommand(String.format(CMD_LIST_FILES, gerritConfiguration.getChangeId()),
+        Result cmdResult = sshClient.executeCommand(String.format(CMD_LIST_FILES, gerritConfiguration.getChangeNumber()),
             userAtHost);
 
         return cmdResult.stdoutAsText("UTF-8");

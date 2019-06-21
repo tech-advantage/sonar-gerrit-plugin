@@ -39,7 +39,7 @@ public class GerritConfiguration {
 
     private String projectName;
     private String branchName;
-    private String changeId;
+    private String changeNumber;
     private String revisionId;
 
     public GerritConfiguration(Settings settings) {
@@ -70,7 +70,7 @@ public class GerritConfiguration {
 
         this.setProjectName(settings.getString(PropertyKey.GERRIT_PROJECT));
         this.setBranchName(settings.getString(PropertyKey.GERRIT_BRANCH));
-        this.setChangeId(settings.getString(PropertyKey.GERRIT_CHANGE_ID));
+        this.setChangeNumber(settings.getString(PropertyKey.GERRIT_CHANGE_NUMBER));
         this.setRevisionId(settings.getString(PropertyKey.GERRIT_REVISION_ID));
 
         this.assertGerritConfiguration();
@@ -88,9 +88,9 @@ public class GerritConfiguration {
 
     public boolean isEnabled() {
         boolean ret = enabled;
-        if (StringUtils.isEmpty(changeId) || StringUtils.isEmpty(revisionId)) {
+        if (StringUtils.isEmpty(changeNumber) || StringUtils.isEmpty(revisionId)) {
             LOG.info(
-                "[GERRIT PLUGIN] changeId or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
+                "[GERRIT PLUGIN] changeNumber or revisionId is empty. Not called from Gerrit ? Soft-disabling myself.");
             ret = false;
         }
         return ret;
@@ -292,12 +292,12 @@ public class GerritConfiguration {
         return this;
     }
 
-    public String getChangeId() {
-        return changeId;
+    public String getChangeNumber() {
+        return changeNumber;
     }
 
-    public GerritConfiguration setChangeId(String changeId) {
-        this.changeId = changeId;
+    public GerritConfiguration setChangeNumber(String changeNumber) {
+        this.changeNumber = changeNumber;
         return this;
     }
 
@@ -337,7 +337,7 @@ public class GerritConfiguration {
         }
 
         if (StringUtils.isBlank(label) || StringUtils.isBlank(projectName) || StringUtils.isBlank(branchName)
-            || StringUtils.isBlank(changeId) || StringUtils.isBlank(revisionId)) {
+            || StringUtils.isBlank(changeNumber) || StringUtils.isBlank(revisionId)) {
             valid = false;
             if (isEnabled() || LOG.isDebugEnabled()) {
                 LOG.error("[GERRIT PLUGIN] ReviewConfiguration is not valid : {}", this.toString());
@@ -356,6 +356,6 @@ public class GerritConfiguration {
             + ", issueComment=" + issueComment + ", threshold=" + threshold + ", voteNoIssue=" + voteNoIssue
             + ",voteBelowThreshold=" + voteBelowThreshold + ",voteAboveThreshold=" + voteAboveThreshold
             + ",commentNewIssuesOnly=" + commentNewIssuesOnly + ", projectName=" + projectName + ", branchName="
-            + branchName + ", changeId=" + changeId + ", revisionId=" + revisionId + "]";
+            + branchName + ", changeNumber=" + changeNumber + ", revisionId=" + revisionId + "]";
     }
 }
