@@ -7,7 +7,7 @@ public final class PropertyKey {
     public static final String GERRIT_PORT = "GERRIT_PORT";
     public static final String GERRIT_PROJECT = "GERRIT_PROJECT";
     public static final String GERRIT_BRANCH = "GERRIT_BRANCH";
-    public static final String GERRIT_CHANGE_ID = "GERRIT_CHANGE_ID";
+    public static final String GERRIT_CHANGE_NUMBER = "GERRIT_CHANGE_NUMBER";
     public static final String GERRIT_REVISION_ID = "GERRIT_PATCHSET_REVISION";
     public static final String GERRIT_USERNAME = "GERRIT_USERNAME";
     public static final String GERRIT_PASSWORD = "GERRIT_PASSWORD"; // NOSONAR

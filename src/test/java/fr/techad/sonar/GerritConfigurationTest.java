@@ -16,7 +16,7 @@ public class GerritConfigurationTest {
     private final String LABEL = "Code-Review";
     private final String PROJECT = "example";
     private final String BRANCH = "example";
-    private final String CHANGE_ID = "I8473b95934b5732ac55d26311a706c9c2bde9940";
+    private final String CHANGE_NUMBER = "changeid";
     private final String REVISION_ID = "674ac754f91e64a0efb8087e59a176484bd534d1";
     private GerritConfiguration gerritConfiguration;
 
@@ -27,7 +27,7 @@ public class GerritConfigurationTest {
             .setProperty(PropertyKey.GERRIT_PORT, PORT.toString()).setProperty(PropertyKey.GERRIT_USERNAME, USERNAME)
             .setProperty(PropertyKey.GERRIT_PASSWORD, PASSWORD).setProperty(PropertyKey.GERRIT_BASE_PATH, "")
             .setProperty(PropertyKey.GERRIT_PROJECT, PROJECT).setProperty(PropertyKey.GERRIT_BRANCH, BRANCH)
-            .setProperty(PropertyKey.GERRIT_CHANGE_ID, CHANGE_ID)
+            .setProperty(PropertyKey.GERRIT_CHANGE_NUMBER, CHANGE_NUMBER)
             .setProperty(PropertyKey.GERRIT_REVISION_ID, REVISION_ID)
             .setProperty(PropertyKey.GERRIT_LABEL, LABEL);
         gerritConfiguration = new GerritConfiguration(settings);
@@ -93,9 +93,9 @@ public class GerritConfigurationTest {
     }
 
     @Test
-    public void shouldNotValidateIfChangeIdIsBlank() throws GerritPluginException {
+    public void shouldNotValidateIfChangeNumberIsBlank() throws GerritPluginException {
         // given
-        gerritConfiguration.setChangeId("");
+        gerritConfiguration.setChangeNumber("");
         // when
         gerritConfiguration.assertGerritConfiguration();
         // then
@@ -346,8 +346,8 @@ public class GerritConfigurationTest {
     }
 
     @Test
-    public void shouldGetChangeId() {
-        Assertions.assertEquals(CHANGE_ID, this.gerritConfiguration.getChangeId());
+    public void shouldGetChangeNumber() {
+        Assertions.assertEquals(CHANGE_NUMBER, this.gerritConfiguration.getChangeNumber());
     }
 
     @Test
@@ -393,8 +393,8 @@ public class GerritConfigurationTest {
     }
 
     @Test
-    public void shouldInvalidateConfigurationWithBlankChangeId() {
-        gerritConfiguration.setChangeId("");
+    public void shouldInvalidateConfigurationWithBlankChangeNumber() {
+        gerritConfiguration.setChangeNumber("");
         gerritConfiguration.assertGerritConfiguration();
         Assertions.assertFalse(gerritConfiguration.isValid());
     }

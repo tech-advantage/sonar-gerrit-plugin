@@ -43,7 +43,7 @@ public class GerritPostJob implements PostJob {
     @Override
     public void describe(PostJobDescriptor descriptor) {
         descriptor.name("GERRIT PLUGIN");
-        descriptor.requireProperty(PropertyKey.GERRIT_CHANGE_ID);
+        descriptor.requireProperty(PropertyKey.GERRIT_CHANGE_NUMBER);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class GerritPostJob implements PostJob {
                     gerritConfiguration.getLabel());
             }
 
-            LOG.debug("[GERRIT PLUGIN] Send review for ChangeId={}, RevisionId={}", gerritConfiguration.getChangeId(),
+            LOG.debug("[GERRIT PLUGIN] Send review for ChangeNumber={}, RevisionId={}", gerritConfiguration.getChangeNumber(),
                 gerritConfiguration.getRevisionId());
 
             gerritFacade.setReview(reviewInput);

@@ -65,7 +65,7 @@ public class GerritRestConnectorTest {
             .setProperty(PropertyKey.GERRIT_HOST, "localhost")
             .appendProperty(PropertyKey.GERRIT_PORT, "10800")
             .setProperty(PropertyKey.GERRIT_PROJECT, "project")
-            .setProperty(PropertyKey.GERRIT_CHANGE_ID, "changeid")
+            .setProperty(PropertyKey.GERRIT_CHANGE_NUMBER, "changeid")
             .setProperty(PropertyKey.GERRIT_REVISION_ID, "revisionid")
             .setProperty(PropertyKey.GERRIT_LABEL, "Code-Review");
     }
@@ -87,7 +87,7 @@ public class GerritRestConnectorTest {
         GerritRestConnector gerritRestConnector = getRestConnector();
 
         // then
-        assertEquals("/a/changes/project~branch~changeid/revisions/revisionid",
+        assertEquals("/a/changes/project~changeid/revisions/revisionid",
             gerritRestConnector.rootUriBuilder());
     }
 
@@ -103,7 +103,7 @@ public class GerritRestConnectorTest {
         GerritRestConnector gerritRestConnector = getRestConnector();
 
         // then
-        assertEquals("/a/changes/project~branch%2Fsubbranch~changeid/revisions/revisionid",
+        assertEquals("/a/changes/project~changeid/revisions/revisionid",
             gerritRestConnector.rootUriBuilder());
     }
 
@@ -119,7 +119,7 @@ public class GerritRestConnectorTest {
         GerritRestConnector gerritRestConnector = getRestConnector();
 
         // then
-        assertEquals("/r/a/changes/project~branch%2Fsubbranch~changeid/revisions/revisionid",
+        assertEquals("/r/a/changes/project~changeid/revisions/revisionid",
             gerritRestConnector.rootUriBuilder());
     }
 
@@ -133,7 +133,7 @@ public class GerritRestConnectorTest {
         GerritRestConnector gerritRestConnector = getRestConnector();
 
         // then
-        assertEquals("/changes/project~branch%2Fsubbranch~changeid/revisions/revisionid",
+        assertEquals("/changes/project~changeid/revisions/revisionid",
             gerritRestConnector.rootUriBuilder());
     }
 
@@ -147,7 +147,7 @@ public class GerritRestConnectorTest {
         GerritRestConnector gerritRestConnector = getRestConnector();
 
         // then
-        assertEquals("/r/changes/project~branch%2Fsubbranch~changeid/revisions/revisionid",
+        assertEquals("/r/changes/project~changeid/revisions/revisionid",
             gerritRestConnector.rootUriBuilder());
     }
 
@@ -155,7 +155,7 @@ public class GerritRestConnectorTest {
     public void shouldSetReview() throws IOException {
         mockServer.when(
             request()
-                .withPath("/a/changes/project~branch~changeid/revisions/revisionid/review")
+                .withPath("/a/changes/project~changeid/revisions/revisionid/review")
                 .withMethod("POST"))
             .respond(
                 response()
@@ -179,7 +179,7 @@ public class GerritRestConnectorTest {
     public void shouldSetReviewWithNullResponseBody() throws IOException {
         mockServer.when(
             request()
-                .withPath("/a/changes/project~branch~changeid2/revisions/revisionid/review")
+                .withPath("/a/changes/project~changeid/revisions/revisionid/review")
                 .withMethod("POST"))
             .respond(
                 response()
@@ -193,7 +193,7 @@ public class GerritRestConnectorTest {
             .setProperty(PropertyKey.GERRIT_PASSWORD, "sonar")
             .appendProperty(PropertyKey.GERRIT_BASE_PATH, "")
             .setProperty(PropertyKey.GERRIT_BRANCH, "branch")
-            .setProperty(PropertyKey.GERRIT_CHANGE_ID, "changeid2")
+            .setProperty(PropertyKey.GERRIT_CHANGE_NUMBER, "changeid")
         ;
 
         String response = getRestConnector().setReview("review");
@@ -204,7 +204,7 @@ public class GerritRestConnectorTest {
     public void shouldSetReviewAsAnonymous() throws IOException {
         mockServer.when(
             request()
-                .withPath("/changes/project~branch~changeid/revisions/revisionid/review")
+                .withPath("/changes/project~changeid/revisions/revisionid/review")
                 .withMethod("POST"))
             .respond(
                 response()
@@ -225,7 +225,7 @@ public class GerritRestConnectorTest {
     public void shouldListFiles() throws IOException {
         mockServer.when(
             request()
-                .withPath("/a/changes/project~branch~changeid/revisions/revisionid/files/")
+                .withPath("/a/changes/project~changeid/revisions/revisionid/files/")
                 .withMethod("GET"))
             .respond(
                 response()

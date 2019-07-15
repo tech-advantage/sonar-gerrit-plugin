@@ -34,7 +34,7 @@ import java.net.URLEncoder;
 public class GerritRestConnector implements GerritConnector {
     private static final Logger LOG = Loggers.get(GerritRestConnector.class);
     private static final String URI_AUTH_PREFIX = "/a";
-    private static final String URI_CHANGES = "/changes/%s~%s~%s";
+    private static final String URI_CHANGES = "/changes/%s~%s";
     private static final String URI_REVISIONS = "/revisions/%s";
     private static final String URI_LIST_FILES_SUFFIX = "/files/";
     private static final String URI_SET_REVIEW = "/review";
@@ -161,7 +161,7 @@ public class GerritRestConnector implements GerritConnector {
             uri = uri.concat(URI_AUTH_PREFIX);
         }
         uri = uri.concat(String.format(URI_CHANGES, encode(gerritConfiguration.getProjectName()),
-            encode(gerritConfiguration.getBranchName()), encode(gerritConfiguration.getChangeId())));
+            encode(gerritConfiguration.getChangeNumber())));
         uri = uri.concat(String.format(URI_REVISIONS, encode(gerritConfiguration.getRevisionId())));
 
         LOG.debug("[GERRIT PLUGIN] Built URI : {}", uri);

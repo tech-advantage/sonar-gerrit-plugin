@@ -63,7 +63,7 @@ class GerritPostJobTest {
             .setProperty(PropertyKey.GERRIT_HOST, "localhost")
             .appendProperty(PropertyKey.GERRIT_PORT, "10800")
             .setProperty(PropertyKey.GERRIT_PROJECT, "project")
-            .setProperty(PropertyKey.GERRIT_CHANGE_ID, "changeid")
+            .setProperty(PropertyKey.GERRIT_CHANGE_NUMBER, "changenumber")
             .setProperty(PropertyKey.GERRIT_REVISION_ID, "revisionid")
             .setProperty(PropertyKey.GERRIT_VOTE_NO_ISSUE, "1")
             .setProperty(PropertyKey.GERRIT_VOTE_ISSUE_ABOVE_THRESHOLD, "-2")
@@ -87,7 +87,7 @@ class GerritPostJobTest {
         verify(descriptor).requireProperty(describeStringCaptor.capture());
         String property = describeStringCaptor.getValue();
         Assertions.assertEquals("GERRIT PLUGIN", name);
-        Assertions.assertEquals(PropertyKey.GERRIT_CHANGE_ID, property);
+        Assertions.assertEquals(PropertyKey.GERRIT_CHANGE_NUMBER, property);
     }
 
     @Test
